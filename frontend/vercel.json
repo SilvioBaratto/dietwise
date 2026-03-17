@@ -37,7 +37,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; connect-src 'self' https://api-diet.fly.dev https://rbnimrabbjkmjrbflmxq.supabase.co wss://rbnimrabbjkmjrbflmxq.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://rbnimrabbjkmjrbflmxq.supabase.co wss://rbnimrabbjkmjrbflmxq.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'"
         }
       ]
     },
