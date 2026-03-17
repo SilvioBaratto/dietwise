@@ -1,0 +1,169 @@
+<section class="min-h-screen">
+  <div class="mx-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10 max-w-7xl">
+
+    <!-- Loading Spinner -->
+    @if (loading()) {
+    <div class="flex flex-col justify-center items-center h-64 sm:h-80 lg:h-96" role="status" aria-live="polite">
+      <div class="relative">
+        <div class="w-12 h-12 sm:w-16 sm:h-16 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin"
+          aria-hidden="true"></div>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <img src="assets/icons/clipboard_teal.svg" alt="" class="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true">
+        </div>
+      </div>
+      <p class="mt-3 sm:mt-4 text-sm sm:text-base text-gray-600 font-medium">Caricamento dettagli dieta...</p>
+    </div>
+    }
+
+    <!-- Error Banner -->
+    @if (error() && !loading()) {
+    <div class="mb-6 sm:mb-8 p-4 sm:p-5 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-lg shadow-sm"
+      role="alert" aria-live="assertive">
+      <div class="flex items-start sm:items-center gap-3">
+        <img src="assets/icons/alert_red.svg" alt="" class="w-5 h-5 flex-shrink-0 mt-0.5 sm:mt-0" aria-hidden="true">
+        <span class="font-medium text-sm sm:text-base leading-relaxed">{{ error() }}</span>
+      </div>
+    </div>
+    }
+
+    <!-- Diet Details -->
+    @if (diet() && !loading()) {
+    <div class="space-y-6 sm:space-y-8">
+      <!-- Header Section -->
+      <header class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8">
+        <div class="text-center">
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4 px-2">
+            {{ diet()!.nome || 'Dettagli Dieta' }}
+          </h1>
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-2 text-gray-600">
+            <img src="assets/icons/calendar_gray.svg" alt="" class="w-5 h-5 flex-shrink-0" aria-hidden="true">
+            <time class="text-base sm:text-lg font-medium text-center break-words">{{ diet()!.dataInizio }} — {{
+              diet()!.dataFine }}</time>
+          </div>
+        </div>
+      </header>
+      <!-- Stats Overview -->
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6" aria-label="Statistiche dieta">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div class="text-center p-3 sm:p-4 bg-gradient-to-br from-teal-50 to-teal-100 rounded-lg">
+            <div class="text-2xl sm:text-3xl font-bold text-teal-600" aria-label="Numero pasti totali">{{
+              diet()!.pasti.length }}</div>
+            <div class="text-xs sm:text-sm text-gray-700 font-medium mt-1">Pasti totali</div>
+          </div>
+          <div class="text-center p-3 sm:p-4 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg">
+            <div class="text-2xl sm:text-3xl font-bold text-emerald-600" aria-label="Calorie totali">{{
+              getTotalCalories() }}</div>
+            <div class="text-xs sm:text-sm text-gray-700 font-medium mt-1">Calorie totali</div>
+          </div>
+          <div class="text-center p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+            <div class="text-2xl sm:text-3xl font-bold text-blue-600" aria-label="Giorni coperti">{{ getUniqueDays() }}
+            </div>
+            <div class="text-xs sm:text-sm text-gray-700 font-medium mt-1">Giorni coperti</div>
+          </div>
+          <div class="text-center p-3 sm:p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
+            <div class="text-2xl sm:text-3xl font-bold text-purple-600" aria-label="Ingredienti unici">{{
+              getUniqueIngredients() }}</div>
+            <div class="text-xs sm:text-sm text-gray-700 font-medium mt-1">Ingredienti unici</div>
+          </div>
+        </div>
+      </section>
+      <!-- Meals Grid - Grouped by Day -->
+      <section class="space-y-6 sm:space-y-8">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2 px-1">
+          <img src="assets/icons/plus_teal.svg" alt="" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" aria-hidden="true">
+          <span>Pasti della settimana</span>
+        </h2>
+
+        @for (dayGroup of groupMealsByDay(); track dayGroup.day) {
+        <!-- Day Section -->
+        <div class="space-y-4">
+          <!-- Day Header -->
+          <div
+            class="sticky top-0 z-10 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-lg px-4 sm:px-6 py-3 sm:py-4 shadow-md">
+            <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-3">
+              <img src="assets/icons/calendar_white.svg" alt="" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"
+                aria-hidden="true">
+              <span>{{ dayGroup.dayName }}</span>
+              <span class="ml-auto text-sm sm:text-base font-medium bg-white/20 px-3 py-1 rounded-full">
+                {{ dayGroup.meals.length }} pasti
+              </span>
+            </h3>
+          </div>
+
+          <!-- Meals for this day -->
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+            @for (pasto of dayGroup.meals; track pasto.id) {
+            <div
+              class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-teal-300 transition-all duration-300 transform hover:-translate-y-1 focus-within:ring-2 focus-within:ring-teal-500 focus-within:ring-offset-2 flex flex-col">
+              <!-- Card Header -->
+              <div
+                class="bg-gradient-to-r from-teal-50 to-emerald-50 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
+                  <span
+                    class="inline-flex items-center px-3 py-1.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium text-white min-h-11 sm:min-h-[28px] justify-center"
+                    [class.bg-orange-500]="pasto.tipoPasto.tipo === 'COLAZIONE'"
+                    [class.bg-green-500]="pasto.tipoPasto.tipo === 'SPUNTINO_MATTINA' || pasto.tipoPasto.tipo === 'SPUNTINO_POMERIGGIO'"
+                    [class.bg-blue-500]="pasto.tipoPasto.tipo === 'PRANZO'"
+                    [class.bg-purple-500]="pasto.tipoPasto.tipo === 'CENA'"
+                    [attr.aria-label]="'Tipo pasto: ' + getMealTypeLabel(pasto.tipoPasto.tipo)">
+                    {{ getMealTypeLabel(pasto.tipoPasto.tipo) }}
+                  </span>
+                  <div class="flex items-center gap-1.5 text-sm text-gray-600">
+                    <img src="assets/icons/clock_gray.svg" alt="" class="w-4 h-4 flex-shrink-0" aria-hidden="true">
+                    <time class="font-medium">{{ pasto.tipoPasto.orario || '—' }}</time>
+                  </div>
+                </div>
+              </div>
+              <!-- Card Content -->
+              <div class="p-4 sm:p-6 flex flex-col flex-1">
+                <!-- Recipe Title -->
+                <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 line-clamp-2 leading-tight">
+                  {{ pasto.tipoPasto.ricetta }}
+                </h3>
+
+                <!-- Content that should align at bottom -->
+                <div class="mt-auto space-y-4">
+                  <!-- Calorie Info -->
+                  <div class="flex items-center gap-2 p-3 bg-gradient-to-r from-gray-50 to-emerald-50 rounded-lg"
+                    role="group" aria-label="Informazioni caloriche">
+                    <img src="assets/icons/lightning_orange.svg" alt="" class="w-5 h-5 flex-shrink-0"
+                      aria-hidden="true">
+                    <span class="text-gray-700 text-sm sm:text-base">Calorie:</span>
+                    <span class="font-bold text-emerald-600 text-lg sm:text-xl">{{ pasto.calorie }}</span>
+                  </div>
+
+                  <!-- Ingredients -->
+                  <details class="group">
+                    <summary
+                      class="flex items-center gap-2 text-sm sm:text-base text-teal-600 hover:text-teal-800 cursor-pointer font-medium mb-2 py-2 px-1 rounded-md hover:bg-teal-50 transition-colors touch-manipulation min-h-11 sm:min-h-[36px] list-none focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                      aria-label="Mostra o nascondi ingredienti">
+                      <img src="assets/icons/chevron_right_gray.svg" alt=""
+                        class="w-4 h-4 transition-transform group-open:rotate-90 flex-shrink-0" aria-hidden="true">
+                      <span>Ingredienti</span>
+                    </summary>
+                    <div class="mt-2 sm:mt-3 p-3 sm:p-4 bg-gray-50 rounded-md">
+                      <p class="text-sm sm:text-base text-gray-700 leading-relaxed">{{ pasto.ingredienti }}</p>
+                    </div>
+                  </details>
+
+                  <!-- Action Button -->
+                  <button type="button" (click)="viewRecipe(pasto.id)"
+                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-3.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 active:scale-95 touch-manipulation min-h-11 text-sm sm:text-base"
+                    [attr.aria-label]="'Visualizza ricetta per ' + pasto.tipoPasto.ricetta">
+                    <img src="assets/icons/eye_white.svg" alt="" class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
+                      aria-hidden="true">
+                    <span>Visualizza Ricetta</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </section>
+    </div>
+    }
+
+  </div>
+</section>

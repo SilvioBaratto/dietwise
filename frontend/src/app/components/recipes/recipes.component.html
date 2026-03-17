@@ -1,0 +1,245 @@
+<!-- Recipes List Page -->
+<div class="min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+
+        <!-- Header Section -->
+        <div class="mb-8 sm:mb-10 lg:mb-12">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 sm:mb-3">
+                        Le Tue Ricette
+                    </h1>
+                    <p class="text-base sm:text-lg text-gray-600">
+                        Tutte le ricette che hai salvato dai tuoi piani alimentari
+                    </p>
+                </div>
+
+                @if (!loading() && hasRecipes()) {
+                <div class="flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-sm border border-gray-200"
+                    role="status" aria-live="polite">
+                    <img src="assets/icons/recipe.svg" alt="" class="w-6 h-6 text-teal-600" aria-hidden="true">
+                    <div>
+                        <p class="text-2xl font-bold text-gray-900">{{ recipeCount() }}</p>
+                        <p class="text-xs text-gray-600">{{ recipeCount() === 1 ? 'Ricetta' : 'Ricette' }}</p>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        @if (error()) {
+        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3" role="alert"
+            aria-live="assertive">
+            <img src="assets/icons/alert_red.svg" alt="" class="w-6 h-6 flex-shrink-0 mt-0.5" aria-hidden="true">
+            <div>
+                <h3 class="font-semibold text-red-900 mb-1">Errore</h3>
+                <p class="text-sm text-red-700">{{ error() }}</p>
+            </div>
+        </div>
+        }
+
+        <!-- Loading State -->
+        @if (loading()) {
+        <div class="flex flex-col items-center justify-center py-16 sm:py-20 lg:py-24" role="status" aria-live="polite">
+            <img src="assets/icons/spinner_teal.svg" alt="" class="w-12 h-12 sm:w-16 sm:h-16 animate-spin mb-4"
+                aria-hidden="true">
+            <p class="text-lg text-gray-600">Caricamento ricette...</p>
+        </div>
+        }
+
+        <!-- Empty State -->
+        @if (!loading() && !hasRecipes() && !error()) {
+        <div class="flex flex-col items-center justify-center py-16 sm:py-20 lg:py-24">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6"
+                aria-hidden="true">
+                <img src="assets/icons/recipe.svg" alt="" class="w-10 h-10 sm:w-12 sm:h-12 opacity-50">
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3">Nessuna Ricetta Salvata</h2>
+            <p class="text-base sm:text-lg text-gray-600 text-center max-w-md mb-8">
+                Inizia a salvare le tue ricette preferite dai piani settimanali per vederle qui.
+            </p>
+            <a routerLink="/weekly"
+                class="inline-flex items-center justify-center gap-3 px-6 py-3 min-h-11 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                aria-label="Vai ai piani settimanali per salvare ricette">
+                <img src="assets/icons/calendar_white.svg" alt="" class="w-5 h-5" aria-hidden="true">
+                <span>Vai ai Piani Settimanali</span>
+            </a>
+        </div>
+        }
+
+        <!-- Recipes Grid -->
+        @if (!loading() && hasRecipes()) {
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+            @for (recipe of recipes(); track recipe.id) {
+            <article
+                class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] flex flex-col">
+
+                <!-- Recipe Header -->
+                <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-4 sm:px-6 py-4 border-b border-gray-200">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 line-clamp-2 flex-1">
+                            {{ recipe.recipe_name }}
+                        </h3>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0"
+                            [class.bg-amber-100]="recipe.meal_type === 'COLAZIONE'"
+                            [class.text-amber-800]="recipe.meal_type === 'COLAZIONE'"
+                            [class.bg-green-100]="recipe.meal_type === 'SPUNTINO_MATTINA' || recipe.meal_type === 'SPUNTINO_POMERIGGIO'"
+                            [class.text-green-800]="recipe.meal_type === 'SPUNTINO_MATTINA' || recipe.meal_type === 'SPUNTINO_POMERIGGIO'"
+                            [class.bg-blue-100]="recipe.meal_type === 'PRANZO'"
+                            [class.text-blue-800]="recipe.meal_type === 'PRANZO'"
+                            [class.bg-purple-100]="recipe.meal_type === 'CENA'"
+                            [class.text-purple-800]="recipe.meal_type === 'CENA'">
+                            {{ getMealTypeLabel(recipe.meal_type) }}
+                        </span>
+                    </div>
+
+                    <!-- Recipe Meta -->
+                    <div class="flex items-center gap-4 text-sm text-gray-600">
+                        <div class="flex items-center gap-2">
+                            <img src="assets/icons/fire_gray.svg" alt="" class="w-4 h-4" aria-hidden="true">
+                            <span class="font-medium">{{ recipe.calories }} kcal</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <img src="assets/icons/calendar_gray.svg" alt="" class="w-4 h-4" aria-hidden="true">
+                            <span class="text-xs">{{ formatDate(recipe.created_at) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe Instructions Preview -->
+                <div class="px-4 sm:px-6 py-4 flex-1">
+                    <div class="text-sm text-gray-700 line-clamp-4 recipe-preview">
+                        {{ getRecipePreview(recipe.recipe_instructions) }}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
+                    <!-- View Full Recipe Button -->
+                    <button (click)="viewRecipe(recipe)" type="button"
+                        class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 min-h-11 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md text-sm touch-manipulation"
+                        aria-label="Visualizza ricetta completa: {{ recipe.recipe_name }}">
+                        <img src="assets/icons/eye_white.svg" alt="" class="w-4 h-4" aria-hidden="true">
+                        <span>Visualizza</span>
+                    </button>
+
+                    <!-- Delete Button -->
+                    <button (click)="deleteRecipe(recipe.id, recipe.recipe_name)" type="button"
+                        [disabled]="deletingRecipeId() === recipe.id"
+                        class="sm:flex-shrink-0 inline-flex items-center justify-center px-4 py-3 min-h-11 min-w-11 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white border border-red-200 hover:border-red-500 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm touch-manipulation"
+                        [attr.aria-label]="deletingRecipeId() === recipe.id ? 'Eliminazione in corso' : 'Elimina ricetta: ' + recipe.recipe_name">
+                        @if (deletingRecipeId() === recipe.id) {
+                        <img src="assets/icons/spinner_red.svg" alt="" class="w-4 h-4 animate-spin" aria-hidden="true">
+                        }
+                        @if (deletingRecipeId() !== recipe.id) {
+                        <img src="assets/icons/trash_red.svg" alt="" class="w-4 h-4" aria-hidden="true">
+                        }
+                        <span class="sm:sr-only">Elimina</span>
+                    </button>
+                </div>
+            </article>
+            }
+        </div>
+        }
+    </div>
+</div>
+
+<!-- Recipe Detail Modal -->
+@if (showModal() && selectedRecipe()) {
+<div class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title"
+    (click)="closeModal()" (keydown.escape)="closeModal()">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
+
+    <!-- Modal Content -->
+    <div class="flex min-h-screen items-center justify-center p-4 sm:p-6">
+        <div (click)="$event.stopPropagation()"
+            class="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl transform transition-all">
+
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-6 sm:px-8 py-6 border-b border-gray-200">
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex-1">
+                        <h2 id="modal-title" class="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                            {{ selectedRecipe()!.recipe_name }}
+                        </h2>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold"
+                                [class.bg-amber-100]="selectedRecipe()!.meal_type === 'COLAZIONE'"
+                                [class.text-amber-800]="selectedRecipe()!.meal_type === 'COLAZIONE'"
+                                [class.bg-green-100]="selectedRecipe()!.meal_type === 'SPUNTINO_MATTINA' || selectedRecipe()!.meal_type === 'SPUNTINO_POMERIGGIO'"
+                                [class.text-green-800]="selectedRecipe()!.meal_type === 'SPUNTINO_MATTINA' || selectedRecipe()!.meal_type === 'SPUNTINO_POMERIGGIO'"
+                                [class.bg-blue-100]="selectedRecipe()!.meal_type === 'PRANZO'"
+                                [class.text-blue-800]="selectedRecipe()!.meal_type === 'PRANZO'"
+                                [class.bg-purple-100]="selectedRecipe()!.meal_type === 'CENA'"
+                                [class.text-purple-800]="selectedRecipe()!.meal_type === 'CENA'">
+                                {{ getMealTypeLabel(selectedRecipe()!.meal_type) }}
+                            </span>
+                            <div class="flex items-center gap-2 text-sm text-gray-600">
+                                <img src="assets/icons/fire_gray.svg" alt="" class="w-4 h-4" aria-hidden="true">
+                                <span class="font-medium">{{ selectedRecipe()!.calories }} kcal</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-600">
+                                <img src="assets/icons/calendar_gray.svg" alt="" class="w-4 h-4" aria-hidden="true">
+                                <span class="text-xs">{{ formatDate(selectedRecipe()!.created_at) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Close Button -->
+                    <button (click)="closeModal()" type="button"
+                        class="flex-shrink-0 w-10 h-10 min-w-11 min-h-11 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors touch-manipulation"
+                        aria-label="Chiudi finestra ricetta">
+                        <img src="assets/icons/close_gray.svg" alt="" class="w-6 h-6" aria-hidden="true">
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="px-6 sm:px-8 py-6 max-h-[60vh] overflow-y-auto scrollbar-hidden">
+                <div class="prose prose-sm sm:prose max-w-none recipe-content">
+                    @for (section of parseRecipeInstructions(selectedRecipe()!.recipe_instructions); track $index) {
+                        @switch (section.type) {
+                            @case ('heading') {
+                                <h3 class="text-lg font-semibold text-gray-900 mt-4 mb-2 first:mt-0">{{ section.content }}</h3>
+                            }
+                            @case ('paragraph') {
+                                <p class="text-gray-700 mb-3 leading-relaxed">{{ section.content }}</p>
+                            }
+                            @case ('bullet') {
+                                <ul class="list-disc list-inside text-gray-700 mb-3 space-y-1">
+                                    @for (item of section.items; track $index) {
+                                        <li>{{ item }}</li>
+                                    }
+                                </ul>
+                            }
+                            @case ('numbered') {
+                                <ol class="list-decimal list-inside text-gray-700 mb-3 space-y-2">
+                                    @for (item of section.items; track $index) {
+                                        <li class="leading-relaxed">{{ item }}</li>
+                                    }
+                                </ol>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 px-6 sm:px-8 py-4 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
+                <button (click)="copyRecipe()" type="button"
+                    class="flex-1 inline-flex items-center justify-center gap-3 px-6 py-3 min-h-11 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md touch-manipulation"
+                    aria-label="Copia ricetta negli appunti">
+                    <img src="assets/icons/copy_gray.svg" alt="" class="w-5 h-5" aria-hidden="true">
+                    <span>Copia Ricetta</span>
+                </button>
+                <button (click)="closeModal()" type="button"
+                    class="flex-1 inline-flex items-center justify-center gap-3 px-6 py-3 min-h-11 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md touch-manipulation"
+                    aria-label="Chiudi finestra ricetta">
+                    <span>Chiudi</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+}

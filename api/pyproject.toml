@@ -1,0 +1,289 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "api-diet"
+version = "1.0.0"
+description = "API Diet"
+readme = "README.md"
+authors = [
+    {name = "API Diet", email = "silvio.baratto22@gmail.com"}
+]
+license = {text = "MIT"}
+requires-python = ">=3.11"
+
+# Core dependencies
+dependencies = [
+    # FastAPI framework and server
+    "fastapi==0.115.12",
+    "uvicorn[standard]==0.34.2",
+    "python-dotenv==1.1.0",
+    
+    # Database and ORM - Optimized for Supabase Transaction Pooler
+    "SQLAlchemy==2.0.41",
+    "psycopg2-binary==2.9.10",  # Primary driver for Supabase compatibility
+    "alembic==1.16.2",
+    
+    # Supabase SDK
+    "supabase==2.15.3",
+    
+    # Data validation and serialization
+    "pydantic==2.11.7",
+    "pydantic[email]",  # Email validation support
+    "pydantic-settings==2.0.3",
+    
+    # Authentication
+    "python-jose[cryptography]",
+    
+    # AI/ML
+    "baml-py==0.207.1",
+    
+    # File handling
+    "python-multipart==0.0.20",
+    
+    # Caching & Performance
+    "redis==6.2.0",
+    
+    # Monitoring
+    "psutil==6.1.0",
+    "prometheus-client==0.21.1",
+    
+    # HTTP Client
+    "httpx==0.28.1",
+]
+
+# Optional dependencies for different use cases
+[project.optional-dependencies]
+dev = [
+    # Testing (matching requirements.txt)
+    "pytest==8.4.1",
+    "pytest-asyncio==1.1.0",
+    "pytest-cov>=6.0.0,<7.0.0",
+    "httpx==0.28.1",  # For testing API endpoints
+    "factory-boy>=3.3.0,<4.0.0",  # For test data generation
+    
+    # Code quality and formatting
+    "black>=24.0.0,<25.0.0",
+    "ruff>=0.8.0,<1.0.0",
+    "mypy>=1.13.0,<2.0.0",
+    "pre-commit>=4.0.0,<5.0.0",
+    
+    # Development tools
+    "watchfiles>=0.24.0,<1.0.0",  # For file watching
+    "ipython>=8.29.0,<9.0.0",  # Enhanced REPL
+]
+
+production = [
+    # Production monitoring and logging
+    "sentry-sdk[fastapi]>=2.19.2,<3.0.0",
+    "structlog>=24.4.0,<25.0.0",
+    
+    # Production server optimizations
+    "gunicorn>=23.0.0,<24.0.0",
+]
+
+testing = [
+    "pytest==8.4.1",
+    "pytest-asyncio==1.1.0",
+    "pytest-cov>=6.0.0,<7.0.0",
+    "httpx==0.28.1",
+    "factory-boy>=3.3.0,<4.0.0",
+    "pytest-mock>=3.14.0,<4.0.0",
+]
+
+docs = [
+    "mkdocs>=1.6.0,<2.0.0",
+    "mkdocs-material>=9.5.0,<10.0.0",
+    "mkdocstrings[python]>=0.27.0,<1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/SilvioBaratto/dietwise"
+Repository = "https://github.com/SilvioBaratto/dietwise"
+Documentation = "https://github.com/SilvioBaratto/dietwise/blob/main/README.md"
+
+[project.scripts]
+api-diet = "app.main:app"
+
+# Tool configurations
+
+[tool.hatch.build]
+include = [
+    "app/**/*.py",
+    "alembic/**/*.py",
+    "alembic.ini",
+    "*.md",
+]
+exclude = [
+    "tests/",
+    ".git/",
+    ".pytest_cache/",
+    "__pycache__/",
+    "*.pyc",
+    "*.pyo",
+    "*.pyd",
+    ".env*",
+]
+
+[tool.hatch.version]
+path = "app/__init__.py"
+
+# Black code formatting
+[tool.black]
+line-length = 88
+target-version = ['py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+# Ruff linting and formatting
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "ARG", # flake8-unused-arguments
+    "SIM", # flake8-simplify
+    "PTH", # flake8-use-pathlib
+    "ERA", # flake8-eradicate
+]
+ignore = [
+    "E501",   # line too long, handled by black
+    "B008",   # do not perform function calls in argument defaults
+    "C901",   # too complex
+    "ARG001", # unused function argument
+    "ARG002", # unused method argument
+    "UP007",  # use X | Y for type annotations (requires Python 3.10+)
+]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "alembic/versions/",  # exclude migration files
+]
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.ruff.isort]
+known-first-party = ["app"]
+force-sort-within-sections = true
+
+[tool.ruff.flake8-type-checking]
+strict = true
+
+# MyPy type checking
+[tool.mypy]
+python_version = "3.11"
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+no_implicit_reexport = true
+strict_equality = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = [
+    "supabase.*",
+    "prometheus_client.*",
+    "psutil.*",
+    "baml_py.*",
+    "baml_client.*",
+]
+ignore_missing_imports = true
+
+# Pytest configuration
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+]
+testpaths = ["tests"]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]
+asyncio_mode = "auto"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "auth: marks tests related to authentication",
+    "database: marks tests that require database",
+]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "app/main.py",  # Entry point, hard to test
+    "*/migrations/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+# Bandit security linting
+[tool.bandit]
+exclude_dirs = ["tests", "alembic/versions"]
+skips = ["B101", "B601"]  # Skip assert_used and shell_injection_subprocess

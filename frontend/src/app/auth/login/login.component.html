@@ -1,0 +1,514 @@
+<!-- Full-page split-screen login layout -->
+<div class="min-h-screen flex flex-col lg:flex-row relative">
+
+  <!-- Mobile Background SVG (visible only on mobile) -->
+  <div class="fixed inset-0 lg:hidden bg-[#E8F5E9] z-0">
+    <svg viewBox="0 0 800 600" class="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice"
+      xmlns="http://www.w3.org/2000/svg">
+      <!-- Background -->
+      <rect width="800" height="600" fill="#E8F5E9" />
+
+      <!-- Title Area -->
+      <rect x="0" y="0" width="800" height="100" fill="#4CAF50" opacity="0.1" />
+
+      <!-- Person 1 - Left (Woman with salad) -->
+      <g transform="translate(150, 250)">
+        <ellipse cx="0" cy="60" rx="45" ry="55" fill="#FF6B9D" />
+        <circle cx="0" cy="0" r="35" fill="#FFD4A3" />
+        <path d="M -25 -15 Q -35 -25, -30 -35 Q -20 -40, 0 -35 Q 20 -40, 30 -35 Q 35 -25, 25 -15 Z" fill="#8B4513" />
+        <path d="M -12 -5 Q -12 0, -8 0 Q -12 0, -12 -5" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M 8 0 Q 12 0, 12 -5 Q 12 0, 8 0" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M -15 10 Q 0 20, 15 10" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
+        <ellipse cx="-40" cy="50" rx="12" ry="35" fill="#FFD4A3" transform="rotate(-20 -40 50)" />
+        <ellipse cx="40" cy="50" rx="12" ry="35" fill="#FFD4A3" transform="rotate(20 40 50)" />
+        <ellipse cx="0" cy="120" rx="40" ry="15" fill="#81C784" />
+        <path d="M -40 120 Q -40 140, 0 145 Q 40 140, 40 120" fill="#A5D6A7" />
+        <circle cx="-15" cy="125" r="8" fill="#FF6B6B" />
+        <circle cx="10" cy="125" r="8" fill="#FFD93D" />
+        <circle cx="-5" cy="130" r="6" fill="#6BCF7F" />
+        <ellipse cx="15" cy="132" rx="10" ry="5" fill="#FF8A5B" />
+      </g>
+
+      <!-- Person 2 - Center (Man with smoothie) -->
+      <g transform="translate(400, 280)">
+        <ellipse cx="0" cy="50" rx="50" ry="60" fill="#64B5F6" />
+        <circle cx="0" cy="0" r="38" fill="#FFD4A3" />
+        <path d="M -28 -10 Q -35 -20, -32 -32 Q -15 -38, 0 -38 Q 15 -38, 32 -32 Q 35 -20, 28 -10 Z" fill="#2C1810" />
+        <circle cx="-12" cy="-3" r="3" fill="#333" />
+        <circle cx="12" cy="-3" r="3" fill="#333" />
+        <path d="M -15 -8 Q -12 -12, -8 -8" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M 8 -8 Q 12 -12, 15 -8" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M -18 12 Q 0 25, 18 12" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        <ellipse cx="-45" cy="45" rx="13" ry="38" fill="#FFD4A3" transform="rotate(-15 -45 45)" />
+        <ellipse cx="45" cy="45" rx="13" ry="38" fill="#FFD4A3" transform="rotate(15 45 45)" />
+        <rect x="-20" y="100" width="40" height="55" rx="5" fill="#FF6B9D" opacity="0.3" />
+        <rect x="-20" y="105" width="40" height="50" rx="5" fill="#E91E63" opacity="0.6" />
+        <rect x="-18" y="110" width="36" height="40" fill="#FF4081" />
+        <ellipse cx="0" cy="110" rx="18" ry="8" fill="#FF80AB" />
+        <rect x="-2" y="70" width="4" height="45" fill="#FFF" opacity="0.8" />
+        <rect x="-5" y="65" width="10" height="8" rx="2" fill="#FFF" opacity="0.8" />
+        <circle cx="-8" cy="112" r="5" fill="#FFD93D" opacity="0.8" />
+        <circle cx="8" cy="112" r="5" fill="#4CAF50" opacity="0.8" />
+      </g>
+
+      <!-- Person 3 - Right (Woman with fruit) -->
+      <g transform="translate(650, 260)">
+        <ellipse cx="0" cy="55" rx="42" ry="50" fill="#FFB74D" />
+        <circle cx="0" cy="0" r="33" fill="#FFD4A3" />
+        <ellipse cx="0" cy="-5" rx="33" ry="30" fill="#654321" />
+        <ellipse cx="25" cy="-10" rx="15" ry="25" fill="#654321" transform="rotate(30 25 -10)" />
+        <path d="M -10 -2 Q -10 3, -5 3 Q -10 3, -10 -2" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M 5 3 Q 10 3, 10 -2 Q 10 3, 5 3" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M -12 12 Q 0 20, 12 12" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
+        <ellipse cx="-38" cy="48" rx="11" ry="32" fill="#FFD4A3" transform="rotate(-25 -38 48)" />
+        <ellipse cx="38" cy="48" rx="11" ry="32" fill="#FFD4A3" transform="rotate(25 38 48)" />
+        <ellipse cx="0" cy="115" rx="38" ry="12" fill="#FFF" stroke="#DDD" stroke-width="2" />
+        <circle cx="-15" cy="110" r="9" fill="#FF6B6B" />
+        <circle cx="0" cy="110" r="9" fill="#FFD93D" />
+        <circle cx="15" cy="110" r="9" fill="#9C27B0" />
+        <ellipse cx="-8" cy="115" rx="7" ry="5" fill="#FF9800" />
+        <ellipse cx="8" cy="115" rx="7" ry="5" fill="#4CAF50" />
+      </g>
+
+      <!-- Decorative hearts -->
+      <g fill="#FF6B9D" opacity="0.3">
+        <path
+          d="M 100 150 Q 100 140, 108 140 Q 116 140, 116 150 Q 116 160, 100 170 Q 84 160, 84 150 Q 84 140, 92 140 Q 100 140, 100 150"
+          transform="scale(0.8)" />
+        <path
+          d="M 700 180 Q 700 170, 708 170 Q 716 170, 716 180 Q 716 190, 700 200 Q 684 190, 684 180 Q 684 170, 692 170 Q 700 170, 700 180"
+          transform="scale(0.7)" />
+        <path
+          d="M 380 120 Q 380 110, 388 110 Q 396 110, 396 120 Q 396 130, 380 140 Q 364 130, 364 120 Q 364 110, 372 110 Q 380 110, 380 120"
+          transform="scale(0.6)" />
+      </g>
+
+      <!-- Sparkles -->
+      <g fill="#FFD700" opacity="0.4">
+        <circle cx="120" cy="200" r="4" />
+        <circle cx="680" cy="240" r="5" />
+        <circle cx="360" cy="160" r="3" />
+        <circle cx="500" cy="190" r="4" />
+        <circle cx="220" cy="320" r="3" />
+      </g>
+
+      <!-- Leaf decorations -->
+      <g fill="#4CAF50" opacity="0.3">
+        <ellipse cx="80" cy="480" rx="15" ry="30" transform="rotate(-30 80 480)" />
+        <ellipse cx="720" cy="500" rx="15" ry="30" transform="rotate(30 720 500)" />
+        <ellipse cx="400" cy="520" rx="20" ry="35" transform="rotate(0 400 520)" />
+      </g>
+    </svg>
+    <div class="absolute inset-0 bg-gradient-to-b from-white/60 via-white/70 to-white/80"></div>
+  </div>
+
+  <!-- LEFT SECTION: Login Form (mobile: full width, desktop: 50%) -->
+  <div class="relative flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 xl:px-12 lg:bg-white z-10">
+    <div class="w-full max-w-md">
+
+      <!-- Logo/Brand Area -->
+      <div class="mb-8 text-center lg:text-left">
+        <div
+          class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 mb-4 shadow-lg ring-1 ring-white/20">
+          <img src="assets/logo/logo.svg" alt="DietologoAI Logo" class="w-8 h-8">
+        </div>
+        <h2 class="text-sm font-semibold text-teal-600 tracking-wide uppercase mb-2">DietologoAI</h2>
+      </div>
+
+      <!-- Welcome Headline -->
+      <div class="mb-8 text-center lg:text-left">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+          Bentornato
+        </h1>
+        <p class="text-base sm:text-lg text-gray-600 leading-relaxed">
+          Accedi per continuare il tuo percorso di benessere e gestire i tuoi piani alimentari personalizzati
+        </p>
+      </div>
+
+      <!-- Login Form Area -->
+      <div class="space-y-6">
+
+        <!-- Google Sign In Button -->
+        <button (click)="onLogin()" class="group relative w-full flex items-center justify-center gap-3
+                 min-h-11 px-6 py-3
+                 bg-white border-2 border-gray-300 rounded-xl
+                 text-gray-900 font-semibold text-base
+                 hover:bg-gray-50 hover:border-gray-400
+                 focus:outline-none focus:ring-4 focus:ring-teal-500 focus:ring-opacity-20 focus:border-teal-500
+                 active:bg-gray-100
+                 transition-all duration-200
+                 shadow-sm hover:shadow-md">
+
+          <!-- Google Logo -->
+          <img src="assets/icons/google.svg" alt="Google" class="h-5 w-5 flex-shrink-0" />
+
+          <!-- Button Text -->
+          <span>Continua con Google</span>
+
+          <!-- Animated Arrow on Hover -->
+          <img src="assets/icons/arrow_right_white.svg" alt="Icona freccia destra"
+            class="w-5 h-5 group-hover:translate-x-1 transition-all duration-200">
+        </button>
+
+        <!-- Divider -->
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-200"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-4 bg-white text-gray-500 font-medium">Autenticazione sicura</span>
+          </div>
+        </div>
+
+        <!-- Features/Benefits -->
+        <div class="space-y-3 pt-2">
+          <div class="flex items-start gap-3 text-sm text-gray-600">
+            <img src="assets/icons/check_green.svg" alt="Icona spunta" class="w-5 h-5 flex-shrink-0 mt-0.5">
+            <span>Piani alimentari settimanali personalizzati</span>
+          </div>
+          <div class="flex items-start gap-3 text-sm text-gray-600">
+            <img src="assets/icons/check_green.svg" alt="Icona spunta" class="w-5 h-5 flex-shrink-0 mt-0.5">
+            <span>Generazione intelligente della lista della spesa</span>
+          </div>
+          <div class="flex items-start gap-3 text-sm text-gray-600">
+            <img src="assets/icons/check_green.svg" alt="Icona spunta" class="w-5 h-5 flex-shrink-0 mt-0.5">
+            <span>Monitora calorie e obiettivi nutrizionali</span>
+          </div>
+        </div>
+
+        <!-- Terms acceptance status -->
+        @if (hasAcceptedTerms()) {
+        <div class="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+          <div class="flex items-center justify-center w-8 h-8 bg-emerald-100 rounded-lg flex-shrink-0">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <span class="text-sm text-emerald-700 font-medium">Termini e Condizioni accettati</span>
+        </div>
+        } @else {
+        <button (click)="openTermsModal()"
+          class="group w-full flex items-center gap-3 p-4 bg-teal-50 border border-teal-200 rounded-xl hover:bg-teal-100 hover:border-teal-300 transition-all duration-200">
+          <div class="flex items-center justify-center w-8 h-8 bg-teal-100 rounded-lg flex-shrink-0 group-hover:bg-teal-200 transition-colors">
+            <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+              </path>
+            </svg>
+          </div>
+          <span class="text-sm text-teal-700 font-medium">Leggi e accetta i Termini e Condizioni per continuare</span>
+          <svg class="w-4 h-4 text-teal-500 ml-auto group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        }
+
+      </div>
+
+      <!-- Footer -->
+      <div class="mt-6 pt-6 border-t border-gray-100 text-center lg:text-left">
+        <p class="text-xs text-gray-500">
+          Per accedere devi leggere e accettare i
+          <button (click)="openTermsModal()"
+            class="text-teal-600 hover:text-teal-700 font-medium transition-colors">Termini e Condizioni</button>
+          e la
+          <a href="assets/terms_of_condition/privacy.html" target="_blank"
+            class="text-teal-600 hover:text-teal-700 font-medium transition-colors">Informativa Privacy</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT SECTION: Hero/Brand (hidden on mobile, visible lg+) -->
+  <div class="hidden lg:flex lg:flex-1 relative overflow-hidden bg-[#E8F5E9]">
+
+    <!-- Background SVG -->
+    <svg viewBox="0 0 800 600" class="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice"
+      xmlns="http://www.w3.org/2000/svg">
+      <!-- Background -->
+      <rect width="800" height="600" fill="#E8F5E9" />
+
+      <!-- Title Area -->
+      <rect x="0" y="0" width="800" height="100" fill="#4CAF50" opacity="0.1" />
+
+      <!-- Person 1 - Left (Woman with salad) -->
+      <g transform="translate(150, 250)">
+        <ellipse cx="0" cy="60" rx="45" ry="55" fill="#FF6B9D" />
+        <circle cx="0" cy="0" r="35" fill="#FFD4A3" />
+        <path d="M -25 -15 Q -35 -25, -30 -35 Q -20 -40, 0 -35 Q 20 -40, 30 -35 Q 35 -25, 25 -15 Z" fill="#8B4513" />
+        <path d="M -12 -5 Q -12 0, -8 0 Q -12 0, -12 -5" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M 8 0 Q 12 0, 12 -5 Q 12 0, 8 0" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M -15 10 Q 0 20, 15 10" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
+        <ellipse cx="-40" cy="50" rx="12" ry="35" fill="#FFD4A3" transform="rotate(-20 -40 50)" />
+        <ellipse cx="40" cy="50" rx="12" ry="35" fill="#FFD4A3" transform="rotate(20 40 50)" />
+        <ellipse cx="0" cy="120" rx="40" ry="15" fill="#81C784" />
+        <path d="M -40 120 Q -40 140, 0 145 Q 40 140, 40 120" fill="#A5D6A7" />
+        <circle cx="-15" cy="125" r="8" fill="#FF6B6B" />
+        <circle cx="10" cy="125" r="8" fill="#FFD93D" />
+        <circle cx="-5" cy="130" r="6" fill="#6BCF7F" />
+        <ellipse cx="15" cy="132" rx="10" ry="5" fill="#FF8A5B" />
+      </g>
+
+      <!-- Person 2 - Center (Man with smoothie) -->
+      <g transform="translate(400, 280)">
+        <ellipse cx="0" cy="50" rx="50" ry="60" fill="#64B5F6" />
+        <circle cx="0" cy="0" r="38" fill="#FFD4A3" />
+        <path d="M -28 -10 Q -35 -20, -32 -32 Q -15 -38, 0 -38 Q 15 -38, 32 -32 Q 35 -20, 28 -10 Z" fill="#2C1810" />
+        <circle cx="-12" cy="-3" r="3" fill="#333" />
+        <circle cx="12" cy="-3" r="3" fill="#333" />
+        <path d="M -15 -8 Q -12 -12, -8 -8" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M 8 -8 Q 12 -12, 15 -8" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M -18 12 Q 0 25, 18 12" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        <ellipse cx="-45" cy="45" rx="13" ry="38" fill="#FFD4A3" transform="rotate(-15 -45 45)" />
+        <ellipse cx="45" cy="45" rx="13" ry="38" fill="#FFD4A3" transform="rotate(15 45 45)" />
+        <rect x="-20" y="100" width="40" height="55" rx="5" fill="#FF6B9D" opacity="0.3" />
+        <rect x="-20" y="105" width="40" height="50" rx="5" fill="#E91E63" opacity="0.6" />
+        <rect x="-18" y="110" width="36" height="40" fill="#FF4081" />
+        <ellipse cx="0" cy="110" rx="18" ry="8" fill="#FF80AB" />
+        <rect x="-2" y="70" width="4" height="45" fill="#FFF" opacity="0.8" />
+        <rect x="-5" y="65" width="10" height="8" rx="2" fill="#FFF" opacity="0.8" />
+        <circle cx="-8" cy="112" r="5" fill="#FFD93D" opacity="0.8" />
+        <circle cx="8" cy="112" r="5" fill="#4CAF50" opacity="0.8" />
+      </g>
+
+      <!-- Person 3 - Right (Woman with fruit) -->
+      <g transform="translate(650, 260)">
+        <ellipse cx="0" cy="55" rx="42" ry="50" fill="#FFB74D" />
+        <circle cx="0" cy="0" r="33" fill="#FFD4A3" />
+        <ellipse cx="0" cy="-5" rx="33" ry="30" fill="#654321" />
+        <ellipse cx="25" cy="-10" rx="15" ry="25" fill="#654321" transform="rotate(30 25 -10)" />
+        <path d="M -10 -2 Q -10 3, -5 3 Q -10 3, -10 -2" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M 5 3 Q 10 3, 10 -2 Q 10 3, 5 3" stroke="#333" stroke-width="2" fill="none" />
+        <path d="M -12 12 Q 0 20, 12 12" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
+        <ellipse cx="-38" cy="48" rx="11" ry="32" fill="#FFD4A3" transform="rotate(-25 -38 48)" />
+        <ellipse cx="38" cy="48" rx="11" ry="32" fill="#FFD4A3" transform="rotate(25 38 48)" />
+        <ellipse cx="0" cy="115" rx="38" ry="12" fill="#FFF" stroke="#DDD" stroke-width="2" />
+        <circle cx="-15" cy="110" r="9" fill="#FF6B6B" />
+        <circle cx="0" cy="110" r="9" fill="#FFD93D" />
+        <circle cx="15" cy="110" r="9" fill="#9C27B0" />
+        <ellipse cx="-8" cy="115" rx="7" ry="5" fill="#FF9800" />
+        <ellipse cx="8" cy="115" rx="7" ry="5" fill="#4CAF50" />
+      </g>
+
+      <!-- Decorative hearts -->
+      <g fill="#FF6B9D" opacity="0.3">
+        <path
+          d="M 100 150 Q 100 140, 108 140 Q 116 140, 116 150 Q 116 160, 100 170 Q 84 160, 84 150 Q 84 140, 92 140 Q 100 140, 100 150"
+          transform="scale(0.8)" />
+        <path
+          d="M 700 180 Q 700 170, 708 170 Q 716 170, 716 180 Q 716 190, 700 200 Q 684 190, 684 180 Q 684 170, 692 170 Q 700 170, 700 180"
+          transform="scale(0.7)" />
+        <path
+          d="M 380 120 Q 380 110, 388 110 Q 396 110, 396 120 Q 396 130, 380 140 Q 364 130, 364 120 Q 364 110, 372 110 Q 380 110, 380 120"
+          transform="scale(0.6)" />
+      </g>
+
+      <!-- Sparkles -->
+      <g fill="#FFD700" opacity="0.4">
+        <circle cx="120" cy="200" r="4" />
+        <circle cx="680" cy="240" r="5" />
+        <circle cx="360" cy="160" r="3" />
+        <circle cx="500" cy="190" r="4" />
+        <circle cx="220" cy="320" r="3" />
+      </g>
+
+      <!-- Leaf decorations -->
+      <g fill="#4CAF50" opacity="0.3">
+        <ellipse cx="80" cy="480" rx="15" ry="30" transform="rotate(-30 80 480)" />
+        <ellipse cx="720" cy="500" rx="15" ry="30" transform="rotate(30 720 500)" />
+        <ellipse cx="400" cy="520" rx="20" ry="35" transform="rotate(0 400 520)" />
+      </g>
+    </svg>
+
+
+  </div>
+
+</div>
+
+<!-- Terms and Conditions Modal -->
+@if (showTermsModal()) {
+<div class="fixed inset-0 z-50 overflow-y-auto">
+  <!-- Backdrop -->
+  <div class="fixed inset-0 bg-black/50 transition-opacity" (click)="closeTermsModal()"></div>
+
+  <!-- Modal -->
+  <div class="flex min-h-full items-center justify-center p-4">
+    <div class="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl max-h-[90vh] flex flex-col">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
+        <div>
+          <h2 class="text-xl font-bold text-gray-900">Termini e Condizioni di Utilizzo</h2>
+          <p class="text-sm text-gray-500 mt-1">Scorri fino in fondo per accettare</p>
+        </div>
+        <button (click)="closeTermsModal()" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="flex-1 overflow-y-auto p-6" (scroll)="onTermsScroll($event)">
+
+        <!-- Medical Disclaimer -->
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r-lg">
+          <h3 class="font-bold text-amber-800 mb-2">AVVISO IMPORTANTE - DISCLAIMER MEDICO</h3>
+          <p class="text-amber-700 text-sm mb-2"><strong>Questa applicazione NON fornisce consulenza medica, diagnosi o
+              trattamenti.</strong></p>
+          <p class="text-amber-700 text-sm mb-2">I piani alimentari e i suggerimenti generati dall'intelligenza
+            artificiale hanno esclusivamente scopo informativo e di intrattenimento. Non sostituiscono in alcun modo il
+            parere di medici, dietisti, nutrizionisti o altri professionisti sanitari qualificati.</p>
+          <p class="text-amber-700 text-sm font-bold">Prima di apportare qualsiasi modifica alla propria alimentazione,
+            consultare sempre un professionista sanitario.</p>
+        </div>
+
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">1. Natura dell'Applicazione</h3>
+        <p class="text-gray-600 mb-4 text-sm">DietologoAI (di seguito "l'Applicazione") è un progetto personale
+          sviluppato e gestito da una persona fisica (di seguito "il Titolare") per uso privato e non commerciale.
+          L'Applicazione non è gestita da un'azienda, società o ente commerciale.</p>
+        <p class="text-gray-600 mb-6 text-sm">L'Applicazione utilizza tecnologie di intelligenza artificiale per
+          generare suggerimenti relativi a piani alimentari, ricette e liste della spesa. Tali contenuti sono generati
+          automaticamente e non sono stati verificati da professionisti del settore medico-nutrizionale.</p>
+
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">2. Accesso all'Applicazione</h3>
+        <h4 class="font-medium text-gray-800 mb-2">2.1 Accesso su Invito</h4>
+        <p class="text-gray-600 mb-3 text-sm"><strong>L'accesso all'Applicazione è riservato esclusivamente agli utenti
+            approvati dal Titolare.</strong></p>
+        <p class="text-gray-600 mb-2 text-sm">Il Titolare si riserva il diritto assoluto e insindacabile di:</p>
+        <ul class="list-disc list-inside text-gray-600 mb-4 text-sm space-y-1">
+          <li>Decidere a propria discrezione chi può accedere all'Applicazione</li>
+          <li>Approvare o rifiutare qualsiasi richiesta di accesso senza obbligo di motivazione</li>
+          <li>Revocare l'accesso a qualsiasi utente in qualsiasi momento, con o senza preavviso</li>
+          <li>Eliminare account utente e relativi dati senza obbligo di motivazione</li>
+        </ul>
+
+        <h4 class="font-medium text-gray-800 mb-2">2.2 Nessun Diritto di Accesso</h4>
+        <p class="text-gray-600 mb-6 text-sm">La registrazione all'Applicazione non garantisce automaticamente
+          l'accesso. Gli utenti non approvati non potranno utilizzare le funzionalità dell'Applicazione fino ad
+          eventuale approvazione da parte del Titolare.</p>
+
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">3. Esclusione di Responsabilità</h3>
+        <h4 class="font-medium text-gray-800 mb-2">3.1 Contenuti Generati dall'IA</h4>
+        <p class="text-gray-600 mb-2 text-sm">L'Applicazione utilizza modelli di intelligenza artificiale per generare
+          contenuti. Il Titolare:</p>
+        <ul class="list-disc list-inside text-gray-600 mb-4 text-sm space-y-1">
+          <li>Non garantisce l'accuratezza, completezza o idoneità dei contenuti generati</li>
+          <li>Non è responsabile per errori, omissioni o imprecisioni nei suggerimenti alimentari</li>
+          <li>Non è responsabile per eventuali danni derivanti dall'uso dei contenuti generati</li>
+        </ul>
+
+        <h4 class="font-medium text-gray-800 mb-2">3.2 Uso a Proprio Rischio</h4>
+        <p class="text-gray-600 mb-2 text-sm">L'utilizzo dell'Applicazione avviene interamente a rischio e pericolo
+          dell'utente. Il Titolare non sarà responsabile per:</p>
+        <ul class="list-disc list-inside text-gray-600 mb-6 text-sm space-y-1">
+          <li>Danni alla salute derivanti dal seguire i suggerimenti dell'Applicazione</li>
+          <li>Reazioni allergiche o intolleranze alimentari</li>
+          <li>Qualsiasi conseguenza negativa derivante dall'uso dell'Applicazione</li>
+          <li>Interruzioni del servizio o perdita di dati</li>
+        </ul>
+
+        <!-- Categories at Risk -->
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
+          <h4 class="font-bold text-red-800 mb-2">CATEGORIE A RISCHIO</h4>
+          <p class="text-red-700 text-sm mb-2">Si sconsiglia vivamente l'utilizzo dell'Applicazione a:</p>
+          <ul class="list-disc list-inside text-red-700 text-sm space-y-1 mb-2">
+            <li>Persone affette da patologie (diabete, malattie cardiovascolari, renali, epatiche, ecc.)</li>
+            <li>Donne in gravidanza o in allattamento</li>
+            <li>Minori di 18 anni</li>
+            <li>Persone con disturbi del comportamento alimentare</li>
+            <li>Persone con allergie o intolleranze alimentari</li>
+          </ul>
+          <p class="text-red-700 text-sm font-bold">In questi casi è indispensabile consultare un medico prima di
+            modificare la propria alimentazione.</p>
+        </div>
+
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">4. Dati Personali</h3>
+        <h4 class="font-medium text-gray-800 mb-2">4.1 Raccolta dei Dati</h4>
+        <p class="text-gray-600 mb-2 text-sm">L'Applicazione raccoglie i seguenti dati personali:</p>
+        <ul class="list-disc list-inside text-gray-600 mb-4 text-sm space-y-1">
+          <li>Indirizzo email (tramite autenticazione Google)</li>
+          <li>Dati fisici inseriti volontariamente (peso, altezza, età, sesso)</li>
+          <li>Obiettivi personali relativi all'alimentazione</li>
+          <li>Piani alimentari e ricette generate</li>
+        </ul>
+
+        <h4 class="font-medium text-gray-800 mb-2">4.2 Finalità del Trattamento</h4>
+        <p class="text-gray-600 mb-2 text-sm">I dati sono trattati esclusivamente per:</p>
+        <ul class="list-disc list-inside text-gray-600 mb-4 text-sm space-y-1">
+          <li>Permettere l'autenticazione e l'accesso all'Applicazione</li>
+          <li>Generare piani alimentari personalizzati</li>
+          <li>Salvare le preferenze e i dati dell'utente</li>
+        </ul>
+
+        <h4 class="font-medium text-gray-800 mb-2">4.3 Trasferimento Dati</h4>
+        <p class="text-gray-600 mb-6 text-sm">L'Applicazione utilizza servizi di terze parti (Google per
+          l'autenticazione, OpenAI per la generazione dei contenuti) che potrebbero comportare il trasferimento di dati
+          al di fuori dell'Unione Europea. Utilizzando l'Applicazione, l'utente acconsente a tale trasferimento.</p>
+
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">5. Disponibilità del Servizio</h3>
+        <p class="text-gray-600 mb-2 text-sm">L'Applicazione è fornita "così com'è" (as-is) senza alcuna garanzia di:
+        </p>
+        <ul class="list-disc list-inside text-gray-600 mb-4 text-sm space-y-1">
+          <li>Disponibilità continua o ininterrotta</li>
+          <li>Assenza di errori o malfunzionamenti</li>
+          <li>Idoneità per scopi particolari</li>
+        </ul>
+        <p class="text-gray-600 mb-6 text-sm">Il Titolare può sospendere, modificare o terminare l'Applicazione in
+          qualsiasi momento senza preavviso.</p>
+
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">6. Legge Applicabile</h3>
+        <p class="text-gray-600 mb-6 text-sm">I presenti Termini sono regolati dalla legge italiana. Per qualsiasi
+          controversia derivante dall'uso dell'Applicazione sarà competente il Foro del luogo di residenza del Titolare.
+        </p>
+
+        <!-- Final Acceptance Box -->
+        <div class="bg-teal-50 border border-teal-200 p-4 rounded-lg">
+          <h4 class="font-bold text-teal-800 mb-2">Accettazione dei Termini</h4>
+          <p class="text-teal-700 text-sm">Utilizzando l'Applicazione, l'utente dichiara di aver letto, compreso e
+            accettato integralmente i presenti Termini e Condizioni, incluso il disclaimer medico e le condizioni di
+            accesso su invito.</p>
+        </div>
+
+      </div>
+
+      <!-- Footer with Accept Button -->
+      <div class="flex-shrink-0 p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+        <div class="flex items-center justify-between gap-4">
+          <!-- Scroll indicator -->
+          @if (!hasScrolledToBottom()) {
+          <div class="flex items-center gap-2 text-amber-600">
+            <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3">
+              </path>
+            </svg>
+            <span class="text-sm font-medium">Scorri fino in fondo per continuare</span>
+          </div>
+          } @else {
+          <div class="flex items-center gap-2 text-green-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span class="text-sm font-medium">Hai letto tutti i termini</span>
+          </div>
+          }
+
+          <div class="flex gap-3">
+            <button (click)="closeTermsModal()"
+              class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+              Annulla
+            </button>
+            <button (click)="acceptTerms()" [disabled]="!hasScrolledToBottom()" [class]="hasScrolledToBottom()
+                        ? 'px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium'
+                        : 'px-6 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed font-medium'">
+              Accetto i Termini
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+}

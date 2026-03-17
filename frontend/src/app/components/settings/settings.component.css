@@ -1,0 +1,17 @@
+/* Settings component styles - Replaced with Tailwind utilities in template */
+/* All styles have been moved to Tailwind classes for better consistency and performance */
+
+/*
+  Previous custom styles replaced with Tailwind utilities:
+  
+  .form-input -> transition-all duration-200 + focus states with Tailwind
+  .form-input:focus -> hover:scale-[1.02] active:scale-[0.98] + shadow utilities
+  .form-section -> animate-in fade-in duration-500 + delay variants
+  fadeInUp animation -> slide-in-from-bottom-2 and fade-in utilities
+  
+  Benefits of using Tailwind utilities:
+  - Better purging and smaller bundle size
+  - Consistent design system
+  - Better responsive design control
+  - Easier maintenance and debugging
+*/

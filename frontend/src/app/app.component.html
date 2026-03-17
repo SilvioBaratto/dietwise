@@ -1,0 +1,48 @@
+<!-- Conditional layout: show sidebar/header only when NOT on auth pages -->
+@if (showLayout()) {
+<!-- Dashboard shell with mobile-first responsive design -->
+<div class="flex min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
+  <!-- MOBILE OVERLAY - Shows only on mobile when sidebar is open -->
+  <div class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-all duration-300 ease-in-out lg:hidden"
+    [class.opacity-0]="!sidebarOpen()" [class.pointer-events-none]="!sidebarOpen()" [class.opacity-100]="sidebarOpen()"
+    (click)="toggleSidebar()" aria-hidden="true">
+  </div>
+  <!-- SIDEBAR - Fixed positioning, fixed width -->
+  <aside class="fixed inset-y-0 left-0 z-50 w-80
+                 transform bg-white/95 backdrop-blur-xl
+                 border-r border-gray-200/80
+                 shadow-2xl lg:shadow-lg
+                 overflow-y-auto scrollbar-hidden
+                 transition-transform duration-300 ease-in-out
+                 -translate-x-full lg:translate-x-0" [class.translate-x-0]="sidebarOpen()">
+    <app-sidebar (closeSidebar)="onSidebarLinkClick()"></app-sidebar>
+  </aside>
+  <!-- CONTENT AREA - Adjusted margin for desktop sidebar -->
+  <div class="flex-1 flex flex-col min-w-0 lg:ml-80">
+    <!-- MOBILE HEADER - Enhanced with better touch targets -->
+    <header class="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 py-4
+                     bg-white/95 backdrop-blur-xl border-b border-gray-200/80 lg:hidden">
+      <button type="button" class="flex items-center justify-center w-10 h-10 rounded-xl
+                 bg-gray-100 hover:bg-gray-200 active:bg-gray-300
+                 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2
+                 transition-all duration-200 touch-manipulation" aria-label="Toggle sidebar" (click)="toggleSidebar()">
+        <img src="assets/icons/hamburger_gray.svg" alt="Menu icon" class="w-5 h-5">
+      </button>
+      <!-- Mobile header title/logo area -->
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-lg flex items-center justify-center">
+          <img src="assets/logo/logo.svg" alt="FrontendDiet" class="w-5 h-5">
+        </div>
+        <span class="font-semibold text-gray-900 text-sm">DietologoAI</span>
+      </div>
+    </header>
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+} @else {
+<!-- Full-screen layout for login/auth pages -->
+<router-outlet></router-outlet>
+}

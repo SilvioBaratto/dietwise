@@ -1,0 +1,352 @@
+<section class="min-h-screen">
+  <div class="mx-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10 max-w-7xl">
+
+    <!-- Back Button - Mobile-first with proper touch targets -->
+    <button (click)="goBack()" type="button"
+      class="inline-flex items-center gap-2 sm:gap-3 text-teal-600 hover:text-teal-800 active:text-teal-900 mb-6 sm:mb-8 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-lg px-4 py-3 sm:px-3 sm:py-2 min-h-11 touch-manipulation"
+      aria-label="Torna alla pagina precedente">
+      <img src="assets/icons/arrow_left_gray.svg" alt="" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" aria-hidden="true">
+      <span class="text-base sm:text-sm">Torna Indietro</span>
+    </button>
+
+    <!-- Loading Spinner -->
+    @if (loading()) {
+    <div class="flex flex-col justify-center items-center h-96" role="status" aria-live="polite">
+      <div class="relative">
+        <div class="w-16 h-16 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin" aria-hidden="true">
+        </div>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <img src="assets/icons/plus_teal.svg" alt="" class="w-6 h-6" aria-hidden="true">
+        </div>
+      </div>
+      <p class="mt-4 text-gray-600 font-medium">Caricamento ricetta...</p>
+    </div>
+    }
+
+    <!-- Error Banner -->
+    @if (error() && !loading()) {
+    <div class="mb-8 p-4 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-lg shadow-sm" role="alert"
+      aria-live="assertive">
+      <div class="flex items-center">
+        <img src="assets/icons/alert_red.svg" alt="" class="w-5 h-5 mr-3 flex-shrink-0" aria-hidden="true">
+        <span class="font-medium">{{ error() }}</span>
+      </div>
+    </div>
+    }
+
+    <!-- Recipe Details -->
+    @if (meal() && !loading()) {
+    <div class="space-y-6 sm:space-y-8">
+      <!-- Header Section - Mobile-optimized for cooking context -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8">
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6">
+          <div class="flex-1">
+            <div class="flex items-start gap-3 mb-4 sm:mb-6">
+              <img src="assets/icons/recipe_teal.svg" alt="" class="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 mt-1"
+                aria-hidden="true">
+              <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+                {{ meal()!.tipoPasto.ricetta }}
+              </h1>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4">
+              <span
+                class="inline-flex items-center justify-center px-4 py-2 sm:px-3 sm:py-1 rounded-full text-sm sm:text-xs font-medium text-white min-h-9 sm:min-h-auto w-fit"
+                [class.bg-orange-500]="meal()!.tipoPasto.tipo === 'COLAZIONE'"
+                [class.bg-green-500]="meal()!.tipoPasto.tipo === 'SPUNTINO_MATTINA' || meal()!.tipoPasto.tipo === 'SPUNTINO_POMERIGGIO'"
+                [class.bg-blue-500]="meal()!.tipoPasto.tipo === 'PRANZO'"
+                [class.bg-purple-500]="meal()!.tipoPasto.tipo === 'CENA'" role="status"
+                [attr.aria-label]="'Tipo di pasto: ' + getMealTypeLabel(meal()!.tipoPasto.tipo)">
+                {{ getMealTypeLabel(meal()!.tipoPasto.tipo) }}
+              </span>
+              <div class="flex items-center gap-2 text-gray-600 min-h-9 sm:min-h-auto">
+                <img src="assets/icons/clock_gray.svg" alt="" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"
+                  aria-hidden="true">
+                <time class="font-medium text-sm sm:text-xs">{{ meal()!.tipoPasto.orario || 'Orario non disponibile'
+                  }}</time>
+              </div>
+            </div>
+          </div>
+          <!-- Calorie display - prominent on mobile for cooking -->
+          <div
+            class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 sm:p-3 text-center min-w-[140px] sm:min-w-[120px] self-start md:self-auto"
+            role="status" aria-label="Informazioni caloriche">
+            <div class="flex items-center justify-center gap-2 mb-2 sm:mb-1">
+              <img src="assets/icons/lightning_orange.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5" aria-hidden="true">
+              <span class="text-sm text-gray-600 font-medium" aria-hidden="true">Calorie</span>
+            </div>
+            <div class="text-3xl sm:text-2xl lg:text-3xl font-bold text-emerald-600"
+              aria-label="{{ meal()!.calorie }} calorie">{{ meal()!.calorie }}</div>
+          </div>
+        </div>
+      </div>
+      <!-- Ingredients Section - Optimized for mobile cooking -->
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+        aria-labelledby="ingredients-heading">
+        <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-4 py-4 sm:px-6 border-b border-gray-200">
+          <div class="flex items-center gap-3">
+            <img src="assets/icons/box_blue.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0" aria-hidden="true">
+            <h2 id="ingredients-heading" class="text-xl sm:text-lg font-bold text-gray-900">Ingredienti</h2>
+          </div>
+        </div>
+        <!-- Ingredients display - simple text format -->
+        <div class="p-4 sm:p-6">
+          <div class="p-4 sm:p-5 bg-gray-50 rounded-xl">
+            <p class="text-gray-800 font-medium text-base sm:text-sm leading-relaxed">
+              {{ meal()!.ingredienti }}
+            </p>
+          </div>
+          <!-- Mobile cooking tip -->
+          <div class="mt-4 sm:mt-6 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400 sm:hidden" role="note">
+            <div class="flex items-start gap-2">
+              <img src="assets/icons/info_blue.svg" alt="" class="w-5 h-5 flex-shrink-0 mt-0.5" aria-hidden="true">
+              <p class="text-sm text-blue-800 font-medium">Prepara tutti gli ingredienti prima di iniziare la cottura
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Recipe Generation Section -->
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+        aria-labelledby="recipe-generation-heading">
+        <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-4 sm:px-6 border-b border-gray-200">
+          <div class="flex items-center gap-3">
+            <img src="assets/icons/lightbulb_yellow.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5" aria-hidden="true">
+            <h2 id="recipe-generation-heading" class="text-xl sm:text-lg font-bold text-gray-900">Ricetta Completa</h2>
+            <span class="bg-white px-2 py-1 rounded-full text-xs font-medium text-gray-600"
+              aria-label="Generata con intelligenza artificiale">
+              AI Generata
+            </span>
+          </div>
+        </div>
+        <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
+          <!-- Generate Button -->
+          <div class="text-center">
+            <button (click)="generateRecipe()" [disabled]="generating()" type="button"
+              class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-4 sm:px-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 active:from-purple-800 active:to-pink-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 min-h-14 touch-manipulation"
+              [attr.aria-busy]="generating()">
+              @if (generating()) {
+              <img src="assets/icons/spinner_teal.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5 animate-spin flex-shrink-0"
+                aria-hidden="true">
+              }
+              @if (!generating()) {
+              <img src="assets/icons/lightbulb_yellow.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0"
+                aria-hidden="true">
+              }
+              <span class="text-base sm:text-sm">{{ generating() ? 'Sto Generando...' : 'Genera Ricetta Completa'
+                }}</span>
+            </button>
+          </div>
+          <!-- Generated Recipe Output - Mobile-optimized for cooking -->
+          @if (generatedRecipe() && generatedRecipe().h1) {
+          <div class="space-y-4 sm:space-y-6">
+            <div
+              class="flex items-center gap-3 text-green-600 p-3 sm:p-0 bg-green-50 sm:bg-transparent rounded-lg sm:rounded-none"
+              role="status" aria-live="polite">
+              <img src="assets/icons/check_green.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0"
+                aria-hidden="true">
+              <span class="font-semibold text-base sm:text-sm">Ricetta generata con successo!</span>
+            </div>
+
+            <!-- Recipe content - structured display -->
+            <article
+              class="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-200 overflow-hidden"
+              aria-labelledby="generated-recipe-title">
+
+              <!-- Recipe Title -->
+              <header class="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-8 sm:px-6 sm:py-8">
+                <h3 id="generated-recipe-title"
+                  class="text-3xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight">{{ generatedRecipe().h1 }}
+                </h3>
+              </header>
+
+              <!-- Times Section -->
+              @if (generatedRecipe().p && generatedRecipe().p.length > 0) {
+              <div
+                class="px-6 py-6 sm:px-6 lg:px-8 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-gray-200">
+                <div class="flex flex-col sm:flex-row gap-5 sm:gap-8">
+                  @if (generatedRecipe().p[0]) {
+                  <div class="flex items-center gap-3">
+                    <div class="bg-amber-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
+                      <img src="assets/icons/clock_gray.svg" alt="" class="w-6 h-6">
+                    </div>
+                    <span class="text-gray-800 font-semibold text-lg sm:text-sm">{{ generatedRecipe().p[0] }}</span>
+                  </div>
+                  }
+                  @if (generatedRecipe().p[1]) {
+                  <div class="flex items-center gap-3">
+                    <div class="bg-orange-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
+                      <img src="assets/icons/flame_orange.svg" alt="" class="w-6 h-6">
+                    </div>
+                    <span class="text-gray-800 font-semibold text-lg sm:text-sm">{{ generatedRecipe().p[1] }}</span>
+                  </div>
+                  }
+                </div>
+              </div>
+              }
+
+              <!-- Ingredients Section -->
+              @if (generatedRecipe().h2 && generatedRecipe().h2.length > 0 && generatedRecipe().ul) {
+              <section class="px-6 py-8 sm:px-6 sm:py-8 border-b border-gray-200"
+                aria-labelledby="generated-ingredients-heading">
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="bg-teal-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
+                    <img src="assets/icons/box_blue.svg" alt="" class="w-7 h-7 sm:w-5 sm:h-5">
+                  </div>
+                  <h4 id="generated-ingredients-heading" class="text-2xl sm:text-2xl font-bold text-gray-900">{{
+                    generatedRecipe().h2[0] }}</h4>
+                </div>
+                <ul class="space-y-4">
+                  @for (item of generatedRecipe().ul; track item) {
+                  <li class="flex items-start gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                    <div class="mt-2 flex-shrink-0">
+                      <div class="w-3 h-3 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-full"
+                        aria-hidden="true"></div>
+                    </div>
+                    <span class="text-gray-800 font-medium text-lg sm:text-sm leading-relaxed flex-1">{{ item
+                      }}</span>
+                  </li>
+                  }
+                </ul>
+              </section>
+              }
+
+              <!-- Instructions Section -->
+              @if (generatedRecipe().h2 && generatedRecipe().h2.length > 1 && generatedRecipe().ol) {
+              <section class="px-6 py-8 sm:px-6 sm:py-8 bg-gradient-to-br from-gray-50 to-white"
+                aria-labelledby="generated-instructions-heading">
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="bg-purple-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
+                    <img src="assets/icons/clipboard_gray.svg" alt="" class="w-7 h-7 sm:w-5 sm:h-5">
+                  </div>
+                  <h4 id="generated-instructions-heading" class="text-2xl sm:text-2xl font-bold text-gray-900">{{
+                    generatedRecipe().h2[1] }}</h4>
+                </div>
+                <ol class="space-y-5" role="list">
+                  @for (step of generatedRecipe().ol; track step; let idx = $index) {
+                  <li
+                    class="flex items-start gap-5 p-5 sm:p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-purple-300 transition-colors shadow-sm">
+                    <div class="flex-shrink-0">
+                      <div
+                        class="w-10 h-10 sm:w-8 sm:h-8 bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold rounded-full flex items-center justify-center text-lg sm:text-base shadow-md"
+                        aria-hidden="true">
+                        {{ idx + 1 }}
+                      </div>
+                    </div>
+                    <p class="text-gray-800 font-medium text-lg sm:text-sm leading-relaxed flex-1 pt-1.5 sm:pt-1">{{
+                      step }}</p>
+                  </li>
+                  }
+                </ol>
+              </section>
+              }
+
+              <!-- Tips Section (optional) -->
+              @if (generatedRecipe().p && generatedRecipe().p.length > 2 && generatedRecipe().p[2]) {
+              <aside class="px-6 py-6 sm:px-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-t border-gray-200"
+                role="note" aria-labelledby="recipe-tip-heading">
+                <div class="flex items-start gap-4">
+                  <div class="bg-blue-100 p-3 rounded-lg flex-shrink-0 mt-1" aria-hidden="true">
+                    <img src="assets/icons/info_blue.svg" alt="" class="w-6 h-6">
+                  </div>
+                  <div class="flex-1">
+                    <h5 id="recipe-tip-heading" class="text-xl sm:text-base font-bold text-gray-900 mb-3">Suggerimento
+                    </h5>
+                    <p class="text-gray-700 font-medium text-lg sm:text-sm leading-relaxed">{{ generatedRecipe().p[2] }}
+                    </p>
+                  </div>
+                </div>
+              </aside>
+              }
+            </article>
+
+            <!-- Action buttons - prominent for mobile -->
+            <div class="flex flex-col-reverse sm:flex-row justify-center gap-3 pt-2" role="group"
+              aria-label="Azioni ricetta">
+              <button (click)="saveRecipe()" [disabled]="savingRecipe()" type="button"
+                class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-4 sm:px-4 sm:py-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 active:from-teal-800 active:to-emerald-800 rounded-xl sm:rounded-lg text-white hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 min-h-14 sm:min-h-11 touch-manipulation font-semibold sm:font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                [attr.aria-busy]="savingRecipe()">
+                @if (savingRecipe()) {
+                <img src="assets/icons/spinner_teal.svg" alt="" class="w-5 h-5 sm:w-4 sm:h-4 animate-spin flex-shrink-0"
+                  aria-hidden="true">
+                }
+                @if (!savingRecipe()) {
+                <img src="assets/icons/bookmark_white.svg" alt="" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"
+                  aria-hidden="true">
+                }
+                <span class="text-base sm:text-sm">{{ savingRecipe() ? 'Salvataggio...' : 'Salva Ricetta' }}</span>
+              </button>
+
+              <button (click)="copyRecipe()" type="button"
+                class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-4 sm:px-4 sm:py-2 bg-white border-2 border-purple-300 hover:border-purple-400 rounded-xl sm:rounded-lg text-purple-700 hover:bg-purple-50 active:bg-purple-100 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 min-h-14 sm:min-h-11 touch-manipulation font-semibold sm:font-medium"
+                aria-label="Copia il testo della ricetta negli appunti">
+                <img src="assets/icons/copy_gray.svg" alt="" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"
+                  aria-hidden="true">
+                <span class="text-base sm:text-sm">Copia Ricetta</span>
+              </button>
+            </div>
+
+            <!-- Success message -->
+            @if (saveSuccess()) {
+            <div class="mt-4 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg" role="alert" aria-live="polite">
+              <div class="flex items-center">
+                <img src="assets/icons/check_green.svg" alt="" class="w-5 h-5 mr-3 flex-shrink-0" aria-hidden="true">
+                <span class="text-green-800 font-medium">Ricetta salvata con successo!</span>
+              </div>
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </section>
+
+      <!-- Saved Recipes Section -->
+      @if (savedRecipes().length > 0) {
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+        aria-labelledby="saved-recipes-heading">
+        <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-4 py-4 sm:px-6 border-b border-gray-200">
+          <div class="flex items-center gap-3">
+            <img src="assets/icons/bookmark_teal.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5" aria-hidden="true">
+            <h2 id="saved-recipes-heading" class="text-xl sm:text-lg font-bold text-gray-900">Ricette Salvate</h2>
+            <span class="bg-white px-2 py-1 rounded-full text-xs font-medium text-gray-600"
+              aria-label="{{ savedRecipes().length }} ricette salvate">
+              {{ savedRecipes().length }}
+            </span>
+          </div>
+        </div>
+        <div class="p-4 sm:p-6 space-y-4">
+          @if (meal()) {
+          <p class="text-gray-600 text-sm">Ricette precedentemente salvate per "{{ meal()!.tipoPasto.ricetta }}"</p>
+          }
+          <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @for (recipe of savedRecipes(); track recipe.id) {
+            <li class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-teal-300 transition-colors">
+              <div class="flex items-start justify-between mb-3 gap-3">
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-bold text-gray-900 mb-1 text-base">{{ recipe.recipe_name }}</h3>
+                  <time class="text-xs text-gray-500" [attr.datetime]="recipe.created_at">Salvata: {{ recipe.created_at
+                    | date:'short' }}</time>
+                </div>
+                <div
+                  class="flex items-center gap-2 text-xs font-medium text-gray-600 bg-white px-2 py-1 rounded-lg flex-shrink-0"
+                  aria-label="{{ recipe.calories }} calorie">
+                  <img src="assets/icons/lightning_orange.svg" alt="" class="w-4 h-4" aria-hidden="true">
+                  {{ recipe.calories }}
+                </div>
+              </div>
+              <button (click)="viewSavedRecipe(recipe)" type="button"
+                class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 text-sm min-h-11 touch-manipulation"
+                [attr.aria-label]="'Visualizza ricetta: ' + recipe.recipe_name">
+                <img src="assets/icons/eye_white.svg" alt="" class="w-4 h-4" aria-hidden="true">
+                <span>Visualizza</span>
+              </button>
+            </li>
+            }
+          </ul>
+        </div>
+      </section>
+      }
+    </div>
+    }
+
+  </div>
+</section>

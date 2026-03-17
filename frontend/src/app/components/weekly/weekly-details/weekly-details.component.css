@@ -1,0 +1,10 @@
+/* 
+ * All styles now use Tailwind CSS utilities.
+ * line-clamp-2 is now handled by Tailwind's built-in line-clamp utilities.
+ * Custom breakpoint for extra small screens can be added to tailwind.config.js if needed:
+ * 
+ * screens: {
+ *   'xs': '475px',
+ *   // ... other breakpoints
+ * }
+ */
