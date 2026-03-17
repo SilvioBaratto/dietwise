@@ -1,31 +1,31 @@
 """Request logging middleware"""
 
-import time
-import logging
-import uuid
 import json
-from typing import Any, Dict
-from starlette.types import ASGIApp, Scope, Receive, Send, Message
+import logging
+import time
+import uuid
+
+from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 logger = logging.getLogger(__name__)
 
 
 class LoggingMiddleware:
     """Middleware to log all requests and responses for monitoring and debugging"""
-    
+
     def __init__(self, app: ASGIApp):
         self.app = app
-    
+
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
             await self.app(scope, receive, send)
             return
-        
+
         # Generate request ID for tracing
         request_id = str(uuid.uuid4())
-        
+
         start_time = time.time()
-        
+
         # Extract request information from scope
         method = scope.get("method", "")
         path = scope.get("path", "")
@@ -33,7 +33,7 @@ class LoggingMiddleware:
         client_ip = scope.get("client", ["unknown", None])[0] if scope.get("client") else "unknown"
         headers_dict = dict(scope.get("headers", []))
         user_agent = headers_dict.get(b"user-agent", b"unknown").decode()
-        
+
         # Log incoming request
         logger.info(
             f"Request {request_id}: {method} {path}",
@@ -47,15 +47,15 @@ class LoggingMiddleware:
                 "event_type": "request_start"
             }
         )
-        
+
         # Capture response data
         response_body = b""
         response_status = 200
         response_headers = {}
-        
+
         async def send_wrapper(message: Message) -> None:
             nonlocal response_body, response_status, response_headers
-            
+
             if message["type"] == "http.response.start":
                 response_status = message["status"]
                 response_headers = dict(message.get("headers", []))
@@ -66,18 +66,18 @@ class LoggingMiddleware:
                 message["headers"] = new_headers
             elif message["type"] == "http.response.body":
                 response_body += message.get("body", b"")
-            
+
             await send(message)
-        
+
         # Process request
         await self.app(scope, receive, send_wrapper)
-        
+
         # Calculate processing time
         process_time = time.time() - start_time
-        
+
         # Parse response JSON if available
         response_json = None
-        
+
         if response_body:
             try:
                 # Check if it's JSON content
@@ -87,7 +87,7 @@ class LoggingMiddleware:
                     response_json = json.loads(response_text)
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
                 logger.debug(f"Failed to parse response JSON for {request_id}: {e}")
-        
+
         # Prepare log extra data
         log_extra = {
             "request_id": request_id,
@@ -95,17 +95,17 @@ class LoggingMiddleware:
             "process_time": process_time,
             "event_type": "request_complete"
         }
-        
+
         # Add response JSON if available
         if response_json is not None:
             log_extra["response_json"] = response_json
-            
+
         # Log response with JSON if available
         if response_json is not None:
             try:
                 # Format JSON beautifully with indentation - never truncate
                 formatted_json = json.dumps(response_json, indent=2, ensure_ascii=False, separators=(',', ': '))
-                
+
                 logger.info(
                     f"Response {request_id}: {response_status} in {process_time:.3f}s - JSON:\n{formatted_json}",
                     extra=log_extra

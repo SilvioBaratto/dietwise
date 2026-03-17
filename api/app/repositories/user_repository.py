@@ -1,8 +1,8 @@
 """User repository for data access operations"""
 
-from typing import Optional
-from sqlalchemy.orm import Session
+
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.models import User, UserSettings
 
@@ -12,13 +12,13 @@ class UserRepository:
 
     def __init__(self, db: Session):
         self.db = db
-    
-    def get_by_email(self, email: str) -> Optional[User]:
+
+    def get_by_email(self, email: str) -> User | None:
         """Get user by email"""
         stmt = select(User).where(User.email == email)
         result = self.db.execute(stmt)
         return result.scalar_one_or_none()
-    
+
     def create_user(self, user_id: str, email: str) -> User:
         """Create a new user"""
         user = User(id=user_id, email=email)
@@ -32,23 +32,23 @@ class UserSettingsRepository:
 
     def __init__(self, db: Session):
         self.db = db
-    
-    def get_by_user_id(self, user_id: str) -> Optional[UserSettings]:
+
+    def get_by_user_id(self, user_id: str) -> UserSettings | None:
         """Get user settings by user ID"""
         stmt = select(UserSettings).where(UserSettings.user_id == user_id)
         result = self.db.execute(stmt)
         return result.scalar_one_or_none()
-    
+
     def create_user_settings(
         self,
         settings_id: str,
         user_id: str,
-        age: Optional[int] = None,
-        sex: Optional[str] = None,
-        weight: Optional[float] = None,
-        height: Optional[float] = None,
-        other_data: Optional[str] = None,
-        goals: Optional[str] = None
+        age: int | None = None,
+        sex: str | None = None,
+        weight: float | None = None,
+        height: float | None = None,
+        other_data: str | None = None,
+        goals: str | None = None
     ) -> UserSettings:
         """Create new user settings"""
         settings = UserSettings(
@@ -64,17 +64,17 @@ class UserSettingsRepository:
         self.db.add(settings)
         self.db.flush()
         return settings
-    
+
     def update_user_settings(
         self,
         user_id: str,
-        age: Optional[int] = None,
-        sex: Optional[str] = None,
-        weight: Optional[float] = None,
-        height: Optional[float] = None,
-        other_data: Optional[str] = None,
-        goals: Optional[str] = None
-    ) -> Optional[UserSettings]:
+        age: int | None = None,
+        sex: str | None = None,
+        weight: float | None = None,
+        height: float | None = None,
+        other_data: str | None = None,
+        goals: str | None = None
+    ) -> UserSettings | None:
         """Update existing user settings"""
         settings = self.get_by_user_id(user_id)
         if not settings:
@@ -93,6 +93,19 @@ class UserSettingsRepository:
         if goals is not None:
             settings.goals = goals
 
+        self.db.flush()
+        self.db.refresh(settings)
+        return settings
+
+    def update_provider_preferences(
+        self, user_id: str, provider: str, model: str
+    ) -> UserSettings | None:
+        """Update preferred_provider and preferred_model on existing settings."""
+        settings = self.get_by_user_id(user_id)
+        if not settings:
+            return None
+        settings.preferred_provider = provider
+        settings.preferred_model = model
         self.db.flush()
         self.db.refresh(settings)
         return settings

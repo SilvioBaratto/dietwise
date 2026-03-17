@@ -1,10 +1,11 @@
 """Supabase authentication integration with JWT validation"""
 
+from dataclasses import dataclass
 import logging
 import time
-from typing import Optional, Dict, Any
-from dataclasses import dataclass
-from supabase import create_client, Client
+from typing import Any
+
+from supabase import Client, create_client
 from supabase.lib.client_options import SyncClientOptions
 
 from app.config import settings
@@ -22,13 +23,13 @@ class JwtClaims:
     exp: int  # Expiration time
     iat: int  # Issued at
     role: str  # Postgres role (authenticated, anon, etc.)
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    aal: Optional[str] = None  # Authentication Assurance Level
-    session_id: Optional[str] = None
-    is_anonymous: Optional[bool] = None
-    app_metadata: Optional[Dict[str, Any]] = None
-    user_metadata: Optional[Dict[str, Any]] = None
+    email: str | None = None
+    phone: str | None = None
+    aal: str | None = None  # Authentication Assurance Level
+    session_id: str | None = None
+    is_anonymous: bool | None = None
+    app_metadata: dict[str, Any] | None = None
+    user_metadata: dict[str, Any] | None = None
 
 
 class SupabaseAuthManager:
@@ -40,7 +41,7 @@ class SupabaseAuthManager:
     """
 
     def __init__(self):
-        self._client: Optional[Client] = None
+        self._client: Client | None = None
         self._initialized = False
 
     async def initialize(self) -> None:
@@ -85,7 +86,7 @@ class SupabaseAuthManager:
                 )
                 self._initialized = False
             else:
-                raise RuntimeError(error_msg)
+                raise RuntimeError(error_msg) from e
 
     def get_client(self) -> Client:
         """Get the configured Supabase client"""
@@ -95,7 +96,7 @@ class SupabaseAuthManager:
             )
         return self._client
 
-    async def validate_jwt_claims(self, token: str) -> Optional[Dict[str, Any]]:
+    async def validate_jwt_claims(self, token: str) -> dict[str, Any] | None:
         """
         Validate JWT using get_claims() - fast, cached JWKS verification.
 
@@ -171,7 +172,7 @@ class SupabaseAuthManager:
 
         return None
 
-    async def get_user_from_token(self, token: str) -> Optional[Dict[str, Any]]:
+    async def get_user_from_token(self, token: str) -> dict[str, Any] | None:
         """
         Get full user data from Supabase Auth server.
 
@@ -212,7 +213,7 @@ class SupabaseAuthManager:
 
     async def validate_token(
         self, token: str, require_fresh: bool = False
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """
         Validate a Supabase JWT token.
 
@@ -231,13 +232,11 @@ class SupabaseAuthManager:
             # Fast JWKS-based validation - preferred for API calls
             return await self.validate_jwt_claims(token)
 
-    def get_config_info(self) -> Dict[str, Any]:
+    def get_config_info(self) -> dict[str, Any]:
         """Get configuration information for debugging"""
         return {
             "url_configured": bool(settings.supabase_url),
             "key_configured": bool(settings.supabase_key),
-            "jwt_secret_configured": bool(settings.supabase_jwt_secret),
-            "service_role_configured": bool(settings.supabase_service_role_key),
             "client_initialized": self._initialized,
             "environment": settings.environment,
             "jwks_endpoint": f"{settings.supabase_url}/auth/v1/.well-known/jwks.json",
@@ -245,7 +244,7 @@ class SupabaseAuthManager:
 
 
 # Global instance
-_supabase_auth_manager: Optional[SupabaseAuthManager] = None
+_supabase_auth_manager: SupabaseAuthManager | None = None
 
 
 async def get_supabase_auth_manager() -> SupabaseAuthManager:
@@ -267,7 +266,7 @@ async def get_supabase_client() -> Client:
 
 async def validate_supabase_token(
     token: str, require_fresh: bool = False
-) -> Optional[Dict[str, Any]]:
+) -> dict[str, Any] | None:
     """
     Validate a Supabase JWT token.
 
@@ -298,7 +297,7 @@ def get_supabase_auth_manager_sync() -> SupabaseAuthManager:
 
 def validate_supabase_token_sync(
     token: str, require_fresh: bool = False
-) -> Optional[Dict[str, Any]]:
+) -> dict[str, Any] | None:
     """
     Validate a Supabase JWT token (synchronous version).
 
@@ -316,14 +315,12 @@ def validate_supabase_token_sync(
     return asyncio.run(manager.validate_token(token, require_fresh=require_fresh))
 
 
-async def get_supabase_config_info() -> Dict[str, Any]:
+async def get_supabase_config_info() -> dict[str, Any]:
     """Get Supabase configuration information for health checks"""
     if _supabase_auth_manager is None:
         return {
             "url_configured": bool(settings.supabase_url),
             "key_configured": bool(settings.supabase_key),
-            "jwt_secret_configured": bool(settings.supabase_jwt_secret),
-            "service_role_configured": bool(settings.supabase_service_role_key),
             "client_initialized": False,
             "environment": settings.environment,
         }

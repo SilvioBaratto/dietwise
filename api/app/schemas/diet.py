@@ -1,21 +1,19 @@
 """Diet-related Pydantic schemas"""
 
 from datetime import datetime
-from typing import Optional, List
+
 from pydantic import BaseModel, ConfigDict
-from baml_client.types import (
-    Ingrediente,
-    HtmlStructure,
-    TipoPasto as TipoPastoEnum,
-    GiornoSettimana
-)
+
+from baml_client.types import GiornoSettimana, HtmlStructure
+from baml_client.types import ListaSpesa as ListaSpesaSchema
+from baml_client.types import TipoPasto as TipoPastoEnum
 
 
 class TipoPasto(BaseModel):
     """Schema for meal type information"""
 
     tipo: TipoPastoEnum
-    orario: Optional[str] = None
+    orario: str | None = None
     ricetta: str
 
 
@@ -24,12 +22,12 @@ class UserSettingsIn(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    age: Optional[int] = None  # years
-    sex: Optional[str] = None  # 'M' or 'F'
-    weight: Optional[float] = None  # kg
-    height: Optional[float] = None  # cm
-    other_data: Optional[str] = None
-    goals: Optional[str] = None
+    age: int | None = None  # years
+    sex: str | None = None  # 'M' or 'F'
+    weight: float | None = None  # kg
+    height: float | None = None  # cm
+    other_data: str | None = None
+    goals: str | None = None
 
 
 class UserSettingsOut(UserSettingsIn):
@@ -47,7 +45,7 @@ class DietSummary(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: str
-    name: Optional[str] = None
+    name: str | None = None
     created_at: datetime
 
 
@@ -60,6 +58,9 @@ class PastoSchema(BaseModel):
     tipoPasto: TipoPasto
     ingredienti: str  # Comma-separated ingredient string (e.g., "avena 50g, latte 200ml, banana 1pz")
     calorie: int
+    proteine: int = 0
+    carboidrati: int = 0
+    grassi: int = 0
     day: GiornoSettimana
 
 
@@ -70,7 +71,7 @@ class DietaSettimanaleSchema(BaseModel):
     nome: str
     dataInizio: str
     dataFine: str
-    pasti: List[PastoSchema]
+    pasti: list[PastoSchema]
 
 
 class DietaConLista(BaseModel):
@@ -91,9 +92,6 @@ class ModifyDietRequest(BaseModel):
 
     modification_prompt: str  # User's request for modifications (e.g., "Replace breakfast on Monday with something without eggs")
 
-
-# Import ListaSpesaSchema from baml_client
-from baml_client.types import ListaSpesa as ListaSpesaSchema
 
 # Update the forward reference
 DietaConLista.model_rebuild()

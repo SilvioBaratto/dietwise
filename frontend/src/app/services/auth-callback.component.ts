@@ -2,13 +2,13 @@
 import { Component, inject, ChangeDetectionStrategy, OnInit, DestroyRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { CommonModule } from '@angular/common';
+
 
 // Global processing state to prevent duplicate processing across multiple component instances
 const AUTH_PROCESSING_KEY = 'auth_callback_processing';
 
 @Component({
-    imports: [CommonModule],
+    imports: [],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">

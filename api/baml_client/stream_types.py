@@ -23,18 +23,14 @@ class StreamState(BaseModel, typing.Generic[StreamStateValueT]):
     value: StreamStateValueT
     state: typing_extensions.Literal["Pending", "Incomplete", "Complete"]
 # #########################################################################
-# Generated classes (6)
+# Generated classes (5)
 # #########################################################################
-
-class Dieta(BaseModel):
-    giorno: typing.Optional[types.GiornoSettimana] = None
-    pasti: typing.List["Pasto"]
 
 class DietaSettimanale(BaseModel):
     nome: typing.Optional[str] = None
     dataInizio: typing.Optional[str] = Field(default=None, description='YYYY-MM-DD')
     dataFine: typing.Optional[str] = Field(default=None, description='YYYY-MM-DD')
-    dieta: typing.List["Dieta"] = Field(description='Elenco dei giorni della settimana con i relativi pasti')
+    pasti: typing.List["Pasto"] = Field(description='Elenco piatto di tutti i pasti della settimana, ogni pasto include il giorno')
 
 class HtmlStructure(BaseModel):
     h1: typing.Optional[str] = None
@@ -52,11 +48,15 @@ class ListaSpesa(BaseModel):
     ingredienti: typing.List["Ingrediente"] = Field(description='Elenco aggregato di tutti gli ingredienti da acquistare per l\'intera settimana, con quantità sommate e unità di misura coerenti')
 
 class Pasto(BaseModel):
+    giorno: typing.Optional[types.GiornoSettimana] = None
     tipo: typing.Optional[types.TipoPasto] = None
     nome: typing.Optional[str] = None
     orario: typing.Optional[str] = Field(default=None, description='Orario del pasto')
     ingredienti: typing.Optional[str] = None
     calorie: typing.Optional[int] = None
+    proteine: typing.Optional[int] = Field(default=None, description='Grammi di proteine')
+    carboidrati: typing.Optional[int] = Field(default=None, description='Grammi di carboidrati')
+    grassi: typing.Optional[int] = Field(default=None, description='Grammi di grassi')
 
 # #########################################################################
 # Generated type aliases (0)

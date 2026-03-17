@@ -5,7 +5,17 @@ import { Router } from '@angular/router';
 import { catchError, switchMap, throwError, from } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { SupabaseService } from '../services/supabase.service';
+import { LlmErrorService } from '../services/llm-error.service';
 import { environment } from '../../environments/environment';
+
+const LLM_ERROR_CODES = new Set([
+  'API_KEY_NOT_CONFIGURED',
+  'LLM_KEY_INVALID',
+  'LLM_QUOTA_EXCEEDED',
+  'LLM_MODEL_UNAVAILABLE',
+  'RATE_LIMIT_ERROR',
+  'LLM_PROVIDER_ERROR',
+]);
 
 /**
  * HTTP Interceptor that:
@@ -18,6 +28,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const supabaseService = inject(SupabaseService);
   const router = inject(Router);
+  const llmErrorService = inject(LlmErrorService);
 
   // Check if this is an API request
   const isApiRequest = req.url.startsWith(environment.apiUrl) ||
@@ -47,6 +58,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Execute request and handle errors
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
+      // Handle LLM-specific errors (BYOK key failures)
+      const errorCode: string = error.error?.error?.code ?? '';
+      if (LLM_ERROR_CODES.has(errorCode)) {
+        llmErrorService.handleError(error);
+        return throwError(() => error);
+      }
+
       // Handle 403 Forbidden - account pending approval
       if (error.status === 403) {
         const errorMessage = error.error?.error?.message || error.error?.message || '';

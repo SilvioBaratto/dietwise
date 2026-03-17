@@ -7,7 +7,7 @@ import {
   inject,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DietService } from '../../../services/diet.service';
@@ -21,7 +21,7 @@ interface DayGroup {
 
 @Component({
   selector: 'app-weekly-details',
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   templateUrl: './weekly-details.component.html',
   styleUrls: ['./weekly-details.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "API (Development)",
+      "name": "API",
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
@@ -22,26 +22,5 @@
       "envFile": "${workspaceFolder}/api/.env",
       "console": "integratedTerminal"
     },
-    {
-      "name": "API (Production)",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "uvicorn",
-      "cwd": "${workspaceFolder}/api",
-      "args": [
-        "app.main:app",
-        "--reload",
-        "--port",
-        "8000",
-        "--host",
-        "0.0.0.0",
-        "--log-level",
-        "info"
-      ],
-      "python": "/Users/silviobaratto/anaconda3/envs/diet/bin/python",
-      "jinja": true,
-      "envFile": "${workspaceFolder}/api/.env",
-      "console": "integratedTerminal"
-    }
   ]
 }

@@ -20,7 +20,7 @@ from .globals import DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIM
 class TypeBuilder(type_builder.TypeBuilder):
     def __init__(self):
         super().__init__(classes=set(
-          ["Dieta","DietaSettimanale","HtmlStructure","Ingrediente","ListaSpesa","Pasto",]
+          ["DietaSettimanale","HtmlStructure","Ingrediente","ListaSpesa","Pasto",]
         ), enums=set(
           ["GiornoSettimana","TipoPasto","UnitaMisura",]
         ), runtime=DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME)
@@ -43,12 +43,8 @@ class TypeBuilder(type_builder.TypeBuilder):
 
 
     # #########################################################################
-    # Generated classes 6
+    # Generated classes 5
     # #########################################################################
-
-    @property
-    def Dieta(self) -> "DietaViewer":
-        return DietaViewer(self)
 
     @property
     def DietaSettimanale(self) -> "DietaSettimanaleViewer":
@@ -248,57 +244,14 @@ class UnitaMisuraValues:
 
 
 # #########################################################################
-# Generated classes 6
+# Generated classes 5
 # #########################################################################
-
-class DietaAst:
-    def __init__(self, tb: type_builder.TypeBuilder):
-        _tb = tb._tb # type: ignore (we know how to use this private attribute)
-        self._bldr = _tb.class_("Dieta")
-        self._properties: typing.Set[str] = set([  "giorno",  "pasti",  ])
-        self._props = DietaProperties(self._bldr, self._properties)
-
-    def type(self) -> baml_py.FieldType:
-        return self._bldr.field()
-
-    @property
-    def props(self) -> "DietaProperties":
-        return self._props
-
-
-class DietaViewer(DietaAst):
-    def __init__(self, tb: type_builder.TypeBuilder):
-        super().__init__(tb)
-
-    
-    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
-        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
-    
-
-
-class DietaProperties:
-    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
-        self.__bldr = bldr
-        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
-
-    
-    
-    @property
-    def giorno(self) -> type_builder.ClassPropertyViewer:
-        return type_builder.ClassPropertyViewer(self.__bldr.property("giorno"))
-    
-    @property
-    def pasti(self) -> type_builder.ClassPropertyViewer:
-        return type_builder.ClassPropertyViewer(self.__bldr.property("pasti"))
-    
-    
-
 
 class DietaSettimanaleAst:
     def __init__(self, tb: type_builder.TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("DietaSettimanale")
-        self._properties: typing.Set[str] = set([  "nome",  "dataInizio",  "dataFine",  "dieta",  ])
+        self._properties: typing.Set[str] = set([  "nome",  "dataInizio",  "dataFine",  "pasti",  ])
         self._props = DietaSettimanaleProperties(self._bldr, self._properties)
 
     def type(self) -> baml_py.FieldType:
@@ -339,8 +292,8 @@ class DietaSettimanaleProperties:
         return type_builder.ClassPropertyViewer(self.__bldr.property("dataFine"))
     
     @property
-    def dieta(self) -> type_builder.ClassPropertyViewer:
-        return type_builder.ClassPropertyViewer(self.__bldr.property("dieta"))
+    def pasti(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("pasti"))
     
     
 
@@ -490,7 +443,7 @@ class PastoAst:
     def __init__(self, tb: type_builder.TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("Pasto")
-        self._properties: typing.Set[str] = set([  "tipo",  "nome",  "orario",  "ingredienti",  "calorie",  ])
+        self._properties: typing.Set[str] = set([  "giorno",  "tipo",  "nome",  "orario",  "ingredienti",  "calorie",  "proteine",  "carboidrati",  "grassi",  ])
         self._props = PastoProperties(self._bldr, self._properties)
 
     def type(self) -> baml_py.FieldType:
@@ -519,6 +472,10 @@ class PastoProperties:
     
     
     @property
+    def giorno(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("giorno"))
+    
+    @property
     def tipo(self) -> type_builder.ClassPropertyViewer:
         return type_builder.ClassPropertyViewer(self.__bldr.property("tipo"))
     
@@ -537,6 +494,18 @@ class PastoProperties:
     @property
     def calorie(self) -> type_builder.ClassPropertyViewer:
         return type_builder.ClassPropertyViewer(self.__bldr.property("calorie"))
+    
+    @property
+    def proteine(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("proteine"))
+    
+    @property
+    def carboidrati(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("carboidrati"))
+    
+    @property
+    def grassi(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("grassi"))
     
     
 

@@ -192,6 +192,250 @@
         </div>
       </div>
 
+      <!-- AI Provider Configuration Section -->
+      <div class="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-violet-50 to-purple-50 px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200">
+          <div class="flex items-center gap-3">
+            <img src="assets/icons/settings.svg" alt="" aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+            <h2 class="text-lg sm:text-xl font-bold text-gray-900">Configurazione Provider AI</h2>
+          </div>
+        </div>
+
+        <div class="p-4 sm:p-6 space-y-6">
+
+          <!-- BYOK Alerts (inline) -->
+          @if (keySuccess()) {
+          <div role="alert" aria-live="polite"
+            class="p-3 sm:p-4 bg-green-50 border-l-4 border-green-400 text-green-800 rounded-r-lg">
+            <div class="flex items-start gap-3">
+              <img src="assets/icons/check_green.svg" alt="" aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0">
+              <span class="font-medium text-sm sm:text-base">{{ keySuccess() }}</span>
+            </div>
+          </div>
+          }
+          @if (keyError()) {
+          <div role="alert" aria-live="assertive"
+            class="p-3 sm:p-4 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-lg">
+            <div class="flex items-start gap-3">
+              <img src="assets/icons/alert_red.svg" alt="" aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0">
+              <span class="font-medium text-sm sm:text-base">{{ keyError() }}</span>
+            </div>
+          </div>
+          }
+          @if (prefsError()) {
+          <div role="alert" aria-live="assertive"
+            class="p-3 sm:p-4 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-lg">
+            <div class="flex items-start gap-3">
+              <img src="assets/icons/alert_red.svg" alt="" aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0">
+              <span class="font-medium text-sm sm:text-base">{{ prefsError() }}</span>
+            </div>
+          </div>
+          }
+
+          <!-- Provider Preferences -->
+          <div class="space-y-4">
+            <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Preferenze Provider</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div class="space-y-2 sm:space-y-3">
+                <label for="activeProvider" class="text-sm font-semibold text-gray-700">Provider Attivo</label>
+                <select id="activeProvider"
+                  [value]="selectedProvider()"
+                  (change)="onProviderChange($any($event.target).value)"
+                  class="w-full px-4 py-4 min-h-[48px] text-base border border-gray-300 rounded-lg
+                         focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500
+                         hover:border-gray-400 transition-colors duration-200
+                         appearance-none bg-white cursor-pointer">
+                  @for (p of providers; track p) {
+                  <option [value]="p">{{ providerLabels[p] }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="space-y-2 sm:space-y-3">
+                <label for="activeModel" class="text-sm font-semibold text-gray-700">Modello</label>
+                <select id="activeModel"
+                  [value]="selectedModel()"
+                  (change)="selectedModel.set($any($event.target).value)"
+                  class="w-full px-4 py-4 min-h-[48px] text-base border border-gray-300 rounded-lg
+                         focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500
+                         hover:border-gray-400 transition-colors duration-200
+                         appearance-none bg-white cursor-pointer">
+                  @for (m of modelsForProvider(); track m) {
+                  <option [value]="m">{{ m }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <!-- Cost Estimate Badge -->
+            @if (selectedModel()) {
+              <app-cost-badge
+                [provider]="selectedProvider()"
+                [model]="selectedModel()"
+              />
+            }
+
+            <div class="flex justify-end">
+              <button type="button" (click)="updatePreferences()"
+                class="inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[48px] text-sm font-medium
+                       bg-violet-600 hover:bg-violet-700 active:bg-violet-800
+                       text-white rounded-lg shadow-sm hover:shadow-md
+                       transition-all duration-200
+                       focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2">
+                <img src="assets/icons/save_white.svg" alt="" aria-hidden="true" class="w-4 h-4 flex-shrink-0">
+                Salva Preferenze
+              </button>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-gray-200"></div>
+
+          <!-- API Keys Status -->
+          <div class="space-y-4">
+            <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Chiavi API</h3>
+
+            <div class="space-y-3">
+              @for (provider of providers; track provider) {
+              <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div class="flex items-center gap-3 flex-1 min-w-0">
+                  <span class="text-sm font-semibold text-gray-900 w-24 flex-shrink-0">{{ providerLabels[provider] }}</span>
+
+                  @if (getKeyForProvider(provider); as key) {
+                  <div class="flex items-center gap-2 min-w-0">
+                    <code class="text-sm text-gray-600 bg-gray-200 px-2 py-0.5 rounded font-mono truncate">{{ key.key_hint }}</code>
+                    @if (key.is_valid) {
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200 flex-shrink-0">
+                      Valida
+                    </span>
+                    } @else {
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200 flex-shrink-0">
+                      Non valida
+                    </span>
+                    }
+                  </div>
+                  } @else {
+                  <span class="text-sm text-gray-400 italic">Non configurata</span>
+                  }
+                </div>
+
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  @if (getKeyForProvider(provider)) {
+                  <button type="button" (click)="onChangeKeyFor(provider)"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] text-xs font-medium
+                           text-violet-700 bg-violet-50 hover:bg-violet-100 active:bg-violet-200
+                           rounded-lg border border-violet-200 transition-colors duration-200
+                           focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-1">
+                    Cambia
+                  </button>
+                  <button type="button" (click)="deleteKey(provider)"
+                    [disabled]="isDeletingProvider() === provider"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] text-xs font-medium
+                           text-red-700 bg-red-50 hover:bg-red-100 active:bg-red-200
+                           rounded-lg border border-red-200 transition-colors duration-200
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1
+                           disabled:opacity-50 disabled:cursor-not-allowed">
+                    @if (isDeletingProvider() === provider) {
+                    <img src="assets/icons/spinner_teal.svg" alt="" aria-hidden="true" class="w-3.5 h-3.5 animate-spin">
+                    Rimozione...
+                    } @else {
+                    Rimuovi
+                    }
+                  </button>
+                  } @else {
+                  <button type="button" (click)="onChangeKeyFor(provider)"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] text-xs font-medium
+                           text-violet-700 bg-violet-50 hover:bg-violet-100 active:bg-violet-200
+                           rounded-lg border border-violet-200 transition-colors duration-200
+                           focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-1">
+                    <img src="assets/icons/plus_teal.svg" alt="" aria-hidden="true" class="w-3.5 h-3.5">
+                    Aggiungi
+                  </button>
+                  }
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Add / Change Key Form -->
+          @if (showKeyInput()) {
+          <div class="border-t border-gray-200 pt-6">
+            <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Aggiungi / Cambia Chiave</h3>
+
+            <div [formGroup]="byokForm" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <div class="space-y-2 sm:space-y-3">
+                  <label for="formProvider" class="text-sm font-semibold text-gray-700">Provider</label>
+                  <select id="formProvider" formControlName="formProvider"
+                    class="w-full px-4 py-4 min-h-[48px] text-base border border-gray-300 rounded-lg
+                           focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500
+                           hover:border-gray-400 transition-colors duration-200
+                           appearance-none bg-white cursor-pointer">
+                    @for (p of providers; track p) {
+                    <option [value]="p">{{ providerLabels[p] }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="space-y-2 sm:space-y-3">
+                  <label for="apiKey" class="text-sm font-semibold text-gray-700">Chiave API</label>
+                  <input type="password" id="apiKey" formControlName="apiKey"
+                    autocomplete="off" placeholder="Inserisci la tua chiave API..."
+                    class="w-full px-4 py-4 min-h-[48px] text-base border border-gray-300 rounded-lg
+                           focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500
+                           hover:border-gray-400 transition-colors duration-200
+                           disabled:opacity-50 disabled:cursor-not-allowed" />
+                  @if (byokForm.controls.apiKey.invalid && byokForm.controls.apiKey.touched) {
+                  <p class="text-sm text-red-600 mt-1">La chiave deve contenere almeno 10 caratteri</p>
+                  }
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <button type="button" (click)="validateAndSave()"
+                  [disabled]="byokForm.invalid || isValidating() || isSaving()"
+                  class="inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[48px] text-sm font-medium
+                         bg-violet-600 hover:bg-violet-700 active:bg-violet-800
+                         text-white rounded-lg shadow-sm hover:shadow-md
+                         transition-all duration-200
+                         focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2
+                         disabled:opacity-50 disabled:cursor-not-allowed">
+                  @if (isValidating()) {
+                  <img src="assets/icons/spinner_teal.svg" alt="" aria-hidden="true" class="w-4 h-4 animate-spin">
+                  Validazione...
+                  } @else if (isSaving()) {
+                  <img src="assets/icons/spinner_teal.svg" alt="" aria-hidden="true" class="w-4 h-4 animate-spin">
+                  Salvataggio...
+                  } @else {
+                  Valida e Salva
+                  }
+                </button>
+
+                <button type="button" (click)="showKeyInput.set(false)"
+                  class="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-sm font-medium
+                         text-gray-700 bg-gray-100 hover:bg-gray-200 active:bg-gray-300
+                         rounded-lg border border-gray-300 transition-colors duration-200
+                         focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                  Annulla
+                </button>
+              </div>
+            </div>
+          </div>
+          }
+
+          <!-- Privacy Notice -->
+          <div class="flex items-start gap-3 p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <img src="assets/icons/info_blue.svg" alt="" aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0">
+            <p class="text-sm text-blue-800 leading-relaxed">
+              La tua chiave viene crittografata e archiviata in modo sicuro.
+              Non vediamo né registriamo le tue chiavi API.
+              Paghi direttamente il tuo provider.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <!-- Action Buttons Section - Enhanced responsive design and touch optimization -->
       <div class="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
         <div class="flex flex-col gap-4 sm:gap-6">

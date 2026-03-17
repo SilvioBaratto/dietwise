@@ -1,14 +1,14 @@
 """Diet API endpoints"""
 
-from fastapi import APIRouter, Depends, Path, status, HTTPException
+
+from fastapi import APIRouter, Depends, HTTPException, Path, status
 from sqlalchemy.orm import Session
-from typing import List
 
 from app.auth.dependencies import get_current_user
 from app.database import get_db
-from app.services import DietService
-from app.schemas import DietSummary, DietaConLista, ModifyDietRequest
+from app.schemas import DietaConLista, DietSummary, ModifyDietRequest
 from app.schemas.diet import DietaSettimanaleSchema
+from app.services import DietService
 from baml_client.types import ListaSpesa as ListaSpesaSchema
 
 router = APIRouter(prefix="/diet", tags=["diet"])
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/diet", tags=["diet"])
 
 @router.get(
     "/list",
-    response_model=List[DietSummary],
+    response_model=list[DietSummary],
     summary="List all weekly diets for the current user",
 )
 def list_user_diets(
@@ -25,7 +25,7 @@ def list_user_diets(
 ):
     """Get all diets for the current user"""
     user_id = current_user["id"]
-    diet_service = DietService(db)
+    diet_service = DietService(db, user_id)
     return diet_service.get_user_diets(user_id)
 
 
@@ -40,7 +40,7 @@ def get_current_week_diet(
 ):
     """Get the diet plan for the current week"""
     user_id = current_user["id"]
-    diet_service = DietService(db)
+    diet_service = DietService(db, user_id)
     result = diet_service.get_current_week_diet(user_id)
 
     # Return 404 if no diet exists for current week
@@ -64,7 +64,7 @@ async def create_diet(
 ):
     """Create a new weekly diet plan WITHOUT grocery list. Call POST /diet/{diet_id}/grocery-list next to generate the shopping list."""
     user_id = current_user["id"]
-    diet_service = DietService(db)
+    diet_service = DietService(db, user_id)
     return await diet_service.create_diet(user_id)
 
 
@@ -80,7 +80,7 @@ async def create_grocery_list(
 ):
     """Generate grocery list for an existing diet. This is Step 2 after creating the diet."""
     user_id = current_user["id"]
-    diet_service = DietService(db)
+    diet_service = DietService(db, user_id)
     return await diet_service.create_grocery_list_for_diet(diet_id, user_id)
 
 
@@ -96,7 +96,7 @@ def get_diet_by_id(
 ):
     """Get a specific diet by ID"""
     user_id = current_user["id"]
-    diet_service = DietService(db)
+    diet_service = DietService(db, user_id)
     return diet_service.get_diet_by_id(diet_id, user_id)
 
 
@@ -112,7 +112,7 @@ def get_diet_grocery_list(
 ):
     """Get grocery list with ingredients, quantities, and units for a specific diet"""
     user_id = current_user["id"]
-    diet_service = DietService(db)
+    diet_service = DietService(db, user_id)
     return diet_service.get_grocery_list_by_diet_id(diet_id, user_id)
 
 
@@ -140,7 +140,7 @@ async def modify_diet(
     The grocery list is automatically regenerated based on the modified meals.
     """
     user_id = current_user["id"]
-    diet_service = DietService(db)
+    diet_service = DietService(db, user_id)
     return await diet_service.modify_diet(diet_id, user_id, request.modification_prompt)
 
 
@@ -156,6 +156,6 @@ def delete_diet(
 ):
     """Delete a specific diet by ID. Only the owner can delete their diet."""
     user_id = current_user["id"]
-    diet_service = DietService(db)
+    diet_service = DietService(db, user_id)
     diet_service.delete_diet(diet_id, user_id)
     return None

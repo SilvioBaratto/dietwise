@@ -4,20 +4,21 @@
 from app.models.base import Base
 
 # Import all models for easy access
+from app.models.api_key import UserApiKey
 from app.models.diet import (
-    User,
-    WeeklyDiet,
-    Meal,
-    Ingredient,
-    MealIngredient,
     GroceryList,
     GroceryListItem,
+    Ingredient,
+    Meal,
+    MealIngredient,
     SavedRecipe,
+    User,
     UserSettings,
+    WeeklyDiet,
 )
 
 # Import BAML enums for convenience
-from baml_client.types import TipoPasto, GiornoSettimana, UnitaMisura
+from baml_client.types import GiornoSettimana, TipoPasto, UnitaMisura
 
 # Export all models and enums
 __all__ = [
@@ -31,6 +32,7 @@ __all__ = [
     "GroceryListItem",
     "SavedRecipe",
     "UserSettings",
+    "UserApiKey",
     "TipoPasto",
     "GiornoSettimana",
     "UnitaMisura",

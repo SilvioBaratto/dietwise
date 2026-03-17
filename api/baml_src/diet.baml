@@ -31,23 +31,22 @@ class Ingrediente {
 }
 
 class Pasto {
+  giorno GiornoSettimana
   tipo TipoPasto
   nome string
   orario string @description("Orario del pasto")
   ingredienti string
   calorie int
-}
-
-class Dieta {
-  giorno GiornoSettimana
-  pasti Pasto[]
+  proteine int @description("Grammi di proteine")
+  carboidrati int @description("Grammi di carboidrati")
+  grassi int @description("Grammi di grassi")
 }
 
 class DietaSettimanale {
   nome string
   dataInizio string @description("YYYY-MM-DD")
   dataFine string @description("YYYY-MM-DD")
-  dieta Dieta[] @description("Elenco dei giorni della settimana con i relativi pasti")
+  pasti Pasto[] @description("Elenco piatto di tutti i pasti della settimana, ogni pasto include il giorno")
 }
 
 function GeneraDietaSettimanale(
@@ -83,9 +82,12 @@ function GeneraDietaSettimanale(
     - Periodo: Dal {{ dataInizio }} ({{ giornoInizio }}) al {{ dataFine }} ({{ giornoFine }})
     - IMPORTANTE: Genera pasti SOLO per i giorni da {{ giornoInizio }} a {{ giornoFine }} inclusi
     - NON includere giorni prima di {{ giornoInizio }} o dopo {{ giornoFine }}
+    - Ogni pasto DEVE includere il campo "giorno" con il giorno della settimana
     - 5 pasti/die (COLAZIONE, SPUNTINO_MATTINA, PRANZO, SPUNTINO_POMERIGGIO, CENA) con orari realistici
     - Ingredienti: "Nome Quantità+Unità" (g, ml, pz)
     - Calorie per pasto bilanciate per timing metabolico
+    - MACRO per ogni pasto: proteine (g), carboidrati (g), grassi (g)
+    - Verifica che proteine + carboidrati + grassi × 9/4 ≈ calorie dichiarate
     - Varietà quotidiana minima 60% ingredienti
     - Include fibre (25-30g/die) e micronutrienti essenziali
 
@@ -101,7 +103,7 @@ class ListaSpesa {
 }
 
 function GeneraListaSpesa(
-  dieta: Dieta[]
+  pasti: Pasto[]
 ) -> ListaSpesa {
   client OpenAI
   prompt #"
@@ -121,17 +123,7 @@ function GeneraListaSpesa(
     5. CATEGORIZZA per gruppo alimentare (proteine, carboidrati, verdure, frutta, condimenti, altro)
 
     PASTI SETTIMANALI DA AGGREGARE:
-
-    {% for giorno_dieta in dieta %}
-    ### {{ giorno_dieta.giorno }}
-
-    | Tipo Pasto | Ingredienti |
-    |------------|-------------|
-    {% for pasto in giorno_dieta.pasti %}
-    | {{ pasto.tipo }} | {{ pasto.ingredienti }} |
-    {% endfor %}
-
-    {% endfor %}
+    {{ pasti|format(type="toon", delimiter="tab") }}
 
     {{ ctx.output_format(prefix='Restituisci la lista della spesa con questa struttura:') }}
   "#
@@ -164,15 +156,8 @@ function ModificaDietaSettimanale(
     DATA ODIERNA:
     Oggi è {{ oggiGiorno }} {{ oggiData }}
 
-    ANALISI PASTI CORRENTI:
-
-    | Giorno | Tipo Pasto | Orario | Nome Pasto | Calorie | Ingredienti |
-    |--------|------------|--------|------------|---------|-------------|
-    {% for giorno in dietaCorrente.dieta %}
-    {% for pasto in giorno.pasti %}
-    | {{ giorno.giorno }} | {{ pasto.tipo }} | {{ pasto.orario }} | {{ pasto.nome }} | {{ pasto.calorie }}kcal | {{ pasto.ingredienti }} |
-    {% endfor %}
-    {% endfor %}
+    PASTI CORRENTI:
+    {{ dietaCorrente.pasti|format(type="toon", delimiter="tab") }}
 
     RICHIESTA MODIFICA:
     {{ richiestaModifica }}
@@ -184,7 +169,8 @@ function ModificaDietaSettimanale(
     4. MANTIENI biodisponibilità nutrienti e sinergie alimentari
     5. ASSICURA compliance AMDR: Carb 45-65%, Prot 10-35%, Grassi 20-35%
     6. VERIFICA adeguatezza micronutrienti post-modifica
-    7. APPLICA principio minima modifica per massima aderenza
+    7. VERIFICA coerenza macro: proteine + carboidrati + grassi × 9/4 ≈ calorie
+    8. APPLICA principio minima modifica per massima aderenza
 
     {{ ctx.output_format(prefix='Restituisci la dieta modificata seguendo questa struttura:') }}
   "#
@@ -212,6 +198,7 @@ function GeneraRicetta(
     - Tipo: {{ pasto.tipo }}
     - Nome target: {{ pasto.nome }}
     - Calorie: {{ pasto.calorie }}kcal
+    - Macro: P {{ pasto.proteine }}g | C {{ pasto.carboidrati }}g | G {{ pasto.grassi }}g
     - Ingredienti disponibili: {{ pasto.ingredienti }}
 
     TIMING METABOLICO (basato sul tipo pasto):
@@ -232,7 +219,7 @@ function GeneraRicetta(
 
     h2: Info Nutrizionali Quick
     p: Tempo preparazione e cottura stimato
-    p: Calorie: {{ pasto.calorie }}kcal
+    p: Calorie: {{ pasto.calorie }}kcal — Proteine: {{ pasto.proteine }}g, Carboidrati: {{ pasto.carboidrati }}g, Grassi: {{ pasto.grassi }}g
 
     h2: Preparazione
 

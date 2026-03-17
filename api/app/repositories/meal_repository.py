@@ -1,10 +1,19 @@
 """Meal repository for data access operations"""
 
-from typing import List, Optional
-from sqlalchemy.orm import Session, selectinload
-from sqlalchemy import select
 
-from app.models import Meal, MealIngredient, Ingredient, GroceryList, GroceryListItem, TipoPasto, GiornoSettimana, UnitaMisura
+from sqlalchemy import select
+from sqlalchemy.orm import Session, selectinload
+
+from app.models import (
+    GiornoSettimana,
+    GroceryList,
+    GroceryListItem,
+    Ingredient,
+    Meal,
+    MealIngredient,
+    TipoPasto,
+    UnitaMisura,
+)
 
 
 class MealRepository:
@@ -12,8 +21,8 @@ class MealRepository:
 
     def __init__(self, db: Session):
         self.db = db
-    
-    def get_with_ingredients(self, meal_id: str) -> Optional[Meal]:
+
+    def get_with_ingredients(self, meal_id: str) -> Meal | None:
         """Get meal with all ingredients and weekly diet"""
         stmt = (
             select(Meal)
@@ -25,7 +34,7 @@ class MealRepository:
         )
         result = self.db.execute(stmt)
         return result.scalar_one_or_none()
-    
+
     def create_meal(
         self,
         meal_id: str,
@@ -35,7 +44,10 @@ class MealRepository:
         time: str,
         recipe: str,
         ingredienti: str,
-        calories: int
+        calories: int,
+        proteine: int = 0,
+        carboidrati: int = 0,
+        grassi: int = 0,
     ) -> Meal:
         """Create a new meal"""
         meal = Meal(
@@ -47,12 +59,15 @@ class MealRepository:
             recipe=recipe,
             ingredienti=ingredienti,
             calories=calories,
+            proteine=proteine,
+            carboidrati=carboidrati,
+            grassi=grassi,
         )
         self.db.add(meal)
         self.db.flush()
         return meal
-    
-    def get_meals_by_diet(self, diet_id: str) -> List[Meal]:
+
+    def get_meals_by_diet(self, diet_id: str) -> list[Meal]:
         """Get all meals for a specific diet"""
         stmt = (
             select(Meal)
@@ -70,13 +85,13 @@ class IngredientRepository:
 
     def __init__(self, db: Session):
         self.db = db
-    
-    def get_by_name(self, name: str) -> Optional[Ingredient]:
+
+    def get_by_name(self, name: str) -> Ingredient | None:
         """Get ingredient by name"""
         stmt = select(Ingredient).where(Ingredient.name == name)
         result = self.db.execute(stmt)
         return result.scalar_one_or_none()
-    
+
     def create_ingredient(self, ingredient_id: str, name: str, unit: UnitaMisura) -> Ingredient:
         """Create a new ingredient"""
         ingredient = Ingredient(
@@ -94,7 +109,7 @@ class MealIngredientRepository:
 
     def __init__(self, db: Session):
         self.db = db
-    
+
     def create_meal_ingredient(
         self,
         meal_ingredient_id: str,
@@ -119,7 +134,7 @@ class GroceryListRepository:
 
     def __init__(self, db: Session):
         self.db = db
-    
+
     def create_grocery_list(self, grocery_list_id: str, weekly_diet_id: str) -> GroceryList:
         """Create a new grocery list"""
         grocery_list = GroceryList(
@@ -136,7 +151,7 @@ class GroceryListItemRepository:
 
     def __init__(self, db: Session):
         self.db = db
-    
+
     def create_grocery_item(
         self,
         item_id: str,

@@ -1,15 +1,15 @@
 """Authentication dependencies for FastAPI using Supabase JWT validation"""
 
-from datetime import datetime, timezone
-from typing import Optional, Annotated
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from sqlalchemy.orm import Session
 import logging
+from typing import Annotated
 
-from app.exceptions import AuthenticationError
-from app.database import get_db
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy.orm import Session
+
 from app.auth.supabase_auth import validate_supabase_token_sync
+from app.database import get_db
+from app.exceptions import AuthenticationError
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ bearer_scheme = HTTPBearer(
 
 
 def get_current_user_from_token(
-    credentials: Annotated[Optional[HTTPAuthorizationCredentials], Depends(bearer_scheme)],
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
     db: Session = Depends(get_db),
 ) -> dict:
     """
@@ -65,8 +65,9 @@ def get_current_user_from_token(
         raise AuthenticationError("Anonymous users not allowed")
 
     # Get or create user in our database
+    from sqlalchemy import or_, select
+
     from app.models import User
-    from sqlalchemy import select, or_
 
     try:
         email = claims_data.get("email")
@@ -116,7 +117,7 @@ def get_current_user_from_token(
     except Exception as e:
         logger.error(f"Error fetching/creating user data: {e}")
         db.rollback()
-        raise AuthenticationError(f"Failed to authenticate user: {str(e)}")
+        raise AuthenticationError(f"Failed to authenticate user: {str(e)}") from e
 
 
 def get_current_user(
@@ -172,9 +173,9 @@ def require_admin(
 
 
 def get_optional_user(
-    credentials: Annotated[Optional[HTTPAuthorizationCredentials], Depends(bearer_scheme)],
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
     db: Session = Depends(get_db),
-) -> Optional[dict]:
+) -> dict | None:
     """
     Dependency to optionally get the current user (doesn't raise if no token).
 
@@ -222,7 +223,7 @@ def get_user_id(current_user: dict = Depends(get_current_user)) -> str:
 
 # Type aliases for dependency injection
 CurrentUser = Annotated[dict, Depends(get_current_user)]
-OptionalUser = Annotated[Optional[dict], Depends(get_optional_user)]
+OptionalUser = Annotated[dict | None, Depends(get_optional_user)]
 AdminUser = Annotated[dict, Depends(require_admin)]
 RequireAuth = Depends(require_user)
 UserId = Annotated[str, Depends(get_user_id)]

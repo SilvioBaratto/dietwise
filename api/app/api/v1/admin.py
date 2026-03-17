@@ -1,14 +1,14 @@
 """Admin endpoints for user management"""
 
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from sqlalchemy import select
-from pydantic import BaseModel
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.auth.dependencies import AdminUser
 from app.database import get_db
 from app.models import User
-from app.auth.dependencies import AdminUser
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -33,11 +33,11 @@ class UserApprovalRequest(BaseModel):
 
 class BulkApprovalRequest(BaseModel):
     """Request to approve/reject multiple users"""
-    user_ids: List[str]
+    user_ids: list[str]
     approved: bool
 
 
-@router.get("/users", response_model=List[UserResponse])
+@router.get("/users", response_model=list[UserResponse])
 def list_all_users(
     admin: AdminUser,
     db: Session = Depends(get_db),
@@ -51,7 +51,7 @@ def list_all_users(
     """
     stmt = select(User)
     if pending_only:
-        stmt = stmt.where(User.is_approved == False)
+        stmt = stmt.where(User.is_approved.is_(False))
     stmt = stmt.order_by(User.created_at.desc())
 
     result = db.execute(stmt)
@@ -69,13 +69,13 @@ def list_all_users(
     ]
 
 
-@router.get("/users/pending", response_model=List[UserResponse])
+@router.get("/users/pending", response_model=list[UserResponse])
 def list_pending_users(
     admin: AdminUser,
     db: Session = Depends(get_db),
 ):
     """List users pending approval (admin only)."""
-    stmt = select(User).where(User.is_approved == False).order_by(User.created_at.desc())
+    stmt = select(User).where(User.is_approved.is_(False)).order_by(User.created_at.desc())
     result = db.execute(stmt)
     users = result.scalars().all()
 

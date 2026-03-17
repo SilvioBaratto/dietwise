@@ -1,17 +1,22 @@
 """Authentication system for API Diet"""
 
-from .supabase_auth import get_supabase_client, validate_supabase_token, initialize_supabase, close_supabase
 from .dependencies import (
-    bearer_scheme,
-    get_current_user,
-    get_current_user_from_token,
-    get_optional_user,
-    require_user,
-    get_user_id,
     CurrentUser,
     OptionalUser,
     RequireAuth,
     UserId,
+    bearer_scheme,
+    get_current_user,
+    get_current_user_from_token,
+    get_optional_user,
+    get_user_id,
+    require_user,
+)
+from .supabase_auth import (
+    close_supabase,
+    get_supabase_client,
+    initialize_supabase,
+    validate_supabase_token,
 )
 
 __all__ = [

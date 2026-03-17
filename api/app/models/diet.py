@@ -1,27 +1,26 @@
 """Diet-related database models"""
 
-import enum
-import uuid
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
+
 from sqlalchemy import (
-    Column,
-    String,
-    Integer,
-    Float,
-    DateTime,
-    Date,
     Boolean,
-    ForeignKey,
-    Enum as SQLEnum,
     CheckConstraint,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
     Index,
+    Integer,
+    String,
     func,
 )
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import (
+    Enum as SQLEnum,
+)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin
-from baml_client.types import TipoPasto, GiornoSettimana, UnitaMisura
+from app.models.base import Base
+from baml_client.types import GiornoSettimana, TipoPasto, UnitaMisura
 
 
 class User(Base):
@@ -61,6 +60,7 @@ class User(Base):
     # Relationships
     diets = relationship("WeeklyDiet", back_populates="user", cascade="all, delete-orphan")
     settings = relationship("UserSettings", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    api_keys = relationship("UserApiKey", back_populates="user", cascade="all, delete-orphan")
 
 
 class WeeklyDiet(Base):
@@ -104,10 +104,16 @@ class Meal(Base):
     recipe: Mapped[str] = mapped_column(String, nullable=True)
     ingredienti: Mapped[str] = mapped_column(String, nullable=False, default="")  # Comma-separated ingredient string
     calories: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    proteine: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    carboidrati: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    grassi: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     # Table constraints
     __table_args__ = (
         CheckConstraint('calories >= 0', name='chk_meals_positive_calories'),
+        CheckConstraint('proteine >= 0', name='chk_meals_positive_proteine'),
+        CheckConstraint('carboidrati >= 0', name='chk_meals_positive_carboidrati'),
+        CheckConstraint('grassi >= 0', name='chk_meals_positive_grassi'),
         Index('idx_meals_weekly_diet_id', 'weekly_diet_id'),
         Index('idx_meals_weekly_diet_day', 'weekly_diet_id', 'day'),
         Index('idx_meals_weekly_diet_type', 'weekly_diet_id', 'meal_type'),
@@ -238,6 +244,8 @@ class UserSettings(Base):
     height: Mapped[float] = mapped_column(Float, nullable=True)
     other_data: Mapped[str] = mapped_column(String, nullable=True)
     goals: Mapped[str] = mapped_column(String, nullable=True)
+    preferred_provider: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    preferred_model: Mapped[str | None] = mapped_column(String(100), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -255,6 +263,10 @@ class UserSettings(Base):
         CheckConstraint('age IS NULL OR (age > 0 AND age < 150)', name='chk_user_settings_valid_age'),
         CheckConstraint('weight IS NULL OR weight > 0', name='chk_user_settings_positive_weight'),
         CheckConstraint('height IS NULL OR height > 0', name='chk_user_settings_positive_height'),
+        CheckConstraint(
+            "preferred_provider IS NULL OR preferred_provider IN ('openai', 'google', 'anthropic')",
+            name='chk_user_settings_valid_preferred_provider',
+        ),
         Index('idx_user_settings_user_id', 'user_id'),
     )
 

@@ -1,7 +1,8 @@
 """API v1 router - aggregates all API endpoints"""
 
 from fastapi import APIRouter
-from app.api.v1 import settings, diet, meal, recipe, admin
+
+from app.api.v1 import admin, api_keys, diet, meal, recipe, settings
 
 # Create the main API router
 api_router = APIRouter()
@@ -12,3 +13,4 @@ api_router.include_router(diet.router)
 api_router.include_router(meal.router)
 api_router.include_router(recipe.router)
 api_router.include_router(admin.router)
+api_router.include_router(api_keys.router)

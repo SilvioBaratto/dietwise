@@ -10,16 +10,17 @@ This module provides:
 - Environment-based configuration
 """
 
-import logging
-import time
-import threading
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Optional, Generator, Dict, Any
+import logging
+import threading
+import time
+from typing import Any
 
-from sqlalchemy import create_engine, Engine, text
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.pool import QueuePool, NullPool
-from sqlalchemy.exc import SQLAlchemyError, OperationalError, DisconnectionError
+from sqlalchemy import Engine, create_engine, text
+from sqlalchemy.exc import DisconnectionError, OperationalError, SQLAlchemyError
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import NullPool, QueuePool
 
 from app.config import settings
 from app.models.base import Base
@@ -41,8 +42,8 @@ class DatabaseManager:
     """
 
     def __init__(self):
-        self._engine: Optional[Engine] = None
-        self._session_factory: Optional[sessionmaker] = None
+        self._engine: Engine | None = None
+        self._session_factory: sessionmaker | None = None
         self._is_initialized: bool = False
         self._lock = threading.RLock()
         self._last_health_check: float = 0
@@ -106,7 +107,7 @@ class DatabaseManager:
 
         self._engine = create_engine(**engine_kwargs)
 
-        logger.info(f"Database engine created:")
+        logger.info("Database engine created:")
         logger.info(f"  - Pool class: {pool_class.__name__}")
         logger.info(
             f"  - Pool size: {settings.database_pool_size if pool_class != NullPool else 'N/A'}"
@@ -138,7 +139,7 @@ class DatabaseManager:
         logger.info("Using QueuePool (client-side pooling)")
         return QueuePool
 
-    def _build_connect_args(self) -> Dict[str, Any]:
+    def _build_connect_args(self) -> dict[str, Any]:
         """Build psycopg2-specific connection arguments."""
         connect_args = {
             "sslmode": "require",  # Always require SSL for Supabase
@@ -234,7 +235,7 @@ class DatabaseManager:
             logger.error(f"Database health check failed: {e}")
             return False
 
-    def get_detailed_status(self) -> Dict[str, Any]:
+    def get_detailed_status(self) -> dict[str, Any]:
         """
         Get detailed database status information for monitoring.
 
@@ -388,7 +389,7 @@ class DatabaseManager:
         return self._is_initialized
 
     @property
-    def engine(self) -> Optional[Engine]:
+    def engine(self) -> Engine | None:
         """Get the SQLAlchemy engine (for advanced use cases)."""
         return self._engine
 
@@ -462,7 +463,7 @@ def get_db() -> Generator[Session, None, None]:
         yield session
 
 
-def get_db_status() -> Dict[str, Any]:
+def get_db_status() -> dict[str, Any]:
     """
     Get comprehensive database status information.
 
@@ -475,7 +476,7 @@ def get_db_status() -> Dict[str, Any]:
 # Utility functions for common database operations
 
 
-def execute_raw_sql(sql: str, parameters: Optional[Dict[str, Any]] = None) -> Any:
+def execute_raw_sql(sql: str, parameters: dict[str, Any] | None = None) -> Any:
     """
     Execute raw SQL with parameter binding.
 

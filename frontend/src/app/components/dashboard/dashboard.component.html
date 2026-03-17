@@ -65,6 +65,16 @@
           </div>
         </div>
 
+        <!-- Cost Estimate Badge -->
+        @if (activeModel()) {
+          <div class="mb-6 sm:mb-8">
+            <app-cost-badge
+              [provider]="activeProvider()"
+              [model]="activeModel()"
+            />
+          </div>
+        }
+
         <button (click)="generateNewDiet()" [disabled]="loading"
           class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-6 py-3.5 sm:px-8 sm:py-4 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-base sm:text-lg rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 min-h-[48px] sm:min-h-[52px] touch-manipulation"
           aria-label="Genera nuova dieta settimanale">

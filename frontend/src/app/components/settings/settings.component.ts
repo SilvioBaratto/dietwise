@@ -1,11 +1,14 @@
 import { Component, OnInit, signal, computed, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+
+import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ApiKeyService } from '../../services/api-key.service';
+import { ApiKeyResponse, AvailableModels, Provider } from '../../models/api-key.types';
+import { CostBadgeComponent } from '../../shared/cost-badge/cost-badge.component';
 
 interface UserSettingsIn {
   age?: number;
@@ -24,7 +27,7 @@ interface UserSettingsOut extends UserSettingsIn {
 
 @Component({
   selector: 'app-settings',
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule, ReactiveFormsModule, CostBadgeComponent],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +37,7 @@ export class SettingsComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
+  private apiKeyService = inject(ApiKeyService);
 
   // Form data (plain object for ngModel compatibility)
   settings: UserSettingsIn = {};
@@ -97,6 +101,44 @@ export class SettingsComponent implements OnInit {
     this.height.set(this.settings.height);
   }
 
+  // BYOK state
+  savedKeys = signal<ApiKeyResponse[]>([]);
+  availableModels = signal<AvailableModels>({ openai: [], google: [], anthropic: [] });
+  selectedProvider = signal<Provider>('openai');
+  selectedModel = signal<string>('');
+  isSaving = signal(false);
+  isValidating = signal(false);
+  isDeletingProvider = signal<Provider | null>(null);
+  keyError = signal('');
+  keySuccess = signal('');
+  prefsError = signal('');
+  showKeyInput = signal(false);
+
+  providers: Provider[] = ['openai', 'google', 'anthropic'];
+  providerLabels: Record<Provider, string> = {
+    openai: 'OpenAI',
+    google: 'Google Gemini',
+    anthropic: 'Anthropic',
+  };
+
+  byokForm = new FormGroup({
+    formProvider: new FormControl<Provider>('openai', { nonNullable: true }),
+    apiKey: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(10)],
+    }),
+  });
+
+  modelsForProvider = computed(() => {
+    const models = this.availableModels();
+    const provider = this.selectedProvider();
+    return models[provider] ?? [];
+  });
+
+  getKeyForProvider(provider: Provider): ApiKeyResponse | undefined {
+    return this.savedKeys().find(k => k.provider === provider);
+  }
+
   ngOnInit() {
     // Note: Authorization header is automatically added by authInterceptor
     this.http
@@ -127,6 +169,9 @@ export class SettingsComponent implements OnInit {
           }
         },
       });
+
+    this.loadApiKeys();
+    this.loadModelsAndPreferences();
   }
 
   saveSettings() {
@@ -168,5 +213,122 @@ export class SettingsComponent implements OnInit {
 
   getBMICategory(): string {
     return this.bmiCategory();
+  }
+
+  // --- BYOK Methods ---
+
+  loadApiKeys(): void {
+    this.apiKeyService.getKeys().subscribe({
+      next: (keys) => this.savedKeys.set(keys),
+      error: (err) => {
+        if (err.status !== 404) {
+          this.keyError.set('Impossibile caricare le chiavi API');
+        }
+      },
+    });
+  }
+
+  loadModelsAndPreferences(): void {
+    forkJoin({
+      models: this.apiKeyService.getAvailableModels(),
+      prefs: this.apiKeyService.getPreferences(),
+    }).subscribe({
+      next: ({ models, prefs }) => {
+        this.availableModels.set(models);
+        const provider = (prefs.provider as Provider) ?? 'openai';
+        this.selectedProvider.set(provider);
+        this.selectedModel.set(prefs.model ?? models[provider]?.[0] ?? '');
+      },
+      error: () => this.prefsError.set('Impossibile caricare le preferenze AI'),
+    });
+  }
+
+  validateAndSave(): void {
+    if (this.byokForm.invalid || this.isSaving() || this.isValidating()) return;
+
+    this.keyError.set('');
+    this.keySuccess.set('');
+
+    const provider = this.byokForm.controls.formProvider.value;
+    const apiKey = this.byokForm.controls.apiKey.value;
+
+    this.isValidating.set(true);
+
+    this.apiKeyService.validateKey(provider, apiKey).subscribe({
+      next: (result) => {
+        this.isValidating.set(false);
+
+        if (!result.is_valid) {
+          this.keyError.set(result.error ?? 'Chiave non valida');
+          return;
+        }
+
+        this.isSaving.set(true);
+        this.apiKeyService.saveKey(provider, apiKey).subscribe({
+          next: () => {
+            this.byokForm.controls.apiKey.reset();
+            this.showKeyInput.set(false);
+            this.isSaving.set(false);
+            this.keySuccess.set(`Chiave ${this.providerLabels[provider]} salvata con successo`);
+            this.loadApiKeys();
+          },
+          error: (err) => {
+            this.isSaving.set(false);
+            this.keyError.set(
+              err.error?.error?.message ?? err.error?.detail ?? 'Errore nel salvataggio della chiave'
+            );
+          },
+        });
+      },
+      error: (err) => {
+        this.isValidating.set(false);
+        this.keyError.set(err.error?.detail ?? 'Errore durante la validazione');
+      },
+    });
+  }
+
+  deleteKey(provider: Provider): void {
+    this.keyError.set('');
+    this.keySuccess.set('');
+    this.isDeletingProvider.set(provider);
+
+    this.apiKeyService.deleteKey(provider).subscribe({
+      next: () => {
+        this.isDeletingProvider.set(null);
+        this.keySuccess.set(`Chiave ${this.providerLabels[provider]} rimossa`);
+        this.loadApiKeys();
+      },
+      error: (err) => {
+        this.isDeletingProvider.set(null);
+        this.keyError.set(
+          err.error?.error?.message ?? err.error?.detail ?? 'Impossibile eliminare la chiave'
+        );
+      },
+    });
+  }
+
+  updatePreferences(): void {
+    this.prefsError.set('');
+
+    this.apiKeyService.updatePreferences(this.selectedProvider(), this.selectedModel()).subscribe({
+      next: () => this.keySuccess.set('Preferenze AI salvate'),
+      error: (err) => {
+        this.prefsError.set(err.error?.detail ?? 'Errore nel salvataggio delle preferenze');
+      },
+    });
+  }
+
+  onChangeKeyFor(provider: Provider): void {
+    this.byokForm.controls.formProvider.setValue(provider);
+    this.byokForm.controls.apiKey.reset();
+    this.showKeyInput.set(true);
+    this.keyError.set('');
+    this.keySuccess.set('');
+  }
+
+  onProviderChange(provider: Provider): void {
+    this.selectedProvider.set(provider);
+    const models = this.availableModels()[provider];
+    this.selectedModel.set(models?.[0] ?? '');
   }
 }

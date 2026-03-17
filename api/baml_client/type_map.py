@@ -16,9 +16,6 @@ from . import stream_types
 
 type_map = {
 
-    "types.Dieta": types.Dieta,
-    "stream_types.Dieta": stream_types.Dieta,
-
     "types.DietaSettimanale": types.DietaSettimanale,
     "stream_types.DietaSettimanale": stream_types.DietaSettimanale,
 

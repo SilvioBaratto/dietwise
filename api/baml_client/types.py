@@ -64,18 +64,14 @@ class UnitaMisura(str, Enum):
     PZ = "PZ"
 
 # #########################################################################
-# Generated classes (6)
+# Generated classes (5)
 # #########################################################################
-
-class Dieta(BaseModel):
-    giorno: GiornoSettimana
-    pasti: typing.List["Pasto"]
 
 class DietaSettimanale(BaseModel):
     nome: str
     dataInizio: str = Field(description='YYYY-MM-DD')
     dataFine: str = Field(description='YYYY-MM-DD')
-    dieta: typing.List["Dieta"] = Field(description='Elenco dei giorni della settimana con i relativi pasti')
+    pasti: typing.List["Pasto"] = Field(description='Elenco piatto di tutti i pasti della settimana, ogni pasto include il giorno')
 
 class HtmlStructure(BaseModel):
     h1: str
@@ -93,11 +89,15 @@ class ListaSpesa(BaseModel):
     ingredienti: typing.List["Ingrediente"] = Field(description='Elenco aggregato di tutti gli ingredienti da acquistare per l\'intera settimana, con quantità sommate e unità di misura coerenti')
 
 class Pasto(BaseModel):
+    giorno: GiornoSettimana
     tipo: TipoPasto
     nome: str
     orario: str = Field(description='Orario del pasto')
     ingredienti: str
     calorie: int
+    proteine: int = Field(description='Grammi di proteine')
+    carboidrati: int = Field(description='Grammi di carboidrati')
+    grassi: int = Field(description='Grammi di grassi')
 
 # #########################################################################
 # Generated type aliases (0)

@@ -108,18 +108,18 @@ class BamlSyncClient:
                 "dataInizio": dataInizio,"giornoInizio": giornoInizio,"dataFine": dataFine,"giornoFine": giornoFine,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"altri_dati": altri_dati,
             })
             return typing.cast(types.DietaSettimanale, __result__.cast_to(types, types, stream_types, False, __runtime__))
-    def GeneraListaSpesa(self, dieta: typing.List["types.Dieta"],
+    def GeneraListaSpesa(self, pasti: typing.List["types.Pasto"],
         baml_options: BamlCallOptions = {},
     ) -> types.ListaSpesa:
         # Check if on_tick is provided
         if 'on_tick' in baml_options:
-            __stream__ = self.stream.GeneraListaSpesa(dieta=dieta,
+            __stream__ = self.stream.GeneraListaSpesa(pasti=pasti,
                 baml_options=baml_options)
             return __stream__.get_final_response()
         else:
             # Original non-streaming code
             __result__ = self.__options.merge_options(baml_options).call_function_sync(function_name="GeneraListaSpesa", args={
-                "dieta": dieta,
+                "pasti": pasti,
             })
             return typing.cast(types.ListaSpesa, __result__.cast_to(types, types, stream_types, False, __runtime__))
     def GeneraRicetta(self, pasto: types.Pasto,
@@ -171,11 +171,11 @@ class BamlStreamClient:
           lambda x: typing.cast(types.DietaSettimanale, x.cast_to(types, types, stream_types, False, __runtime__)),
           __ctx__,
         )
-    def GeneraListaSpesa(self, dieta: typing.List["types.Dieta"],
+    def GeneraListaSpesa(self, pasti: typing.List["types.Pasto"],
         baml_options: BamlCallOptions = {},
     ) -> baml_py.BamlSyncStream[stream_types.ListaSpesa, types.ListaSpesa]:
         __ctx__, __result__ = self.__options.merge_options(baml_options).create_sync_stream(function_name="GeneraListaSpesa", args={
-            "dieta": dieta,
+            "pasti": pasti,
         })
         return baml_py.BamlSyncStream[stream_types.ListaSpesa, types.ListaSpesa](
           __result__,
@@ -222,11 +222,11 @@ class BamlHttpRequestClient:
             "dataInizio": dataInizio,"giornoInizio": giornoInizio,"dataFine": dataFine,"giornoFine": giornoFine,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"altri_dati": altri_dati,
         }, mode="request")
         return __result__
-    def GeneraListaSpesa(self, dieta: typing.List["types.Dieta"],
+    def GeneraListaSpesa(self, pasti: typing.List["types.Pasto"],
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
         __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GeneraListaSpesa", args={
-            "dieta": dieta,
+            "pasti": pasti,
         }, mode="request")
         return __result__
     def GeneraRicetta(self, pasto: types.Pasto,
@@ -258,11 +258,11 @@ class BamlHttpStreamRequestClient:
             "dataInizio": dataInizio,"giornoInizio": giornoInizio,"dataFine": dataFine,"giornoFine": giornoFine,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"altri_dati": altri_dati,
         }, mode="stream")
         return __result__
-    def GeneraListaSpesa(self, dieta: typing.List["types.Dieta"],
+    def GeneraListaSpesa(self, pasti: typing.List["types.Pasto"],
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
         __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GeneraListaSpesa", args={
-            "dieta": dieta,
+            "pasti": pasti,
         }, mode="stream")
         return __result__
     def GeneraRicetta(self, pasto: types.Pasto,

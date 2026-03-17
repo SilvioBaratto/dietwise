@@ -1,15 +1,15 @@
 """Recipe API endpoints for saving and retrieving recipes"""
 
 import uuid
-from typing import List
-from fastapi import APIRouter, Depends, Path, Body, status, HTTPException
+
+from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.database import get_db
-from baml_client.types import TipoPasto
 from app.repositories import SavedRecipeRepository
 from app.schemas import SavedRecipeCreate, SavedRecipeOut
+from baml_client.types import TipoPasto
 
 router = APIRouter(prefix="/recipes", tags=["recipes"])
 
@@ -66,7 +66,7 @@ def save_recipe(
 
 @router.get(
     "",
-    response_model=List[SavedRecipeOut],
+    response_model=list[SavedRecipeOut],
     summary="Get all saved recipes for the current user",
 )
 def get_user_recipes(
@@ -94,7 +94,7 @@ def get_user_recipes(
 
 @router.get(
     "/by-name/{recipe_name}",
-    response_model=List[SavedRecipeOut],
+    response_model=list[SavedRecipeOut],
     summary="Get saved recipes by recipe name",
 )
 def get_recipes_by_name(

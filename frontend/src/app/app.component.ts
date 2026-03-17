@@ -1,7 +1,8 @@
 import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
+import { LlmErrorToastComponent } from './shared/llm-error-toast/llm-error-toast.component';
 import { AuthService } from './services/auth.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs/operators';
@@ -9,10 +10,10 @@ import { filter, map, startWith } from 'rxjs/operators';
 @Component({
   selector: 'app-root',
   imports: [
-    CommonModule,
     RouterOutlet,
-    SidebarComponent
-  ],
+    SidebarComponent,
+    LlmErrorToastComponent,
+],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,11 +1,10 @@
 """User service for business logic operations"""
 
-import uuid
 import logging
+import uuid
 
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
+from sqlalchemy.orm import Session
 
 from app.repositories import UserRepository, UserSettingsRepository
 from app.schemas import UserSettingsIn, UserSettingsOut

@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.database import get_db
+from app.schemas import PastoSchema, RecipeResponse
 from app.services import MealService
-from app.schemas import RecipeResponse, PastoSchema
 
 router = APIRouter(prefix="/meals", tags=["meals"])
 
@@ -23,7 +23,7 @@ def get_meal_details(
 ):
     """Get detailed information about a specific meal"""
     user_id = current_user["id"]
-    meal_service = MealService(db)
+    meal_service = MealService(db, user_id)
     return meal_service.get_meal_details(meal_id, user_id)
 
 
@@ -39,6 +39,6 @@ async def get_meal_recipe(
 ):
     """Generate a full recipe for the specified meal"""
     user_id = current_user["id"]
-    meal_service = MealService(db)
+    meal_service = MealService(db, user_id)
     recipe = await meal_service.get_meal_recipe(meal_id, user_id)
     return RecipeResponse(recipe=recipe)

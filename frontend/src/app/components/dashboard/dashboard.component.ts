@@ -1,14 +1,17 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SettingsService } from '../../services/settings.service';
 import { DietService } from '../../services/diet.service';
+import { ApiKeyService } from '../../services/api-key.service';
 import { DietaConLista, ListaSpesa, Ingrediente, DailyGroup } from '../../models/diet.types';
+import { Provider } from '../../models/api-key.types';
+import { CostBadgeComponent } from '../../shared/cost-badge/cost-badge.component';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CostBadgeComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,6 +21,10 @@ export class DashboardComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly settingsService = inject(SettingsService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly apiKeyService = inject(ApiKeyService);
+
+  activeProvider = signal<Provider>('openai');
+  activeModel = signal<string>('');
 
   dietaConLista: DietaConLista | null = null;
   dailyMeals: DailyGroup[] = [];
@@ -47,6 +54,7 @@ export class DashboardComponent implements OnInit {
         } else {
           // User has settings, proceed to load diet
           this.loadCurrentWeekDiet();
+          this.loadActivePreferences();
         }
       },
       error: (err) => {
@@ -54,6 +62,19 @@ export class DashboardComponent implements OnInit {
         // On error, still try to load the diet
         this.loadCurrentWeekDiet();
       }
+    });
+  }
+
+  loadActivePreferences(): void {
+    this.apiKeyService.getPreferences().subscribe({
+      next: (prefs) => {
+        if (prefs.provider) this.activeProvider.set(prefs.provider as Provider);
+        if (prefs.model) this.activeModel.set(prefs.model);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        // Silently ignore — cost badge just won't show
+      },
     });
   }
 

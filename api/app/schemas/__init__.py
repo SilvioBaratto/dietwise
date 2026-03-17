@@ -1,25 +1,35 @@
 """Diet API Pydantic schemas"""
 
 # Import all schemas for easy access
+from app.schemas.api_key import (
+    ApiKeyResponseSchema,
+    ApiKeySaveRequest,
+    AvailableModelsResponse,
+    ProviderPreferencesRequest,
+    ProviderPreferencesResponse,
+    ValidateKeyRequest,
+    ValidateKeyResponse,
+)
 from app.schemas.diet import (
+    DietaConLista,
+    DietaSettimanaleSchema,
+    DietSummary,
+    ModifyDietRequest,
+    PastoSchema,
+    RecipeResponse,
+    TipoPasto,
     UserSettingsIn,
     UserSettingsOut,
-    DietSummary,
-    TipoPasto,
-    PastoSchema,
-    DietaSettimanaleSchema,
-    DietaConLista,
-    RecipeResponse,
-    ModifyDietRequest
 )
+from app.schemas.saved_recipe import SavedRecipeCreate, SavedRecipeOut
 from baml_client.types import Ingrediente
-from app.schemas.saved_recipe import (
-    SavedRecipeCreate,
-    SavedRecipeOut
-)
 
 # Export all schemas
 __all__ = [
+    "ApiKeyResponseSchema",
+    "ApiKeySaveRequest",
+    "AvailableModelsResponse",
+    "ProviderPreferencesRequest",
     "UserSettingsIn",
     "UserSettingsOut",
     "DietSummary",
@@ -31,5 +41,8 @@ __all__ = [
     "RecipeResponse",
     "ModifyDietRequest",
     "SavedRecipeCreate",
-    "SavedRecipeOut"
+    "SavedRecipeOut",
+    "ProviderPreferencesResponse",
+    "ValidateKeyRequest",
+    "ValidateKeyResponse",
 ]

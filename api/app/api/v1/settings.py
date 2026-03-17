@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.database import get_db
-from app.services import UserService
 from app.schemas import UserSettingsIn, UserSettingsOut
+from app.services import UserService
 
 router = APIRouter(prefix="/settings", tags=["settings"])
 

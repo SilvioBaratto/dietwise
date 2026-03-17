@@ -96,5 +96,5 @@ ng test                                       # Unit tests (Karma)
 
 - Backend env: `.env.dev` / `.env.prod` at workspace root (loaded via Pydantic Settings)
 - Frontend env: `frontend/src/environments/environment.ts` (dev) / `environment.prod.ts` (prod)
-- Key vars: `SUPABASE_DB_URL`, `SUPABASE_URL`, `SUPABASE_KEY`, `MY_OPENAI_KEY`
+- Key vars: `SUPABASE_DB_URL`, `SUPABASE_URL`, `SUPABASE_KEY`, `API_KEY_ENCRYPTION_SECRET`, `OPENAI_API_KEY` (optional fallback)
 - Python: conda env `fantacreator`, formatter: black. TypeScript: formatter: prettier.

@@ -1,12 +1,12 @@
 import { Component, OnInit, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { RecipeService } from '../../services/recipe.service';
 import { SavedRecipe } from '../../models/recipe.types';
 
 @Component({
   selector: 'app-recipes',
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

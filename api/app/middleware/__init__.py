@@ -1,11 +1,11 @@
 """Middleware package"""
 
-from .security import SecurityHeadersMiddleware
 from .logging import LoggingMiddleware
 from .rate_limiting import RateLimitingMiddleware
+from .security import SecurityHeadersMiddleware
 
 __all__ = [
     "SecurityHeadersMiddleware",
-    "LoggingMiddleware", 
+    "LoggingMiddleware",
     "RateLimitingMiddleware",
 ]

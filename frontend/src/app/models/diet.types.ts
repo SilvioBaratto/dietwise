@@ -17,6 +17,9 @@ export interface Pasto {
   readonly tipoPasto: TipoPasto;
   readonly ingredienti: string;  // Comma-separated ingredient string
   readonly calorie: number;
+  readonly proteine: number;
+  readonly carboidrati: number;
+  readonly grassi: number;
   readonly day: string;  // BAML enum: "LUNEDI", "MARTEDI", etc.
 }
 

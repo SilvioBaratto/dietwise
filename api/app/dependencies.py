@@ -1,34 +1,26 @@
 """Global dependencies for the application"""
 
+import logging
 import time
-from typing import Optional, Annotated, Any
+from typing import Annotated, Any
+
 from fastapi import Depends, Request
 from sqlalchemy.orm import Session
-import logging
 
+from app.database import get_db
 from app.exceptions import RateLimitError
 
 logger = logging.getLogger(__name__)
 
-# Database session dependencies - imported from database module
-from app.database import get_db
-
-
-# Import auth dependencies from the auth module
-from app.auth.dependencies import (
-    get_current_user,
-    get_optional_user,
-    require_user,
-    CurrentUser,
-    OptionalUser,
-    RequireAuth,
-    UserId,
-)
-
 
 class RateLimiter:
     """
-    In-memory rate limiting dependency
+    In-memory rate limiting dependency.
+
+    NOTE: State is per-process. In multi-instance deployments (e.g. Fly.io with
+    multiple machines) each instance tracks limits independently, so the effective
+    limit is multiplied by the number of instances. Use Redis-backed limiting if
+    strict global enforcement is required.
 
     Features:
     - Sliding window rate limiting
@@ -42,12 +34,12 @@ class RateLimiter:
         self.per_user = per_user
         self._in_memory_cache: dict[str, list[float]] = {}
 
-    def __call__(self, request: Request, current_user: Optional[dict] = None):
+    def __call__(self, request: Request, current_user: dict | None = None):
         """Check rate limit for the request"""
         return self._check_rate_limit(request, current_user)
 
     def _check_rate_limit(
-        self, request: Request, current_user: Optional[dict] = None
+        self, request: Request, current_user: dict | None = None
     ) -> bool:
         """In-memory rate limiting"""
         # Determine rate limit key
@@ -118,9 +110,9 @@ class PaginationParams:
         self,
         skip: int = 0,
         limit: int = 100,
-        order_by: Optional[str] = None,
+        order_by: str | None = None,
         order_desc: bool = False,
-        cursor: Optional[str] = None,
+        cursor: str | None = None,
         use_cursor: bool = False,
     ):
         self.skip = max(0, skip)
@@ -167,10 +159,10 @@ class FilterParams:
 
     def __init__(
         self,
-        search: Optional[str] = None,
-        is_active: Optional[bool] = None,
-        created_after: Optional[str] = None,
-        created_before: Optional[str] = None,
+        search: str | None = None,
+        is_active: bool | None = None,
+        created_after: str | None = None,
+        created_before: str | None = None,
     ):
         self.search = search
         self.is_active = is_active

@@ -1,20 +1,27 @@
 """Diet service for business logic operations"""
 
-import logging
-import uuid
 from datetime import date
-from typing import List, cast
+import logging
+from typing import cast
+import uuid
 
-from sqlalchemy.orm import Session
-from sqlalchemy.engine import CursorResult
 from fastapi import HTTPException, status
+from sqlalchemy.engine import CursorResult
+from sqlalchemy.orm import Session
 
+from app.exceptions import ApiKeyNotConfiguredError, LLMProviderError, RateLimitError
 from app.repositories import (
-    DietRepository, MealRepository, IngredientRepository,
-    GroceryListRepository, GroceryListItemRepository, UserSettingsRepository
+    DietRepository,
+    GroceryListItemRepository,
+    GroceryListRepository,
+    IngredientRepository,
+    MealRepository,
+    UserSettingsRepository,
 )
-from app.schemas import DietSummary, DietaConLista, TipoPasto as TipoPastoSchema, Ingrediente as IngredienteSchema
-from baml_client.async_client import b
+from app.schemas import DietaConLista, DietSummary
+from app.schemas import Ingrediente as IngredienteSchema
+from app.schemas import TipoPasto as TipoPastoSchema
+from app.services.baml_client_factory import BamlClientFactory
 from baml_client.types import ListaSpesa as ListaSpesaSchema
 
 logger = logging.getLogger(__name__)
@@ -34,19 +41,59 @@ def get_baml_day_enum(date_obj: date) -> str:
     return day_enums[date_obj.weekday()]
 
 
+def _meal_to_schema(m):
+    """Convert a Meal DB model to PastoSchema"""
+    from app.schemas.diet import PastoSchema
+    return PastoSchema(
+        id=m.id,
+        tipoPasto=TipoPastoSchema(
+            tipo=m.meal_type,
+            orario=m.time,
+            ricetta=m.recipe or "",
+        ),
+        ingredienti=m.ingredienti,
+        calorie=m.calories,
+        proteine=m.proteine,
+        carboidrati=m.carboidrati,
+        grassi=m.grassi,
+        day=m.day,
+    )
+
+
+def _meals_to_baml(meals):
+    """Convert DB meals to flat list of BAML Pasto objects"""
+    from baml_client.types import Pasto as PastoBAML
+    return [
+        PastoBAML(
+            giorno=m.day,
+            tipo=m.meal_type,
+            nome=m.recipe or "",
+            orario=m.time,
+            ingredienti=m.ingredienti,
+            calorie=m.calories,
+            proteine=m.proteine,
+            carboidrati=m.carboidrati,
+            grassi=m.grassi,
+        )
+        for m in meals
+    ]
+
+
 class DietService:
     """Service class for diet-related business logic"""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, user_id: str) -> None:
         self.db = db
+        self.user_id = user_id
         self.diet_repo = DietRepository(db)
         self.meal_repo = MealRepository(db)
         self.ingredient_repo = IngredientRepository(db)
         self.grocery_list_repo = GroceryListRepository(db)
         self.grocery_list_item_repo = GroceryListItemRepository(db)
         self.user_settings_repo = UserSettingsRepository(db)
-    
-    def get_user_diets(self, user_id: str) -> List[DietSummary]:
+        self._baml = BamlClientFactory(db, user_id)
+
+    def get_user_diets(self, user_id: str) -> list[DietSummary]:
         """Get all diets for a user"""
         diets = self.diet_repo.get_user_diets(user_id)
         return [
@@ -57,10 +104,10 @@ class DietService:
             )
             for diet in diets
         ]
-    
+
     def get_diet_by_id(self, diet_id: str, user_id: str):
         """Get full diet by ID"""
-        from app.schemas.diet import PastoSchema
+        from app.schemas.diet import DietaSettimanaleSchema
 
         weekly = self.diet_repo.get_with_meals(diet_id, user_id)
 
@@ -70,36 +117,19 @@ class DietService:
                 detail="Diet not found."
             )
 
-        # Build response using BAML enums directly
-        pasti: List[PastoSchema] = []
-        for m in weekly.meals:
-            pasti.append(
-                PastoSchema(
-                    id=m.id,
-                    tipoPasto=TipoPastoSchema(
-                        tipo=m.meal_type,  # Direct BAML enum
-                        orario=m.time,
-                        ricetta=m.recipe or "",
-                    ),
-                    ingredienti=m.ingredienti,  # Just pass through the string
-                    calorie=m.calories,
-                    day=m.day,  # Direct BAML enum
-                )
-            )
-
-        from app.schemas.diet import DietaSettimanaleSchema
         return DietaSettimanaleSchema(
             id=weekly.id,
             nome=weekly.name,
             dataInizio=weekly.start_date.isoformat(),
             dataFine=weekly.end_date.isoformat(),
-            pasti=pasti,
+            pasti=[_meal_to_schema(m) for m in weekly.meals],
         )
-    
+
     async def create_diet(self, user_id: str):
         """Create a new weekly diet WITHOUT grocery list (Step 1 of 2)"""
-        from app.schemas.diet import PastoSchema, DietaSettimanaleSchema
         from datetime import timedelta
+
+        from app.schemas.diet import DietaSettimanaleSchema
 
         # Load user settings
         settings = self.user_settings_repo.get_by_user_id(user_id)
@@ -121,7 +151,7 @@ class DietService:
 
         # Generate diet using BAML (Step 1 - only diet, no grocery list)
         try:
-            external = await b.GeneraDietaSettimanale(
+            external = await self._baml.get_client().GeneraDietaSettimanale(
                 dataInizio=today.isoformat(),
                 giornoInizio=get_baml_day_enum(today),
                 dataFine=end_date.isoformat(),
@@ -133,9 +163,10 @@ class DietService:
                 obiettivo=settings.goals or "",
                 altri_dati=settings.other_data or "",
             )
+        except (ApiKeyNotConfiguredError, LLMProviderError, RateLimitError):
+            raise
         except Exception as e:
-            logger.exception("Error generating diet")
-            raise HTTPException(502, f"Generation failed: {e}")
+            self._baml.handle_baml_error(e)
 
         # Save WeeklyDiet with calculated dates (today until Sunday)
         weekly = self.diet_repo.create_diet(
@@ -146,20 +177,21 @@ class DietService:
             name=external.nome,
         )
 
-        # Iterate over each day in the weekly diet
-        for giorno_dieta in external.dieta:
-            # Process each meal for this day
-            for pasto in giorno_dieta.pasti:
-                self.meal_repo.create_meal(
-                    meal_id=str(uuid.uuid4()),
-                    weekly_diet_id=weekly.id,
-                    meal_type=pasto.tipo,  # Direct BAML enum
-                    day=giorno_dieta.giorno,  # Direct BAML enum
-                    time=pasto.orario,
-                    recipe=pasto.nome,
-                    calories=pasto.calorie,
-                    ingredienti=pasto.ingredienti,  # Store string directly
-                )
+        # Iterate over flat pasti list (each pasto includes its giorno)
+        for pasto in external.pasti:
+            self.meal_repo.create_meal(
+                meal_id=str(uuid.uuid4()),
+                weekly_diet_id=weekly.id,
+                meal_type=pasto.tipo,
+                day=pasto.giorno,
+                time=pasto.orario,
+                recipe=pasto.nome,
+                calories=pasto.calorie,
+                ingredienti=pasto.ingredienti,
+                proteine=pasto.proteine,
+                carboidrati=pasto.carboidrati,
+                grassi=pasto.grassi,
+            )
 
         # Commit all changes
         self.db.commit()
@@ -173,30 +205,12 @@ class DietService:
                 detail="Failed to reload created diet"
             )
 
-        # Build response using BAML enums directly
-        response_meals: List[PastoSchema] = []
-        logger.debug(f"Converting {len(saved.meals)} meals from database to API schema")
-        for m in saved.meals:
-            response_meals.append(
-                PastoSchema(
-                    id=m.id,
-                    tipoPasto=TipoPastoSchema(
-                        tipo=m.meal_type,  # Direct BAML enum
-                        orario=m.time,
-                        ricetta=m.recipe or "",
-                    ),
-                    ingredienti=m.ingredienti,  # Just pass through the string
-                    calorie=m.calories,
-                    day=m.day,  # Direct BAML enum
-                )
-            )
-
         return DietaSettimanaleSchema(
             id=saved.id,
             nome=saved.name,
             dataInizio=saved.start_date.isoformat(),
             dataFine=saved.end_date.isoformat(),
-            pasti=response_meals,
+            pasti=[_meal_to_schema(m) for m in saved.meals],
         )
 
     async def create_grocery_list_for_diet(self, diet_id: str, user_id: str) -> ListaSpesaSchema:
@@ -216,43 +230,22 @@ class DietService:
                 IngredienteSchema(
                     nome=gi.ingredient.name,
                     quantita=gi.quantity,
-                    unita=gi.ingredient.unit  # Direct BAML enum
+                    unita=gi.ingredient.unit
                 )
                 for gi in weekly.grocery_list.items
             ]
             return ListaSpesaSchema(ingredienti=items)
 
-        # Convert meals to BAML format grouped by day for grocery list generation
-        from baml_client.types import Pasto as PastoBAML, Dieta as DietaBAML
+        # Build flat BAML Pasto list (TOON-friendly) — no more grouping by day
+        pasti_baml = _meals_to_baml(weekly.meals)
 
-        # Group meals by day
-        meals_by_day = {}
-        for m in weekly.meals:
-            if m.day not in meals_by_day:
-                meals_by_day[m.day] = []
-
-            meals_by_day[m.day].append(PastoBAML(
-                tipo=m.meal_type,  # Direct BAML enum
-                nome=m.recipe or "",
-                orario=m.time,  # Time from database
-                ingredienti=m.ingredienti,  # Just use the string directly
-                calorie=m.calories
-            ))
-
-        # Build Dieta objects for each day
-        diete_baml = []
-        for day in sorted(meals_by_day.keys()):
-            diete_baml.append(DietaBAML(
-                giorno=day,  # Direct BAML enum
-                pasti=meals_by_day[day]
-            ))
-
-        # Generate grocery list using BAML
+        # Generate grocery list using BAML (uses TOON format in prompt)
         try:
-            grocery = await b.GeneraListaSpesa(diete_baml)
+            grocery = await self._baml.get_client().GeneraListaSpesa(pasti_baml)
+        except (ApiKeyNotConfiguredError, LLMProviderError, RateLimitError):
+            raise
         except Exception as e:
-            logger.exception("Error generating grocery list")
-            raise HTTPException(502, f"Grocery list generation failed: {e}")
+            self._baml.handle_baml_error(e)
 
         # Save grocery list
         grocery_list = self.grocery_list_repo.create_grocery_list(
@@ -263,7 +256,6 @@ class DietService:
         for ingr in grocery.ingredienti:
             existing_ingr = self.ingredient_repo.get_by_name(ingr.nome)
 
-            # Create ingredient if it doesn't exist (same as diet creation logic)
             if not existing_ingr:
                 existing_ingr = self.ingredient_repo.create_ingredient(
                     ingredient_id=str(uuid.uuid4()),
@@ -271,7 +263,6 @@ class DietService:
                     unit=ingr.unita,
                 )
 
-            # Create grocery list item
             self.grocery_list_item_repo.create_grocery_item(
                 item_id=str(uuid.uuid4()),
                 grocery_list_id=grocery_list.id,
@@ -282,8 +273,7 @@ class DietService:
         # Commit changes
         self.db.commit()
 
-        # Return the generated grocery list
-        grocery_schema = ListaSpesaSchema(
+        return ListaSpesaSchema(
             ingredienti=[
                 IngredienteSchema(
                     nome=ingr.nome,
@@ -294,68 +284,45 @@ class DietService:
             ]
         )
 
-        return grocery_schema
-    
     def get_current_week_diet(self, user_id: str) -> DietaConLista | None:
         """Get current week's diet with grocery list. Returns None if no diet exists."""
-        from app.schemas.diet import PastoSchema
-
         today = date.today()
         logger.debug(f"Looking for diet for user {user_id} on date {today}")
         weekly = self.diet_repo.get_current_week_diet(user_id, today)
 
         if not weekly:
-            # Debug: check if user has any diets at all
             all_diets = self.diet_repo.get_user_diets(user_id)
             logger.debug(f"User has {len(all_diets)} total diets")
             for diet in all_diets:
                 logger.debug(f"Diet {diet.id}: {diet.start_date} to {diet.end_date}")
 
-            # Return None instead of raising an error - having no diet is a normal state
             logger.info(f"No diet found for user {user_id} for the current week - this is normal")
             return None
 
-        # Build meals using BAML enums directly
-        response_meals: List[PastoSchema] = []
-        for m in weekly.meals:
-            response_meals.append(
-                PastoSchema(
-                    id=m.id,
-                    tipoPasto=TipoPastoSchema(
-                        tipo=m.meal_type,  # Direct BAML enum
-                        orario=m.time,
-                        ricetta=m.recipe or "",
-                    ),
-                    ingredienti=m.ingredienti,  # Just pass through the string
-                    calorie=m.calories,
-                    day=m.day,  # Direct BAML enum
-                )
-            )
-
         # Build grocery list
-        items: List[IngredienteSchema] = []
+        items: list[IngredienteSchema] = []
         if weekly.grocery_list and weekly.grocery_list.items:
             for gi in weekly.grocery_list.items:
                 items.append(
                     IngredienteSchema(
                         nome=gi.ingredient.name,
                         quantita=gi.quantity,
-                        unita=gi.ingredient.unit,  # Direct BAML enum
+                        unita=gi.ingredient.unit,
                     )
                 )
 
-        from app.schemas.diet import DietaSettimanaleSchema as DietaSettimanaleSchemaLocal2
+        from app.schemas.diet import DietaSettimanaleSchema
         return DietaConLista(
-            dieta=DietaSettimanaleSchemaLocal2(
+            dieta=DietaSettimanaleSchema(
                 id=weekly.id,
                 nome=weekly.name,
                 dataInizio=weekly.start_date.isoformat(),
                 dataFine=weekly.end_date.isoformat(),
-                pasti=response_meals,
+                pasti=[_meal_to_schema(m) for m in weekly.meals],
             ),
             listaSpesa=ListaSpesaSchema(ingredienti=items),
         )
-    
+
     def get_grocery_list_by_diet_id(self, diet_id: str, user_id: str) -> ListaSpesaSchema:
         """Get grocery list for a specific diet by ID"""
         weekly = self.diet_repo.get_with_grocery_list(diet_id, user_id)
@@ -372,14 +339,13 @@ class DietService:
                 detail="No grocery list found for this diet."
             )
 
-        # Build grocery list items
         items = []
         for gi in weekly.grocery_list.items:
             items.append(
                 IngredienteSchema(
                     nome=gi.ingredient.name,
                     quantita=gi.quantity,
-                    unita=gi.ingredient.unit  # Direct BAML enum
+                    unita=gi.ingredient.unit
                 )
             )
 
@@ -387,8 +353,8 @@ class DietService:
 
     async def modify_diet(self, diet_id: str, user_id: str, modification_prompt: str):
         """Modify an existing diet based on user's prompt using LLM"""
-        from app.schemas.diet import PastoSchema, DietaSettimanaleSchema
-        from baml_client.types import Pasto as PastoBAML, DietaSettimanale as DietaSettimanaleBAML
+        from app.schemas.diet import DietaSettimanaleSchema
+        from baml_client.types import DietaSettimanale as DietaSettimanaleBAML
 
         # Load user settings
         settings = self.user_settings_repo.get_by_user_id(user_id)
@@ -405,43 +371,18 @@ class DietService:
                 detail="Diet not found."
             )
 
-        # Convert existing diet to BAML format
-        from baml_client.types import Dieta as DietaBAML
-
-        # Group meals by day
-        meals_by_day = {}
-        for m in weekly.meals:
-            if m.day not in meals_by_day:
-                meals_by_day[m.day] = []
-
-            # Ingredients are already stored as a comma-separated string
-            meals_by_day[m.day].append(PastoBAML(
-                tipo=m.meal_type,  # Direct BAML enum
-                nome=m.recipe or "",
-                orario=m.time,
-                ingredienti=m.ingredienti,  # Just use the string directly
-                calorie=m.calories
-            ))
-
-        # Build Dieta objects for each day
-        diete_baml = []
-        for day in sorted(meals_by_day.keys()):
-            diete_baml.append(DietaBAML(
-                giorno=day,  # Direct BAML enum
-                pasti=meals_by_day[day]
-            ))
-
+        # Build flat BAML representation (TOON-friendly)
         current_diet_baml = DietaSettimanaleBAML(
             nome=weekly.name,
             dataInizio=weekly.start_date.isoformat(),
             dataFine=weekly.end_date.isoformat(),
-            dieta=diete_baml
+            pasti=_meals_to_baml(weekly.meals),
         )
 
         # Call BAML to modify the diet
         try:
             today = date.today()
-            modified = await b.ModificaDietaSettimanale(
+            modified = await self._baml.get_client().ModificaDietaSettimanale(
                 dietaCorrente=current_diet_baml,
                 richiestaModifica=modification_prompt,
                 peso=settings.weight,
@@ -452,12 +393,14 @@ class DietService:
                 oggiData=today.isoformat(),
                 oggiGiorno=get_baml_day_enum(today),
             )
+        except (ApiKeyNotConfiguredError, LLMProviderError, RateLimitError):
+            raise
         except Exception as e:
-            logger.exception("Error modifying diet")
-            raise HTTPException(502, f"Diet modification failed: {e}")
+            self._baml.handle_baml_error(e)
 
         # Delete existing meals for this diet
         from sqlalchemy import delete as sql_delete
+
         from app.models import Meal
 
         stmt = sql_delete(Meal).where(Meal.weekly_diet_id == weekly.id)
@@ -469,19 +412,21 @@ class DietService:
         weekly.start_date = date.fromisoformat(modified.dataInizio)
         weekly.end_date = date.fromisoformat(modified.dataFine)
 
-        # Save new meals (iterate over days)
-        for giorno_dieta in modified.dieta:
-            for pasto in giorno_dieta.pasti:
-                self.meal_repo.create_meal(
-                    meal_id=str(uuid.uuid4()),
-                    weekly_diet_id=weekly.id,
-                    meal_type=pasto.tipo,  # Direct BAML enum
-                    day=giorno_dieta.giorno,  # Direct BAML enum
-                    time=pasto.orario,
-                    recipe=pasto.nome,
-                    calories=pasto.calorie,
-                    ingredienti=pasto.ingredienti,  # Store string directly
-                )
+        # Save new meals from flat pasti list
+        for pasto in modified.pasti:
+            self.meal_repo.create_meal(
+                meal_id=str(uuid.uuid4()),
+                weekly_diet_id=weekly.id,
+                meal_type=pasto.tipo,
+                day=pasto.giorno,
+                time=pasto.orario,
+                recipe=pasto.nome,
+                calories=pasto.calorie,
+                ingredienti=pasto.ingredienti,
+                proteine=pasto.proteine,
+                carboidrati=pasto.carboidrati,
+                grassi=pasto.grassi,
+            )
 
         # Delete existing grocery list if it exists
         if weekly.grocery_list:
@@ -502,37 +447,15 @@ class DietService:
                 detail="Failed to reload modified diet"
             )
 
-        # Generate new grocery list automatically
-        from baml_client.types import Pasto as PastoBAML, Dieta as DietaBAML
+        # Generate new grocery list from flat pasti (TOON-friendly)
+        pasti_baml = _meals_to_baml(saved.meals)
 
-        # Group meals by day for grocery list
-        meals_by_day_grocery = {}
-        for m in saved.meals:
-            if m.day not in meals_by_day_grocery:
-                meals_by_day_grocery[m.day] = []
-
-            meals_by_day_grocery[m.day].append(PastoBAML(
-                tipo=m.meal_type,  # Direct BAML enum
-                nome=m.recipe or "",
-                orario=m.time,  # Time from database
-                ingredienti=m.ingredienti,  # Just use the string directly
-                calorie=m.calories
-            ))
-
-        # Build Dieta objects for each day
-        diete_baml_grocery = []
-        for day in sorted(meals_by_day_grocery.keys()):
-            diete_baml_grocery.append(DietaBAML(
-                giorno=day,  # Direct BAML enum
-                pasti=meals_by_day_grocery[day]
-            ))
-
-        # Generate grocery list using BAML
         try:
-            grocery = await b.GeneraListaSpesa(diete_baml_grocery)
+            grocery = await self._baml.get_client().GeneraListaSpesa(pasti_baml)
+        except (ApiKeyNotConfiguredError, LLMProviderError, RateLimitError):
+            raise
         except Exception as e:
-            logger.exception("Error generating grocery list during diet modification")
-            raise HTTPException(502, f"Grocery list generation failed: {e}")
+            self._baml.handle_baml_error(e)
 
         # Save grocery list
         grocery_list = self.grocery_list_repo.create_grocery_list(
@@ -543,7 +466,6 @@ class DietService:
         for ingr in grocery.ingredienti:
             existing_ingr = self.ingredient_repo.get_by_name(ingr.nome)
 
-            # Create ingredient if it doesn't exist
             if not existing_ingr:
                 existing_ingr = self.ingredient_repo.create_ingredient(
                     ingredient_id=str(uuid.uuid4()),
@@ -551,7 +473,6 @@ class DietService:
                     unit=ingr.unita,
                 )
 
-            # Create grocery list item
             self.grocery_list_item_repo.create_grocery_item(
                 item_id=str(uuid.uuid4()),
                 grocery_list_id=grocery_list.id,
@@ -562,25 +483,6 @@ class DietService:
         # Commit grocery list changes
         self.db.commit()
 
-        # Build response using BAML enums directly from saved meals
-        response_meals: List[PastoSchema] = []
-        for m in saved.meals:
-            response_meals.append(
-                PastoSchema(
-                    id=m.id,
-                    tipoPasto=TipoPastoSchema(
-                        tipo=m.meal_type,  # Direct BAML enum
-                        orario=m.time,
-                        ricetta=m.recipe or "",
-                    ),
-                    ingredienti=m.ingredienti,  # Just pass through the string
-                    calorie=m.calories,
-                    day=m.day,  # Direct BAML enum
-                )
-            )
-
-        # Build grocery list items directly from BAML response (not from DB reload)
-        # This avoids session cache issues and matches the pattern in create_grocery_list_for_diet
         grocery_items = [
             IngredienteSchema(
                 nome=ingr.nome,
@@ -590,15 +492,13 @@ class DietService:
             for ingr in grocery.ingredienti
         ]
 
-        # Return diet with grocery list
-        from app.schemas import DietaConLista
         return DietaConLista(
             dieta=DietaSettimanaleSchema(
                 id=saved.id,
                 nome=saved.name,
                 dataInizio=saved.start_date.isoformat(),
                 dataFine=saved.end_date.isoformat(),
-                pasti=response_meals,
+                pasti=[_meal_to_schema(m) for m in saved.meals],
             ),
             listaSpesa=ListaSpesaSchema(ingredienti=grocery_items)
         )
@@ -606,10 +506,9 @@ class DietService:
     def delete_diet(self, diet_id: str, user_id: str) -> bool:
         """Delete a weekly diet plan"""
         from sqlalchemy import delete as sql_delete
+
         from app.models import WeeklyDiet
 
-        # Use a direct delete query with user_id check for performance
-        # This leverages database CASCADE deletes instead of ORM
         stmt = (
             sql_delete(WeeklyDiet)
             .where(WeeklyDiet.id == diet_id, WeeklyDiet.user_id == user_id)
@@ -619,7 +518,6 @@ class DietService:
         rows_deleted = cast(CursorResult, result).rowcount
 
         if rows_deleted == 0:
-            # Check if diet exists at all (for better error message)
             weekly = self.diet_repo.get(diet_id)
             if not weekly:
                 raise HTTPException(

@@ -1,12 +1,12 @@
 """Saved recipe repository for data access operations"""
 
-from typing import List, Optional
-from sqlalchemy.orm import Session
+
+from pydantic import BaseModel
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.models import SavedRecipe, TipoPasto
 from app.repositories.base_repository import BaseRepository
-from pydantic import BaseModel
 
 
 class SavedRecipeCreate(BaseModel):
@@ -20,7 +20,7 @@ class SavedRecipeRepository(BaseRepository[SavedRecipe, SavedRecipeCreate, Saved
     def __init__(self, db: Session):
         super().__init__(SavedRecipe, db)
 
-    def get_by_recipe_name(self, recipe_name: str, user_id: str) -> List[SavedRecipe]:
+    def get_by_recipe_name(self, recipe_name: str, user_id: str) -> list[SavedRecipe]:
         """Get all saved recipes with a specific name for a user"""
         stmt = (
             select(SavedRecipe)
@@ -33,7 +33,7 @@ class SavedRecipeRepository(BaseRepository[SavedRecipe, SavedRecipeCreate, Saved
         result = self.db.execute(stmt)
         return list(result.scalars().all())
 
-    def get_user_recipes(self, user_id: str, meal_type: Optional[TipoPasto] = None) -> List[SavedRecipe]:
+    def get_user_recipes(self, user_id: str, meal_type: TipoPasto | None = None) -> list[SavedRecipe]:
         """Get all saved recipes for a user, optionally filtered by meal type"""
         stmt = select(SavedRecipe).where(SavedRecipe.user_id == user_id)
 
