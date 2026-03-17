@@ -4,6 +4,9 @@
 .env.staging
 api/.env
 
+# Playwright MCP
+.playwright-mcp
+
 # Legal drafts (contain unpublished legal text)
 law_diet.md
 
