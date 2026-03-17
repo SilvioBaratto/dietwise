@@ -20,13 +20,24 @@ from app.services.encryption_service import encryption_service
 logger = logging.getLogger(__name__)
 
 _AVAILABLE_MODELS: dict[str, list[str]] = {
-    "openai": ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-3.5-turbo"],
-    "anthropic": [
-        "claude-opus-4-5",
-        "claude-sonnet-4-5",
-        "claude-3-haiku-20240307",
+    "openai": [
+        "gpt-5.4",
+        "gpt-5-mini",
+        "gpt-4.1",
+        "gpt-4.1-mini",
+        "gpt-4.1-nano",
     ],
-    "google": ["gemini-2.0-flash", "gemini-1.5-pro", "gemini-1.5-flash"],
+    "anthropic": [
+        "claude-opus-4-6",
+        "claude-sonnet-4-6",
+        "claude-haiku-4-5",
+        "claude-sonnet-4-5",
+    ],
+    "google": [
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+    ],
 }
 
 

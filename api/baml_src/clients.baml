@@ -1,10 +1,13 @@
 // Learn more about clients at https://docs.boundaryml.com/docs/snippets/clients/overview
+//
+// These static clients are dev/test defaults. In production the BYOK
+// BamlClientFactory overrides the primary client via ClientRegistry,
+// so any model the user selects is injected at runtime.
 
-// Using the new OpenAI Responses API for enhanced formatting
 client<llm> OpenAI {
   provider openai
   options {
-    model "gpt-5.2"
+    model "gpt-4.1-mini"
     api_key env.OPENAI_API_KEY
   }
 }
@@ -12,7 +15,7 @@ client<llm> OpenAI {
 client<llm> Gemini {
   provider google-ai
   options {
-    model "gemini-3-pro-preview"
+    model "gemini-2.5-flash"
     api_key env.GOOGLE_API_KEY
     generationConfig {
       maxOutputTokens 16000
@@ -20,11 +23,10 @@ client<llm> Gemini {
   }
 }
 
-// Claude Opus 4.5 - Most capable model (released Nov 2025)
 client<llm> Anthropic {
   provider anthropic
   options {
-    model "claude-opus-4-5-20251101"
+    model "claude-sonnet-4-6"
     api_key env.ANTHROPIC_API_KEY
     max_tokens 16000
   }
