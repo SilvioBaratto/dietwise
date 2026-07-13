@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.exceptions import ApiKeyNotConfiguredError, LLMProviderError, RateLimitError
 from app.repositories import ApiKeyRepository, UserSettingsRepository
-from app.services.encryption_service import encryption_service
+from app.services.encryption_service import InvalidTag, encryption_service
 from baml_client.async_client import BamlAsyncClient, b
 
 logger = logging.getLogger(__name__)
@@ -59,9 +59,27 @@ class BamlClientFactory:
         if not record.is_valid:
             raise ApiKeyNotConfiguredError(provider)
 
-        decrypted_key = encryption_service.decrypt(
-            record.encrypted_key, record.encryption_nonce
-        )
+        try:
+            decrypted_key = encryption_service.decrypt(
+                record.encrypted_key, record.encryption_nonce
+            )
+        except InvalidTag:
+            logger.error(
+                "api_key_event",
+                extra={
+                    "event": "api_key_decrypt_failed",
+                    "user_id": self.user_id,
+                    "provider": provider,
+                    "key_hint": record.key_hint,
+                },
+            )
+            self.api_key_repo.invalidate(record.id)
+            self.db.commit()
+            raise LLMProviderError(
+                "Your API key could not be read. Please update it in Settings.",
+                provider=provider,
+                llm_error_type="LLM_KEY_INVALID",
+            ) from None
         logger.info(
             "api_key_event",
             extra={
