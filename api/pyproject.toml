@@ -16,39 +16,39 @@ requires-python = ">=3.11"
 # Core dependencies
 dependencies = [
     # FastAPI framework and server
-    "fastapi==0.115.12",
-    "uvicorn[standard]==0.34.2",
-    "python-dotenv==1.1.0",
-    
+    "fastapi==0.139.0",
+    "uvicorn[standard]==0.51.0",
+    "python-dotenv==1.2.2",
+
     # Database and ORM - Optimized for Supabase Transaction Pooler
-    "SQLAlchemy==2.0.41",
-    "psycopg2-binary==2.9.10",  # Primary driver for Supabase compatibility
-    "alembic==1.16.2",
-    
+    "SQLAlchemy==2.0.51",
+    "psycopg2-binary==2.9.12",  # Primary driver for Supabase compatibility
+    "alembic==1.18.5",
+
     # Supabase SDK
-    "supabase==2.15.3",
-    
+    "supabase==2.31.0",
+
     # Data validation and serialization
-    "pydantic==2.11.7",
+    "pydantic==2.13.4",
     "pydantic[email]",  # Email validation support
-    "pydantic-settings==2.0.3",
-    
+    "pydantic-settings==2.14.2",
+
     # Authentication
-    "python-jose[cryptography]",
-    
+    "python-jose[cryptography]==3.5.0",
+
     # AI/ML
-    "baml-py==0.207.1",
-    
+    "baml-py==0.223.0",
+
     # File handling
-    "python-multipart==0.0.20",
-    
+    "python-multipart==0.0.32",
+
     # Caching & Performance
-    "redis==6.2.0",
-    
+    "redis==8.0.1",
+
     # Monitoring
-    "psutil==6.1.0",
-    "prometheus-client==0.21.1",
-    
+    "psutil==7.2.2",
+    "prometheus-client==0.25.0",
+
     # HTTP Client
     "httpx==0.28.1",
 ]
@@ -57,8 +57,8 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     # Testing (matching requirements.txt)
-    "pytest==8.4.1",
-    "pytest-asyncio==1.1.0",
+    "pytest==9.1.1",
+    "pytest-asyncio==1.4.0",
     "pytest-cov>=6.0.0,<7.0.0",
     "httpx==0.28.1",  # For testing API endpoints
     "factory-boy>=3.3.0,<4.0.0",  # For test data generation
@@ -80,12 +80,12 @@ production = [
     "structlog>=24.4.0,<25.0.0",
     
     # Production server optimizations
-    "gunicorn>=23.0.0,<24.0.0",
+    "gunicorn==26.0.0",
 ]
 
 testing = [
-    "pytest==8.4.1",
-    "pytest-asyncio==1.1.0",
+    "pytest==9.1.1",
+    "pytest-asyncio==1.4.0",
     "pytest-cov>=6.0.0,<7.0.0",
     "httpx==0.28.1",
     "factory-boy>=3.3.0,<4.0.0",
