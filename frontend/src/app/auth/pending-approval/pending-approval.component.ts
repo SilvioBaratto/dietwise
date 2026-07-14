@@ -2,11 +2,13 @@
 import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { LucideMail, LucideCheck, LucideCopy } from '@lucide/angular';
 
 @Component({
   selector: 'app-pending-approval',
   templateUrl: './pending-approval.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [LucideMail, LucideCheck, LucideCopy],
 })
 export class PendingApprovalComponent {
   private readonly auth = inject(AuthService);

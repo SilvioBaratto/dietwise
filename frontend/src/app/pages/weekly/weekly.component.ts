@@ -4,10 +4,35 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { DietService } from '../../services/diet.service';
 import { DietSummary, ListaSpesa, Ingrediente } from '../../models/diet.types';
+import {
+  LucideAlertTriangle,
+  LucideClipboard,
+  LucideChartColumn,
+  LucideCalendar,
+  LucideEye,
+  LucideTrash2,
+  LucideInbox,
+  LucideArrowLeft,
+  LucideShoppingCart,
+  LucideX,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-weekly',
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    LucideAlertTriangle,
+    LucideClipboard,
+    LucideChartColumn,
+    LucideCalendar,
+    LucideEye,
+    LucideTrash2,
+    LucideInbox,
+    LucideArrowLeft,
+    LucideShoppingCart,
+    LucideX,
+  ],
   templateUrl: './weekly.component.html',
   styleUrls: ['./weekly.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush

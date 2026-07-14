@@ -12,10 +12,30 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DietService } from '../../../services/diet.service';
 import { DailyGroup, DietaSettimanale, Pasto } from '../../../models/diet.types';
+import {
+  LucideClipboard,
+  LucideAlertTriangle,
+  LucideCalendar,
+  LucidePlus,
+  LucideClock,
+  LucideZap,
+  LucideChevronRight,
+  LucideEye,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-weekly-details',
-  imports: [RouterModule],
+  imports: [
+    RouterModule,
+    LucideClipboard,
+    LucideAlertTriangle,
+    LucideCalendar,
+    LucidePlus,
+    LucideClock,
+    LucideZap,
+    LucideChevronRight,
+    LucideEye,
+  ],
   templateUrl: './weekly-details.component.html',
   styleUrls: ['./weekly-details.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -4,6 +4,15 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
+import {
+  LucideLayoutDashboard,
+  LucideCalendarDays,
+  LucideBookOpen,
+  LucideShoppingBag,
+  LucideSettings,
+  LucideChevronRight,
+  LucideLogOut,
+} from '@lucide/angular';
 
 interface NavLink {
   label: string
@@ -14,7 +23,17 @@ interface NavLink {
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterModule, CommonModule],
+  imports: [
+    RouterModule,
+    CommonModule,
+    LucideLayoutDashboard,
+    LucideCalendarDays,
+    LucideBookOpen,
+    LucideShoppingBag,
+    LucideSettings,
+    LucideChevronRight,
+    LucideLogOut,
+  ],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -10,10 +10,44 @@ import { ApiKeyService } from '../../services/api-key.service';
 import { ApiKeyResponse, AvailableModels, Provider } from '../../models/api-key.types';
 import { UserSettingsIn, UserSettingsOut } from '../../models/user-settings.types';
 import { CostBadgeComponent } from '../../shared/cost-badge/cost-badge.component';
+import {
+  LucideSettings,
+  LucideInfo,
+  LucideCheck,
+  LucideAlertTriangle,
+  LucideUser,
+  LucideWeight,
+  LucideRuler,
+  LucideCalculator,
+  LucideFileText,
+  LucideTarget,
+  LucideSave,
+  LucideLoader,
+  LucidePlus,
+  LucideX,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-settings',
-  imports: [FormsModule, ReactiveFormsModule, CostBadgeComponent],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    CostBadgeComponent,
+    LucideSettings,
+    LucideInfo,
+    LucideCheck,
+    LucideAlertTriangle,
+    LucideUser,
+    LucideWeight,
+    LucideRuler,
+    LucideCalculator,
+    LucideFileText,
+    LucideTarget,
+    LucideSave,
+    LucideLoader,
+    LucidePlus,
+    LucideX,
+  ],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

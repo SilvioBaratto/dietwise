@@ -9,13 +9,14 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../services/auth.service';
+import { LucideArrowRight, LucideCheck } from '@lucide/angular';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [LucideArrowRight, LucideCheck],
 })
 export class LoginComponent {
   // Services

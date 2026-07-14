@@ -6,6 +6,7 @@ import { LlmErrorToastComponent } from './shared/llm-error-toast/llm-error-toast
 import { AuthService } from './services/auth.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs/operators';
+import { LucideMenu } from '@lucide/angular';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ import { filter, map, startWith } from 'rxjs/operators';
     RouterOutlet,
     SidebarComponent,
     LlmErrorToastComponent,
+    LucideMenu,
 ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],

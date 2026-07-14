@@ -15,10 +15,47 @@ import { MealService } from '../../../services/meal.service';
 import { RecipeService } from '../../../services/recipe.service';
 import { Pasto } from '../../../models/diet.types';
 import { HtmlStructure, SavedRecipe } from '../../../models/recipe.types';
+import {
+  LucideArrowLeft,
+  LucidePlus,
+  LucideAlertTriangle,
+  LucideScrollText,
+  LucideClock,
+  LucideZap,
+  LucideBox,
+  LucideInfo,
+  LucideLightbulb,
+  LucideLoader,
+  LucideCheck,
+  LucideFlame,
+  LucideClipboard,
+  LucideBookmark,
+  LucideCopy,
+  LucideEye,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-recipe-details',
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    LucideArrowLeft,
+    LucidePlus,
+    LucideAlertTriangle,
+    LucideScrollText,
+    LucideClock,
+    LucideZap,
+    LucideBox,
+    LucideInfo,
+    LucideLightbulb,
+    LucideLoader,
+    LucideCheck,
+    LucideFlame,
+    LucideClipboard,
+    LucideBookmark,
+    LucideCopy,
+    LucideEye,
+  ],
   templateUrl: './recipe-details.component.html',
   styleUrls: ['./recipe-details.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

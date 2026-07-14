@@ -3,11 +3,13 @@ import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/cor
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { LucideChevronDown, LucideCheck } from '@lucide/angular';
 
 @Component({
   selector: 'app-accept-terms',
   templateUrl: './accept-terms.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [LucideChevronDown, LucideCheck],
 })
 export class AcceptTermsComponent {
   private readonly userService = inject(UserService);

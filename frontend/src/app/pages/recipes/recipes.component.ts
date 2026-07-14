@@ -3,10 +3,32 @@ import { Component, OnInit, signal, computed, inject, ChangeDetectionStrategy } 
 import { RouterModule } from '@angular/router';
 import { RecipeService } from '../../services/recipe.service';
 import { SavedRecipe } from '../../models/recipe.types';
+import {
+  LucideBookOpen,
+  LucideAlertTriangle,
+  LucideLoader,
+  LucideCalendar,
+  LucideFlame,
+  LucideEye,
+  LucideTrash2,
+  LucideX,
+  LucideCopy,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-recipes',
-  imports: [RouterModule],
+  imports: [
+    RouterModule,
+    LucideBookOpen,
+    LucideAlertTriangle,
+    LucideLoader,
+    LucideCalendar,
+    LucideFlame,
+    LucideEye,
+    LucideTrash2,
+    LucideX,
+    LucideCopy,
+  ],
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

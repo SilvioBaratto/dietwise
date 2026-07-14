@@ -8,10 +8,42 @@ import { ApiKeyService } from '../../services/api-key.service';
 import { DietaConLista, ListaSpesa, Ingrediente, DailyGroup } from '../../models/diet.types';
 import { Provider } from '../../models/api-key.types';
 import { CostBadgeComponent } from '../../shared/cost-badge/cost-badge.component';
+import {
+  LucidePlus,
+  LucideClock,
+  LucideCheck,
+  LucideCalendar,
+  LucideLoader,
+  LucideRefreshCw,
+  LucideClipboard,
+  LucideShoppingCart,
+  LucideInbox,
+  LucideZap,
+  LucideChevronRight,
+  LucideFileText,
+  LucideX,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule, CostBadgeComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    CostBadgeComponent,
+    LucidePlus,
+    LucideClock,
+    LucideCheck,
+    LucideCalendar,
+    LucideLoader,
+    LucideRefreshCw,
+    LucideClipboard,
+    LucideShoppingCart,
+    LucideInbox,
+    LucideZap,
+    LucideChevronRight,
+    LucideFileText,
+    LucideX,
+  ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

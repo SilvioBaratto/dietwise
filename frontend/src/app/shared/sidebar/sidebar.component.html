@@ -48,38 +48,28 @@
             @switch (link.path) {
               <!-- Dashboard Icon -->
               @case ('/') {
-                <img
-                  src="assets/icons/dashboard.svg"
-                  alt="Dashboard"
-                  class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110">
+                <svg lucideLayoutDashboard aria-hidden="true"
+                  class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110"></svg>
               }
               <!-- Weekly Diet Icon -->
               @case ('/weekly') {
-                <img
-                  src="assets/icons/weekly.svg"
-                  alt="Weekly Diet"
-                  class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110">
+                <svg lucideCalendarDays aria-hidden="true"
+                  class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110"></svg>
               }
               <!-- Recipes Icon -->
               @case ('/recipes') {
-                <img
-                  src="assets/icons/recipe.svg"
-                  alt="Recipes"
-                  class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110">
+                <svg lucideBookOpen aria-hidden="true"
+                  class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110"></svg>
               }
               <!-- Grocery Icon -->
               @case ('/grocery') {
-                <img
-                  src="assets/icons/grocery.svg"
-                  alt="Grocery"
-                  class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110">
+                <svg lucideShoppingBag aria-hidden="true"
+                  class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110"></svg>
               }
               <!-- Settings Icon -->
               @case ('/settings') {
-                <img
-                  src="assets/icons/settings.svg"
-                  alt="Settings"
-                  class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110">
+                <svg lucideSettings aria-hidden="true"
+                  class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110"></svg>
               }
             }
           </div>
@@ -95,7 +85,7 @@
         </div>
         <!-- Active Indicator - Enhanced visibility -->
         <div class="ml-auto opacity-0 group-hover:opacity-100 routerLinkActive:opacity-100 transition-all duration-300 transform group-hover:translate-x-0.5">
-          <img src="assets/icons/chevron_right_teal.svg" alt="Chevron right icon" class="w-4 h-4 lg:w-5 lg:h-5">
+          <svg lucideChevronRight aria-hidden="true" class="w-4 h-4 lg:w-5 lg:h-5 text-teal-600"></svg>
         </div>
       </a>
     }
@@ -132,7 +122,7 @@
              touch-manipulation min-h-[44px] shadow-sm hover:shadow-md"
       aria-label="Logout from your account">
       <!-- Logout Icon -->
-      <img src="assets/icons/logout_gray.svg" alt="Logout icon" class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 group-hover:scale-110">
+      <svg lucideLogOut aria-hidden="true" class="w-5 h-5 lg:w-6 lg:h-6 transition-all duration-300 group-hover:scale-110 text-gray-500 group-hover:text-white"></svg>
       <!-- Label -->
       <span class="font-semibold text-sm lg:text-base">Disconnetti</span>
     </button>

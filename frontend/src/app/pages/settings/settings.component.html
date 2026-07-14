@@ -4,7 +4,7 @@
     <!-- Header Section - Improved responsive typography and spacing -->
     <div class="mb-6 sm:mb-8">
       <div class="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-2">
-        <img src="assets/icons/settings.svg" alt="" aria-hidden="true" class="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0">
+        <svg lucideSettings aria-hidden="true" class="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0"></svg>
         <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
           Impostazioni
         </h1>
@@ -18,7 +18,7 @@
     <div role="alert" aria-live="polite"
       class="mb-6 sm:mb-8 p-4 sm:p-5 bg-blue-50 border-l-4 border-blue-500 text-blue-900 rounded-r-lg shadow-md">
       <div class="flex items-start gap-3">
-        <img src="assets/icons/info_blue.svg" alt="" aria-hidden="true" class="w-6 h-6 mt-0.5 flex-shrink-0">
+        <svg lucideInfo aria-hidden="true" class="w-6 h-6 mt-0.5 flex-shrink-0"></svg>
         <div>
           <h3 class="font-bold text-base sm:text-lg mb-1">Benvenuto! Configurazione Iniziale Richiesta</h3>
           <p class="text-sm sm:text-base leading-relaxed">Prima di utilizzare l'applicazione, completa il tuo profilo
@@ -34,7 +34,7 @@
     <div role="alert" aria-live="polite"
       class="mb-6 sm:mb-8 p-4 sm:p-5 bg-green-50 border-l-4 border-green-400 text-green-800 rounded-r-lg shadow-sm">
       <div class="flex items-start gap-3">
-        <img src="assets/icons/check_green.svg" alt="" aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0">
+        <svg lucideCheck aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0"></svg>
         <span class="font-medium text-sm sm:text-base leading-relaxed">{{ successMessage() }}</span>
       </div>
     </div>
@@ -43,7 +43,7 @@
     <div role="alert" aria-live="assertive"
       class="mb-6 sm:mb-8 p-4 sm:p-5 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-lg shadow-sm">
       <div class="flex items-start gap-3">
-        <img src="assets/icons/alert_red.svg" alt="" aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0">
+        <svg lucideAlertTriangle aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0"></svg>
         <span class="font-medium text-sm sm:text-base leading-relaxed">{{ errorMessage() }}</span>
       </div>
     </div>
@@ -56,7 +56,7 @@
       <div class="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200">
           <div class="flex items-center gap-3">
-            <img src="assets/icons/user_teal.svg" alt="" aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+            <svg lucideUser aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-teal-600"></svg>
             <h2 class="text-lg sm:text-xl font-bold text-gray-900">Informazioni Personali</h2>
           </div>
         </div>
@@ -66,7 +66,7 @@
             <!-- Age - Enhanced touch targets and mobile optimization -->
             <div class="space-y-2 sm:space-y-3">
               <label for="age" class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <img src="assets/icons/user_teal.svg" alt="" aria-hidden="true" class="w-4 h-4 flex-shrink-0">
+                <svg lucideUser aria-hidden="true" class="w-4 h-4 flex-shrink-0 text-teal-600"></svg>
                 Età (anni)
               </label>
               <input type="number" id="age" name="age" [(ngModel)]="settings.age" placeholder="Es. 30"
@@ -80,7 +80,7 @@
             <!-- Sex - Enhanced touch targets and mobile optimization -->
             <div class="space-y-2 sm:space-y-3">
               <label for="sex" class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <img src="assets/icons/user_teal.svg" alt="" aria-hidden="true" class="w-4 h-4 flex-shrink-0">
+                <svg lucideUser aria-hidden="true" class="w-4 h-4 flex-shrink-0 text-teal-600"></svg>
                 Sesso
               </label>
               <select id="sex" name="sex" [(ngModel)]="settings.sex" aria-label="Sesso" class="w-full px-4 py-4 min-h-[48px] text-base border border-gray-300 rounded-lg
@@ -98,7 +98,7 @@
             <!-- Weight - Enhanced touch targets and mobile optimization -->
             <div class="space-y-2 sm:space-y-3">
               <label for="weight" class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <img src="assets/icons/scale_gray.svg" alt="" aria-hidden="true" class="w-4 h-4 flex-shrink-0">
+                <svg lucideWeight aria-hidden="true" class="w-4 h-4 flex-shrink-0 text-gray-500"></svg>
                 Peso (kg) <span class="text-red-500" aria-label="obbligatorio">*</span>
               </label>
               <input type="number" id="weight" name="weight" [(ngModel)]="settings.weight" (ngModelChange)="updateWeightSignal()" required placeholder="Es. 70"
@@ -112,7 +112,7 @@
             <!-- Height - Enhanced touch targets and mobile optimization -->
             <div class="space-y-2 sm:space-y-3">
               <label for="height" class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <img src="assets/icons/height_gray.svg" alt="" aria-hidden="true" class="w-4 h-4 flex-shrink-0">
+                <svg lucideRuler aria-hidden="true" class="w-4 h-4 flex-shrink-0 text-gray-500"></svg>
                 Altezza (cm) <span class="text-red-500" aria-label="obbligatorio">*</span>
               </label>
               <input type="number" id="height" name="height" [(ngModel)]="settings.height" (ngModelChange)="updateHeightSignal()" required
@@ -131,7 +131,7 @@
             aria-live="polite" aria-label="Calcolo BMI">
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
               <div class="flex items-center gap-3">
-                <img src="assets/icons/calculator_emerald.svg" alt="" aria-hidden="true" class="w-5 h-5 flex-shrink-0">
+                <svg lucideCalculator aria-hidden="true" class="w-5 h-5 flex-shrink-0 text-emerald-600"></svg>
                 <span class="text-sm text-gray-600 font-medium">Il tuo BMI:</span>
               </div>
               <div class="flex items-center gap-2 sm:gap-3 pl-8 sm:pl-0">
@@ -151,8 +151,7 @@
       <div class="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200">
           <div class="flex items-center gap-3">
-            <img src="assets/icons/document_blue.svg" alt="" aria-hidden="true"
-              class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+            <svg lucideFileText aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-blue-500"></svg>
             <h2 class="text-lg sm:text-xl font-bold text-gray-900">Informazioni Aggiuntive</h2>
           </div>
         </div>
@@ -161,7 +160,7 @@
           <!-- Other Data - Enhanced textarea with mobile optimization -->
           <div class="space-y-2 sm:space-y-3">
             <label for="other_data" class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-              <img src="assets/icons/info_gray.svg" alt="" aria-hidden="true" class="w-4 h-4 flex-shrink-0">
+              <svg lucideInfo aria-hidden="true" class="w-4 h-4 flex-shrink-0 text-gray-500"></svg>
               Altri Dati
             </label>
             <textarea id="other_data" name="other_data" [(ngModel)]="settings.other_data" rows="3"
@@ -177,7 +176,7 @@
           <!-- Goals - Enhanced textarea with mobile optimization -->
           <div class="space-y-2 sm:space-y-3">
             <label for="goals" class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-              <img src="assets/icons/target_gray.svg" alt="" aria-hidden="true" class="w-4 h-4 flex-shrink-0">
+              <svg lucideTarget aria-hidden="true" class="w-4 h-4 flex-shrink-0 text-gray-500"></svg>
               Obiettivi
             </label>
             <textarea id="goals" name="goals" [(ngModel)]="settings.goals" rows="4"
@@ -196,7 +195,7 @@
       <div class="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="bg-gradient-to-r from-violet-50 to-purple-50 px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200">
           <div class="flex items-center gap-3">
-            <img src="assets/icons/settings.svg" alt="" aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+            <svg lucideSettings aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"></svg>
             <h2 class="text-lg sm:text-xl font-bold text-gray-900">Configurazione Provider AI</h2>
           </div>
         </div>
@@ -208,7 +207,7 @@
           <div role="alert" aria-live="polite"
             class="p-3 sm:p-4 bg-green-50 border-l-4 border-green-400 text-green-800 rounded-r-lg">
             <div class="flex items-start gap-3">
-              <img src="assets/icons/check_green.svg" alt="" aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0">
+              <svg lucideCheck aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0"></svg>
               <span class="font-medium text-sm sm:text-base">{{ keySuccess() }}</span>
             </div>
           </div>
@@ -217,7 +216,7 @@
           <div role="alert" aria-live="assertive"
             class="p-3 sm:p-4 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-lg">
             <div class="flex items-start gap-3">
-              <img src="assets/icons/alert_red.svg" alt="" aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0">
+              <svg lucideAlertTriangle aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0"></svg>
               <span class="font-medium text-sm sm:text-base">{{ keyError() }}</span>
             </div>
           </div>
@@ -226,7 +225,7 @@
           <div role="alert" aria-live="assertive"
             class="p-3 sm:p-4 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-lg">
             <div class="flex items-start gap-3">
-              <img src="assets/icons/alert_red.svg" alt="" aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0">
+              <svg lucideAlertTriangle aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0"></svg>
               <span class="font-medium text-sm sm:text-base">{{ prefsError() }}</span>
             </div>
           </div>
@@ -282,7 +281,7 @@
                        text-white rounded-lg shadow-sm hover:shadow-md
                        transition-all duration-200
                        focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2">
-                <img src="assets/icons/save_white.svg" alt="" aria-hidden="true" class="w-4 h-4 flex-shrink-0">
+                <svg lucideSave aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
                 Salva Preferenze
               </button>
             </div>
@@ -336,7 +335,7 @@
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1
                            disabled:opacity-50 disabled:cursor-not-allowed">
                     @if (isDeletingProvider() === provider) {
-                    <img src="assets/icons/spinner_teal.svg" alt="" aria-hidden="true" class="w-3.5 h-3.5 animate-spin">
+                    <svg lucideLoader aria-hidden="true" class="w-3.5 h-3.5 animate-spin"></svg>
                     Rimozione...
                     } @else {
                     Rimuovi
@@ -348,7 +347,7 @@
                            text-violet-700 bg-violet-50 hover:bg-violet-100 active:bg-violet-200
                            rounded-lg border border-violet-200 transition-colors duration-200
                            focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-1">
-                    <img src="assets/icons/plus_teal.svg" alt="" aria-hidden="true" class="w-3.5 h-3.5">
+                    <svg lucidePlus aria-hidden="true" class="w-3.5 h-3.5"></svg>
                     Aggiungi
                   </button>
                   }
@@ -402,10 +401,10 @@
                          focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2
                          disabled:opacity-50 disabled:cursor-not-allowed">
                   @if (isValidating()) {
-                  <img src="assets/icons/spinner_teal.svg" alt="" aria-hidden="true" class="w-4 h-4 animate-spin">
+                  <svg lucideLoader aria-hidden="true" class="w-4 h-4 animate-spin"></svg>
                   Validazione...
                   } @else if (isSaving()) {
-                  <img src="assets/icons/spinner_teal.svg" alt="" aria-hidden="true" class="w-4 h-4 animate-spin">
+                  <svg lucideLoader aria-hidden="true" class="w-4 h-4 animate-spin"></svg>
                   Salvataggio...
                   } @else {
                   Valida e Salva
@@ -426,7 +425,7 @@
 
           <!-- Privacy Notice -->
           <div class="flex items-start gap-3 p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-100">
-            <img src="assets/icons/info_blue.svg" alt="" aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0">
+            <svg lucideInfo aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0 text-blue-500"></svg>
             <p class="text-sm text-blue-800 leading-relaxed">
               La tua chiave viene crittografata e archiviata in modo sicuro.
               Non vediamo né registriamo le tue chiavi API.
@@ -457,7 +456,7 @@
                        transition-colors duration-200
                        focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
                        disabled:opacity-50 disabled:cursor-not-allowed">
-              <img src="assets/icons/close_gray.svg" alt="" aria-hidden="true" class="w-4 h-4 flex-shrink-0">
+              <svg lucideX aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
               <span>Annulla</span>
             </button>
             }
@@ -472,7 +471,7 @@
                      transition-all duration-200
                      disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-sm
                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
-              <img src="assets/icons/save_white.svg" alt="" aria-hidden="true" class="w-5 h-5 flex-shrink-0">
+              <svg lucideSave aria-hidden="true" class="w-5 h-5 flex-shrink-0"></svg>
               <span>Salva Impostazioni</span>
             </button>
           </div>

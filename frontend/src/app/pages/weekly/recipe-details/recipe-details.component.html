@@ -5,7 +5,7 @@
     <button (click)="goBack()" type="button"
       class="inline-flex items-center gap-2 sm:gap-3 text-teal-600 hover:text-teal-800 active:text-teal-900 mb-6 sm:mb-8 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-lg px-4 py-3 sm:px-3 sm:py-2 min-h-11 touch-manipulation"
       aria-label="Torna alla pagina precedente">
-      <img src="assets/icons/arrow_left_gray.svg" alt="" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" aria-hidden="true">
+      <svg lucideArrowLeft aria-hidden="true" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"></svg>
       <span class="text-base sm:text-sm">Torna Indietro</span>
     </button>
 
@@ -16,7 +16,7 @@
         <div class="w-16 h-16 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin" aria-hidden="true">
         </div>
         <div class="absolute inset-0 flex items-center justify-center">
-          <img src="assets/icons/plus_teal.svg" alt="" class="w-6 h-6" aria-hidden="true">
+          <svg lucidePlus aria-hidden="true" class="w-6 h-6 text-teal-600"></svg>
         </div>
       </div>
       <p class="mt-4 text-gray-600 font-medium">Caricamento ricetta...</p>
@@ -28,7 +28,7 @@
     <div class="mb-8 p-4 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-lg shadow-sm" role="alert"
       aria-live="assertive">
       <div class="flex items-center">
-        <img src="assets/icons/alert_red.svg" alt="" class="w-5 h-5 mr-3 flex-shrink-0" aria-hidden="true">
+        <svg lucideAlertTriangle aria-hidden="true" class="w-5 h-5 mr-3 flex-shrink-0 text-red-500"></svg>
         <span class="font-medium">{{ error() }}</span>
       </div>
     </div>
@@ -42,8 +42,7 @@
         <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6">
           <div class="flex-1">
             <div class="flex items-start gap-3 mb-4 sm:mb-6">
-              <img src="assets/icons/recipe_teal.svg" alt="" class="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 mt-1"
-                aria-hidden="true">
+              <svg lucideScrollText aria-hidden="true" class="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 mt-1 text-teal-600"></svg>
               <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
                 {{ meal()!.tipoPasto.ricetta }}
               </h1>
@@ -59,8 +58,7 @@
                 {{ getMealTypeLabel(meal()!.tipoPasto.tipo) }}
               </span>
               <div class="flex items-center gap-2 text-gray-600 min-h-9 sm:min-h-auto">
-                <img src="assets/icons/clock_gray.svg" alt="" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"
-                  aria-hidden="true">
+                <svg lucideClock aria-hidden="true" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"></svg>
                 <time class="font-medium text-sm sm:text-xs">{{ meal()!.tipoPasto.orario || 'Orario non disponibile'
                   }}</time>
               </div>
@@ -71,7 +69,7 @@
             class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 sm:p-3 text-center min-w-[140px] sm:min-w-[120px] self-start md:self-auto"
             role="status" aria-label="Informazioni caloriche">
             <div class="flex items-center justify-center gap-2 mb-2 sm:mb-1">
-              <img src="assets/icons/lightning_orange.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5" aria-hidden="true">
+              <svg lucideZap aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 text-orange-500"></svg>
               <span class="text-sm text-gray-600 font-medium" aria-hidden="true">Calorie</span>
             </div>
             <div class="text-3xl sm:text-2xl lg:text-3xl font-bold text-emerald-600"
@@ -84,7 +82,7 @@
         aria-labelledby="ingredients-heading">
         <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-4 py-4 sm:px-6 border-b border-gray-200">
           <div class="flex items-center gap-3">
-            <img src="assets/icons/box_blue.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0" aria-hidden="true">
+            <svg lucideBox aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0 text-blue-500"></svg>
             <h2 id="ingredients-heading" class="text-xl sm:text-lg font-bold text-gray-900">Ingredienti</h2>
           </div>
         </div>
@@ -98,7 +96,7 @@
           <!-- Mobile cooking tip -->
           <div class="mt-4 sm:mt-6 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400 sm:hidden" role="note">
             <div class="flex items-start gap-2">
-              <img src="assets/icons/info_blue.svg" alt="" class="w-5 h-5 flex-shrink-0 mt-0.5" aria-hidden="true">
+              <svg lucideInfo aria-hidden="true" class="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-500"></svg>
               <p class="text-sm text-blue-800 font-medium">Prepara tutti gli ingredienti prima di iniziare la cottura
               </p>
             </div>
@@ -110,7 +108,7 @@
         aria-labelledby="recipe-generation-heading">
         <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-4 sm:px-6 border-b border-gray-200">
           <div class="flex items-center gap-3">
-            <img src="assets/icons/lightbulb_yellow.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5" aria-hidden="true">
+            <svg lucideLightbulb aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 text-yellow-500"></svg>
             <h2 id="recipe-generation-heading" class="text-xl sm:text-lg font-bold text-gray-900">Ricetta Completa</h2>
             <span class="bg-white px-2 py-1 rounded-full text-xs font-medium text-gray-600"
               aria-label="Generata con intelligenza artificiale">
@@ -125,12 +123,10 @@
               class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-4 sm:px-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 active:from-purple-800 active:to-pink-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 min-h-14 touch-manipulation"
               [attr.aria-busy]="generating()">
               @if (generating()) {
-              <img src="assets/icons/spinner_teal.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5 animate-spin flex-shrink-0"
-                aria-hidden="true">
+              <svg lucideLoader aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 animate-spin flex-shrink-0"></svg>
               }
               @if (!generating()) {
-              <img src="assets/icons/lightbulb_yellow.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0"
-                aria-hidden="true">
+              <svg lucideLightbulb aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0"></svg>
               }
               <span class="text-base sm:text-sm">{{ generating() ? 'Sto Generando...' : 'Genera Ricetta Completa'
                 }}</span>
@@ -142,8 +138,7 @@
             <div
               class="flex items-center gap-3 text-green-600 p-3 sm:p-0 bg-green-50 sm:bg-transparent rounded-lg sm:rounded-none"
               role="status" aria-live="polite">
-              <img src="assets/icons/check_green.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0"
-                aria-hidden="true">
+              <svg lucideCheck aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0"></svg>
               <span class="font-semibold text-base sm:text-sm">Ricetta generata con successo!</span>
             </div>
 
@@ -167,7 +162,7 @@
                   @if (generatedRecipe().p[0]) {
                   <div class="flex items-center gap-3">
                     <div class="bg-amber-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
-                      <img src="assets/icons/clock_gray.svg" alt="" class="w-6 h-6">
+                      <svg lucideClock aria-hidden="true" class="w-6 h-6 text-amber-700"></svg>
                     </div>
                     <span class="text-gray-800 font-semibold text-lg sm:text-sm">{{ generatedRecipe().p[0] }}</span>
                   </div>
@@ -175,7 +170,7 @@
                   @if (generatedRecipe().p[1]) {
                   <div class="flex items-center gap-3">
                     <div class="bg-orange-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
-                      <img src="assets/icons/flame_orange.svg" alt="" class="w-6 h-6">
+                      <svg lucideFlame aria-hidden="true" class="w-6 h-6 text-orange-700"></svg>
                     </div>
                     <span class="text-gray-800 font-semibold text-lg sm:text-sm">{{ generatedRecipe().p[1] }}</span>
                   </div>
@@ -190,7 +185,7 @@
                 aria-labelledby="generated-ingredients-heading">
                 <div class="flex items-center gap-3 mb-6">
                   <div class="bg-teal-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
-                    <img src="assets/icons/box_blue.svg" alt="" class="w-7 h-7 sm:w-5 sm:h-5">
+                    <svg lucideBox aria-hidden="true" class="w-7 h-7 sm:w-5 sm:h-5 text-teal-700"></svg>
                   </div>
                   <h4 id="generated-ingredients-heading" class="text-2xl sm:text-2xl font-bold text-gray-900">{{
                     generatedRecipe().h2[0] }}</h4>
@@ -216,7 +211,7 @@
                 aria-labelledby="generated-instructions-heading">
                 <div class="flex items-center gap-3 mb-6">
                   <div class="bg-purple-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
-                    <img src="assets/icons/clipboard_gray.svg" alt="" class="w-7 h-7 sm:w-5 sm:h-5">
+                    <svg lucideClipboard aria-hidden="true" class="w-7 h-7 sm:w-5 sm:h-5 text-purple-700"></svg>
                   </div>
                   <h4 id="generated-instructions-heading" class="text-2xl sm:text-2xl font-bold text-gray-900">{{
                     generatedRecipe().h2[1] }}</h4>
@@ -246,7 +241,7 @@
                 role="note" aria-labelledby="recipe-tip-heading">
                 <div class="flex items-start gap-4">
                   <div class="bg-blue-100 p-3 rounded-lg flex-shrink-0 mt-1" aria-hidden="true">
-                    <img src="assets/icons/info_blue.svg" alt="" class="w-6 h-6">
+                    <svg lucideInfo aria-hidden="true" class="w-6 h-6 text-blue-700"></svg>
                   </div>
                   <div class="flex-1">
                     <h5 id="recipe-tip-heading" class="text-xl sm:text-base font-bold text-gray-900 mb-3">Suggerimento
@@ -266,12 +261,10 @@
                 class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-4 sm:px-4 sm:py-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 active:from-teal-800 active:to-emerald-800 rounded-xl sm:rounded-lg text-white hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 min-h-14 sm:min-h-11 touch-manipulation font-semibold sm:font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 [attr.aria-busy]="savingRecipe()">
                 @if (savingRecipe()) {
-                <img src="assets/icons/spinner_teal.svg" alt="" class="w-5 h-5 sm:w-4 sm:h-4 animate-spin flex-shrink-0"
-                  aria-hidden="true">
+                <svg lucideLoader aria-hidden="true" class="w-5 h-5 sm:w-4 sm:h-4 animate-spin flex-shrink-0"></svg>
                 }
                 @if (!savingRecipe()) {
-                <img src="assets/icons/bookmark_white.svg" alt="" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"
-                  aria-hidden="true">
+                <svg lucideBookmark aria-hidden="true" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"></svg>
                 }
                 <span class="text-base sm:text-sm">{{ savingRecipe() ? 'Salvataggio...' : 'Salva Ricetta' }}</span>
               </button>
@@ -279,8 +272,7 @@
               <button (click)="copyRecipe()" type="button"
                 class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-4 sm:px-4 sm:py-2 bg-white border-2 border-purple-300 hover:border-purple-400 rounded-xl sm:rounded-lg text-purple-700 hover:bg-purple-50 active:bg-purple-100 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 min-h-14 sm:min-h-11 touch-manipulation font-semibold sm:font-medium"
                 aria-label="Copia il testo della ricetta negli appunti">
-                <img src="assets/icons/copy_gray.svg" alt="" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"
-                  aria-hidden="true">
+                <svg lucideCopy aria-hidden="true" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"></svg>
                 <span class="text-base sm:text-sm">Copia Ricetta</span>
               </button>
             </div>
@@ -289,7 +281,7 @@
             @if (saveSuccess()) {
             <div class="mt-4 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg" role="alert" aria-live="polite">
               <div class="flex items-center">
-                <img src="assets/icons/check_green.svg" alt="" class="w-5 h-5 mr-3 flex-shrink-0" aria-hidden="true">
+                <svg lucideCheck aria-hidden="true" class="w-5 h-5 mr-3 flex-shrink-0 text-green-500"></svg>
                 <span class="text-green-800 font-medium">Ricetta salvata con successo!</span>
               </div>
             </div>
@@ -305,7 +297,7 @@
         aria-labelledby="saved-recipes-heading">
         <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-4 py-4 sm:px-6 border-b border-gray-200">
           <div class="flex items-center gap-3">
-            <img src="assets/icons/bookmark_teal.svg" alt="" class="w-6 h-6 sm:w-5 sm:h-5" aria-hidden="true">
+            <svg lucideBookmark aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 text-teal-600"></svg>
             <h2 id="saved-recipes-heading" class="text-xl sm:text-lg font-bold text-gray-900">Ricette Salvate</h2>
             <span class="bg-white px-2 py-1 rounded-full text-xs font-medium text-gray-600"
               aria-label="{{ savedRecipes().length }} ricette salvate">
@@ -329,14 +321,14 @@
                 <div
                   class="flex items-center gap-2 text-xs font-medium text-gray-600 bg-white px-2 py-1 rounded-lg flex-shrink-0"
                   aria-label="{{ recipe.calories }} calorie">
-                  <img src="assets/icons/lightning_orange.svg" alt="" class="w-4 h-4" aria-hidden="true">
+                  <svg lucideZap aria-hidden="true" class="w-4 h-4 text-orange-500"></svg>
                   {{ recipe.calories }}
                 </div>
               </div>
               <button (click)="viewSavedRecipe(recipe)" type="button"
                 class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 text-sm min-h-11 touch-manipulation"
                 [attr.aria-label]="'Visualizza ricetta: ' + recipe.recipe_name">
-                <img src="assets/icons/eye_white.svg" alt="" class="w-4 h-4" aria-hidden="true">
+                <svg lucideEye aria-hidden="true" class="w-4 h-4"></svg>
                 <span>Visualizza</span>
               </button>
             </li>
