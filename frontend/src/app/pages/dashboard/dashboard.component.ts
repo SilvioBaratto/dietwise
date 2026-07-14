@@ -4,8 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SettingsService } from '../../services/settings.service';
 import { DietService } from '../../services/diet.service';
-import { DietaConLista, ListaSpesa, Ingrediente, DailyGroup } from '../../models/diet.types';
+import { DietaConLista, ListaSpesa, DailyGroup } from '../../models/diet.types';
 import { PageHeaderComponent } from '../../shared/page-header/page-header.component';
+import { GroceryListSheetComponent } from '../../shared/grocery-list-sheet/grocery-list-sheet';
 import {
   LucidePlus,
   LucideCheck,
@@ -27,6 +28,7 @@ import {
     CommonModule,
     FormsModule,
     PageHeaderComponent,
+    GroceryListSheetComponent,
     LucidePlus,
     LucideCheck,
     LucideCalendar,
@@ -232,10 +234,6 @@ export class DashboardComponent implements OnInit {
   closeGroceryList(): void {
     this.showGroceryList = false;
     this.cdr.markForCheck();
-  }
-
-  trackByNome(_index: number, ingrediente: Ingrediente): string {
-    return ingrediente.nome;
   }
 
   getMealTypeLabel(tipo: string): string {
