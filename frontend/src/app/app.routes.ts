@@ -25,6 +25,7 @@ export const routes: Routes = [
   {
     path: '',
     canActivate: [authGuard],
+    loadComponent: () => import('./shared/layout/layout.component').then(m => m.LayoutComponent),
     children: [
       {
         path: '',
