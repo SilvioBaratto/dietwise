@@ -1,11 +1,12 @@
 // src/app/app.routes.ts
 
 import { Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
+import { authGuard, guestGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'login',
+    canActivate: [guestGuard],
     loadComponent: () => import('./auth/login/login.component').then(m => m.LoginComponent)
   },
   {
@@ -23,7 +24,7 @@ export const routes: Routes = [
 
   {
     path: '',
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     children: [
       {
         path: '',

@@ -17,9 +17,21 @@ export class AuthService {
     readonly isAuthenticated$: Observable<boolean> = this.session$.pipe(map(s => !!s));
     readonly user$: Observable<User | null> = this.session$.pipe(map(s => s?.user ?? null));
 
+    private readonly initPromise: Promise<void>;
+
     constructor() {
         // Always initialize real Supabase session
-        this.initializeSession();
+        this.initPromise = this.initializeSession();
+    }
+
+    /** Resolves once the initial session load (from storage) has completed. */
+    waitUntilInitialized(): Promise<void> {
+        return this.initPromise;
+    }
+
+    /** Synchronous snapshot of auth state - safe to call from guards after waitUntilInitialized(). */
+    isAuthenticated(): boolean {
+        return !!this.sessionSubject.value;
     }
 
     /**
