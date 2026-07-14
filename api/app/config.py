@@ -32,6 +32,11 @@ class Settings(BaseSettings):
     #
     database_url: str = Field(alias="SUPABASE_DB_URL")
 
+    # Direct (non-pooled) connection, used only by Alembic migrations. Falls back to
+    # database_url if unset. Avoids running DDL/prepared statements through Supabase's
+    # transaction pooler (port 6543), which doesn't support them reliably.
+    direct_database_url: str | None = Field(default=None, alias="DIRECT_DATABASE_URL")
+
     # Pool Configuration - Conservative settings for Supabase Micro (15 pool limit)
     database_pool_size: int = Field(default=15)  # Reduced from 8 - safer for multiple instances
     database_max_overflow: int = Field(default=3)  # Reduced from 5 - total = 8 connections max

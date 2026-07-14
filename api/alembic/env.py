@@ -1,6 +1,8 @@
+import logging
 from logging.config import fileConfig
 import os
 import sys
+from urllib.parse import urlsplit
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -16,13 +18,23 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+logger = logging.getLogger("alembic.env")
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Override sqlalchemy.url from environment variable if available
-# This allows production deployments to use SUPABASE_DB_URL from Fly.io secrets
-database_url = os.getenv("SUPABASE_DB_URL")
+# Prefer DIRECT_DATABASE_URL (non-pooled) for migrations - Supabase's transaction
+# pooler (port 6543) doesn't reliably support the prepared statements/DDL Alembic
+# issues. Falls back to SUPABASE_DB_URL (same URL the app uses) if unset.
+direct_database_url = os.getenv("DIRECT_DATABASE_URL")
+database_url = direct_database_url or os.getenv("SUPABASE_DB_URL")
 if database_url:
     config.set_main_option("sqlalchemy.url", database_url)
+    source = "DIRECT_DATABASE_URL" if direct_database_url else "SUPABASE_DB_URL (fallback)"
+    parsed = urlsplit(database_url)
+    logger.info(
+        "alembic: using %s -> host=%s port=%s (password redacted)",
+        source, parsed.hostname, parsed.port,
+    )
 from app.models import Base
 target_metadata = Base.metadata
 
