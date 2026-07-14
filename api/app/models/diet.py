@@ -50,6 +50,11 @@ class User(Base):
         nullable=False,
         comment="True if user is an admin"
     )
+    terms_accepted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        comment="Timestamp when the user accepted the Terms & Conditions; NULL if not yet accepted"
+    )
 
     # Table constraints
     __table_args__ = (

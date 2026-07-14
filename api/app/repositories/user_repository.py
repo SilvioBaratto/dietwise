@@ -1,7 +1,7 @@
 """User repository for data access operations"""
 
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models import User, UserSettings
@@ -19,11 +19,27 @@ class UserRepository:
         result = self.db.execute(stmt)
         return result.scalar_one_or_none()
 
+    def get_by_id(self, user_id: str) -> User | None:
+        """Get user by ID"""
+        stmt = select(User).where(User.id == user_id)
+        result = self.db.execute(stmt)
+        return result.scalar_one_or_none()
+
     def create_user(self, user_id: str, email: str) -> User:
         """Create a new user"""
         user = User(id=user_id, email=email)
         self.db.add(user)
         self.db.flush()
+        return user
+
+    def accept_terms(self, user_id: str) -> User | None:
+        """Record terms acceptance for a user"""
+        user = self.get_by_id(user_id)
+        if not user:
+            return None
+        user.terms_accepted_at = func.now()
+        self.db.flush()
+        self.db.refresh(user)
         return user
 
 

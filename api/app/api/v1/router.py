@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.api.v1 import admin, api_keys, diet, meal, recipe, settings
+from app.api.v1 import admin, api_keys, diet, meal, recipe, settings, users
 
 # Create the main API router
 api_router = APIRouter()
@@ -14,3 +14,4 @@ api_router.include_router(meal.router)
 api_router.include_router(recipe.router)
 api_router.include_router(admin.router)
 api_router.include_router(api_keys.router)
+api_router.include_router(users.router)

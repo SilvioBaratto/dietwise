@@ -20,6 +20,14 @@ class UserService:
         self.user_repo = UserRepository(db)
         self.user_settings_repo = UserSettingsRepository(db)
 
+    def accept_terms(self, user_id: str) -> str:
+        """Record terms acceptance for the current user, return the new timestamp"""
+        user = self.user_repo.accept_terms(user_id)
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found.")
+        self.db.commit()
+        return user.terms_accepted_at.isoformat()
+
     def get_user_settings(self, user_id: str) -> UserSettingsOut:
         """Get user settings"""
         settings = self.user_settings_repo.get_by_user_id(user_id)

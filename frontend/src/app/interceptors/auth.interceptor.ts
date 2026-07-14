@@ -65,13 +65,18 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      // Handle 403 Forbidden - account pending approval
+      // Handle 403 Forbidden - account pending approval or terms not accepted
       if (error.status === 403) {
         const errorMessage = error.error?.error?.message || error.error?.message || '';
-        if (errorMessage.toLowerCase().includes('pending approval') ||
-            errorMessage.toLowerCase().includes('not approved')) {
+        const lowerMessage = errorMessage.toLowerCase();
+        if (lowerMessage.includes('pending approval') || lowerMessage.includes('not approved')) {
           console.log('[AuthInterceptor] Account pending approval, redirecting...');
           router.navigate(['/pending-approval']);
+          return throwError(() => error);
+        }
+        if (lowerMessage.includes('terms and conditions not accepted')) {
+          console.log('[AuthInterceptor] Terms not accepted, redirecting...');
+          router.navigate(['/accept-terms']);
           return throwError(() => error);
         }
       }

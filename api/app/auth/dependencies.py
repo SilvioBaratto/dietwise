@@ -106,6 +106,9 @@ def get_current_user_from_token(
             "is_active": True,
             "is_approved": db_user.is_approved,
             "is_admin": db_user.is_admin,
+            "terms_accepted_at": (
+                db_user.terms_accepted_at.isoformat() if db_user.terms_accepted_at else None
+            ),
             "created_at": db_user.created_at.isoformat(),
             "role": claims_data.get("role", "authenticated"),
             "aal": claims_data.get("aal"),
@@ -143,6 +146,13 @@ def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Your account is pending approval. Please wait for admin approval."
+        )
+
+    # Check if user has accepted the Terms & Conditions
+    if not user_data.get("terms_accepted_at"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Terms and conditions not accepted. Please accept to continue."
         )
 
     return user_data

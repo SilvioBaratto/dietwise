@@ -16,6 +16,10 @@ export const routes: Routes = [
     path: 'pending-approval',
     loadComponent: () => import('./auth/pending-approval/pending-approval.component').then(m => m.PendingApprovalComponent)
   },
+  {
+    path: 'accept-terms',
+    loadComponent: () => import('./auth/accept-terms/accept-terms.component').then(m => m.AcceptTermsComponent)
+  },
 
   {
     path: '',
