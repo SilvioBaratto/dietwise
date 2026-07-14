@@ -7,23 +7,23 @@
     [style.width]="'calc(' + (100 / navItems.length) + '% - 10px)'"
     aria-hidden="true"></div>
   }
-  @for (item of navItems; track item.route) {
+  @for (item of navItems; track item.route; let i = $index) {
   <a [routerLink]="item.route" routerLinkActive="text-white"
     [routerLinkActiveOptions]="{ exact: item.exact }"
     class="relative z-10 flex-1 flex flex-col items-center justify-center gap-1 min-h-13 py-2 text-text-tertiary transition-colors"
     [attr.aria-label]="item.mobileLabel">
     @switch (item.icon) {
       @case ('dashboard') {
-        <svg lucideLayoutDashboard aria-hidden="true" class="w-5 h-5"></svg>
+        <svg lucideLayoutDashboard aria-hidden="true" class="w-5 h-5" [strokeWidth]="activeIndex() === i ? 2.5 : 2"></svg>
       }
       @case ('weekly') {
-        <svg lucideCalendarDays aria-hidden="true" class="w-5 h-5"></svg>
+        <svg lucideCalendarDays aria-hidden="true" class="w-5 h-5" [strokeWidth]="activeIndex() === i ? 2.5 : 2"></svg>
       }
       @case ('recipes') {
-        <svg lucideBookOpen aria-hidden="true" class="w-5 h-5"></svg>
+        <svg lucideBookOpen aria-hidden="true" class="w-5 h-5" [strokeWidth]="activeIndex() === i ? 2.5 : 2"></svg>
       }
       @case ('settings') {
-        <svg lucideSettings aria-hidden="true" class="w-5 h-5"></svg>
+        <svg lucideSettings aria-hidden="true" class="w-5 h-5" [strokeWidth]="activeIndex() === i ? 2.5 : 2"></svg>
       }
     }
     <span class="text-xs font-medium">{{ item.mobileLabel }}</span>
