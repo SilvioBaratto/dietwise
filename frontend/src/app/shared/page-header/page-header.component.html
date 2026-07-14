@@ -1,0 +1,26 @@
+<div class="mb-6 sm:mb-8">
+  @if (backLabel()) {
+  <button type="button" (click)="back.emit()"
+    class="inline-flex items-center gap-2 text-primary hover:text-primary-hover mb-4 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-lg px-2 py-2 -ml-2 min-h-11 touch-manipulation"
+    aria-label="{{ backLabel() }}">
+    <svg lucideArrowLeft aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
+    <span>{{ backLabel() }}</span>
+  </button>
+  }
+
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-3">
+        <ng-content select="[page-header-icon]"></ng-content>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-text leading-tight">
+          {{ title() }}
+        </h1>
+      </div>
+      @if (subtitle()) {
+      <p class="text-text-secondary text-base sm:text-lg leading-relaxed mt-2">{{ subtitle() }}</p>
+      }
+      <ng-content select="[page-header-subtitle]"></ng-content>
+    </div>
+    <ng-content select="[page-header-actions]"></ng-content>
+  </div>
+</div>
