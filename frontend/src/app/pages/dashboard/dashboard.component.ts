@@ -8,6 +8,7 @@ import { ApiKeyService } from '../../services/api-key.service';
 import { DietaConLista, ListaSpesa, Ingrediente, DailyGroup } from '../../models/diet.types';
 import { Provider } from '../../models/api-key.types';
 import { CostBadgeComponent } from '../../shared/cost-badge/cost-badge.component';
+import { PageHeaderComponent } from '../../shared/page-header/page-header.component';
 import {
   LucidePlus,
   LucideClock,
@@ -30,6 +31,7 @@ import {
     CommonModule,
     FormsModule,
     CostBadgeComponent,
+    PageHeaderComponent,
     LucidePlus,
     LucideClock,
     LucideCheck,

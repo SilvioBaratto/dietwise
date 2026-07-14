@@ -12,6 +12,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DietService } from '../../../services/diet.service';
 import { DailyGroup, DietaSettimanale, Pasto } from '../../../models/diet.types';
+import { PageHeaderComponent } from '../../../shared/page-header/page-header.component';
 import {
   LucideClipboard,
   LucideAlertTriangle,
@@ -27,6 +28,7 @@ import {
   selector: 'app-weekly-details',
   imports: [
     RouterModule,
+    PageHeaderComponent,
     LucideClipboard,
     LucideAlertTriangle,
     LucideCalendar,

@@ -87,56 +87,43 @@
     <!-- Main Dashboard Content -->
     @if (dietaConLista) {
     <div class="space-y-4 sm:space-y-6">
-      <!-- Header Section - Enhanced responsive design -->
-      <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8">
-        <div class="flex flex-col gap-4 sm:gap-5">
-          <!-- Title Section -->
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-3 mb-2">
-              <svg lucideCheck aria-hidden="true" class="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 flex-shrink-0 text-green-500"></svg>
-              <h1 class="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900 leading-tight truncate">
-                {{ dietaConLista.dieta.nome }}
-              </h1>
-            </div>
-            <p class="text-sm sm:text-base lg:text-lg text-gray-600 flex items-center gap-2 pl-10 sm:pl-11 lg:pl-12">
-              <svg lucideCalendar aria-hidden="true" class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-gray-500"></svg>
-              <span class="font-medium">{{ dietaConLista.dieta.dataInizio }} — {{ dietaConLista.dieta.dataFine }}</span>
-            </p>
-          </div>
+      <app-page-header [title]="dietaConLista.dieta.nome">
+        <svg page-header-icon lucideCheck aria-hidden="true" class="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 flex-shrink-0 text-green-500"></svg>
+        <p page-header-subtitle class="text-sm sm:text-base lg:text-lg text-gray-600 flex items-center gap-2 mt-2">
+          <svg lucideCalendar aria-hidden="true" class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-gray-500"></svg>
+          <span class="font-medium">{{ dietaConLista.dieta.dataInizio }} — {{ dietaConLista.dieta.dataFine }}</span>
+        </p>
+        <div page-header-actions class="flex flex-row gap-2 sm:gap-3">
+          <!-- Regenerate Button -->
+          <button (click)="generateNewDiet()" [disabled]="loading"
+            class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 sm:px-5 lg:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm sm:text-base lg:text-lg rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 min-h-[48px] sm:min-h-[52px] touch-manipulation"
+            aria-label="Rigenera dieta settimanale">
+            @if (loading) {
+            <svg lucideLoader aria-hidden="true" class="h-5 w-5 sm:h-6 sm:w-6 animate-spin flex-shrink-0"></svg>
+            <span class="hidden sm:inline">Generazione...</span>
+            } @else {
+            <svg lucideRefreshCw aria-hidden="true" class="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0"></svg>
+            <span class="hidden sm:inline">Rigenera</span>
+            }
+          </button>
 
-          <!-- Action Buttons - Compact icon-only on mobile, full text on desktop -->
-          <div class="flex flex-row gap-2 sm:gap-3">
-            <!-- Regenerate Button -->
-            <button (click)="generateNewDiet()" [disabled]="loading"
-              class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 sm:px-5 lg:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm sm:text-base lg:text-lg rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 min-h-[48px] sm:min-h-[52px] touch-manipulation"
-              aria-label="Rigenera dieta settimanale">
-              @if (loading) {
-              <svg lucideLoader aria-hidden="true" class="h-5 w-5 sm:h-6 sm:w-6 animate-spin flex-shrink-0"></svg>
-              <span class="hidden sm:inline">Generazione...</span>
-              } @else {
-              <svg lucideRefreshCw aria-hidden="true" class="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0"></svg>
-              <span class="hidden sm:inline">Rigenera</span>
-              }
-            </button>
+          <!-- Modify Diet Button -->
+          <button (click)="openModifyDialog()"
+            class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 sm:px-5 lg:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm sm:text-base lg:text-lg rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 min-h-[48px] sm:min-h-[52px] touch-manipulation"
+            aria-label="Modifica dieta">
+            <svg lucideClipboard aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"></svg>
+            <span class="hidden sm:inline">Modifica</span>
+          </button>
 
-            <!-- Modify Diet Button -->
-            <button (click)="openModifyDialog()"
-              class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 sm:px-5 lg:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm sm:text-base lg:text-lg rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 min-h-[48px] sm:min-h-[52px] touch-manipulation"
-              aria-label="Modifica dieta">
-              <svg lucideClipboard aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"></svg>
-              <span class="hidden sm:inline">Modifica</span>
-            </button>
-
-            <!-- Shopping List Button -->
-            <button (click)="openGroceryList()"
-              class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 sm:px-5 lg:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm sm:text-base lg:text-lg rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 min-h-[48px] sm:min-h-[52px] touch-manipulation"
-              aria-label="Visualizza lista della spesa">
-              <svg lucideShoppingCart aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"></svg>
-              <span class="hidden sm:inline">Lista Spesa</span>
-            </button>
-          </div>
+          <!-- Shopping List Button -->
+          <button (click)="openGroceryList()"
+            class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 sm:px-5 lg:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm sm:text-base lg:text-lg rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 min-h-[48px] sm:min-h-[52px] touch-manipulation"
+            aria-label="Visualizza lista della spesa">
+            <svg lucideShoppingCart aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"></svg>
+            <span class="hidden sm:inline">Lista Spesa</span>
+          </button>
         </div>
-      </div>
+      </app-page-header>
 
       <!-- Daily Meals Section - Enhanced responsive layout -->
       <div class="space-y-4 sm:space-y-5">

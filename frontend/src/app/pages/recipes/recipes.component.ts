@@ -3,6 +3,7 @@ import { Component, OnInit, signal, computed, inject, ChangeDetectionStrategy } 
 import { RouterModule } from '@angular/router';
 import { RecipeService } from '../../services/recipe.service';
 import { SavedRecipe } from '../../models/recipe.types';
+import { PageHeaderComponent } from '../../shared/page-header/page-header.component';
 import {
   LucideBookOpen,
   LucideAlertTriangle,
@@ -19,6 +20,7 @@ import {
   selector: 'app-recipes',
   imports: [
     RouterModule,
+    PageHeaderComponent,
     LucideBookOpen,
     LucideAlertTriangle,
     LucideLoader,

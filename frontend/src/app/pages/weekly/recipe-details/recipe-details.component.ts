@@ -15,6 +15,7 @@ import { MealService } from '../../../services/meal.service';
 import { RecipeService } from '../../../services/recipe.service';
 import { Pasto } from '../../../models/diet.types';
 import { HtmlStructure, SavedRecipe } from '../../../models/recipe.types';
+import { PageHeaderComponent } from '../../../shared/page-header/page-header.component';
 import {
   LucideArrowLeft,
   LucidePlus,
@@ -39,6 +40,7 @@ import {
   imports: [
     CommonModule,
     RouterModule,
+    PageHeaderComponent,
     LucideArrowLeft,
     LucidePlus,
     LucideAlertTriangle,

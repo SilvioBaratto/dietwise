@@ -29,19 +29,13 @@
     <!-- Diet Details -->
     @if (diet() && !loading()) {
     <div class="space-y-6 sm:space-y-8">
-      <!-- Header Section -->
-      <header class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8">
-        <div class="text-center">
-          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4 px-2">
-            {{ diet()!.nome || 'Dettagli Dieta' }}
-          </h1>
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-2 text-gray-600">
-            <svg lucideCalendar aria-hidden="true" class="w-5 h-5 flex-shrink-0 text-gray-500"></svg>
-            <time class="text-base sm:text-lg font-medium text-center break-words">{{ diet()!.dataInizio }} — {{
-              diet()!.dataFine }}</time>
-          </div>
+      <app-page-header [title]="diet()!.nome || 'Dettagli Dieta'">
+        <div page-header-subtitle class="flex items-center gap-2 text-text-secondary mt-2">
+          <svg lucideCalendar aria-hidden="true" class="w-5 h-5 flex-shrink-0 text-gray-500"></svg>
+          <time class="text-base sm:text-lg font-medium break-words">{{ diet()!.dataInizio }} — {{
+            diet()!.dataFine }}</time>
         </div>
-      </header>
+      </app-page-header>
       <!-- Stats Overview -->
       <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6" aria-label="Statistiche dieta">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

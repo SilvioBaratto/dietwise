@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { DietService } from '../../services/diet.service';
 import { DietSummary, ListaSpesa, Ingrediente } from '../../models/diet.types';
+import { PageHeaderComponent } from '../../shared/page-header/page-header.component';
 import {
   LucideAlertTriangle,
   LucideClipboard,
@@ -22,6 +23,7 @@ import {
   imports: [
     CommonModule,
     RouterModule,
+    PageHeaderComponent,
     LucideAlertTriangle,
     LucideClipboard,
     LucideChartColumn,

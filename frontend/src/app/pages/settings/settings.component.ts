@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 import { ApiKeyResponse, AvailableModels, Provider } from '../../models/api-key.types';
 import { UserSettingsIn, UserSettingsOut } from '../../models/user-settings.types';
 import { CostBadgeComponent } from '../../shared/cost-badge/cost-badge.component';
+import { PageHeaderComponent } from '../../shared/page-header/page-header.component';
 import {
   LucideSettings,
   LucideInfo,
@@ -37,6 +38,7 @@ import {
     ReactiveFormsModule,
     AsyncPipe,
     CostBadgeComponent,
+    PageHeaderComponent,
     LucideSettings,
     LucideInfo,
     LucideCheck,

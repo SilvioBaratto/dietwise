@@ -34,7 +34,7 @@ export class LayoutComponent {
   constructor() {
     effect(() => {
       const pageLabel = this.currentPageLabel();
-      this.title.setTitle(`${pageLabel} — DietologoAI`);
+      this.title.setTitle(pageLabel === 'DietologoAI' ? pageLabel : `${pageLabel} — DietologoAI`);
       this.mainContent()?.nativeElement.focus();
     });
   }
