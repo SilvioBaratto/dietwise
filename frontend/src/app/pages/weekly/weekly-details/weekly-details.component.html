@@ -57,12 +57,50 @@
         </div>
       </div>
 
+      <!-- Meal Type Selector -->
+      @if (availableMealTypes().length > 1) {
+      <div class="flex items-center gap-2 overflow-x-auto scrollbar-hidden -mt-2" role="tablist" aria-label="Seleziona pasto">
+        <button type="button" role="tab" [attr.aria-selected]="selectedMealType() === null"
+          (click)="selectMealType(null)"
+          class="flex-shrink-0 inline-flex items-center justify-center px-3.5 py-2 min-h-11 rounded-xl text-xs sm:text-sm font-medium border transition-colors touch-manipulation focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+          [class.bg-gray-800]="selectedMealType() === null"
+          [class.text-white]="selectedMealType() === null"
+          [class.border-gray-800]="selectedMealType() === null"
+          [class.bg-white]="selectedMealType() !== null"
+          [class.text-gray-700]="selectedMealType() !== null"
+          [class.border-gray-200]="selectedMealType() !== null"
+          [class.hover:bg-gray-50]="selectedMealType() !== null">
+          Tutti
+        </button>
+        @for (type of availableMealTypes(); track type) {
+        <button type="button" role="tab" [attr.aria-selected]="selectedMealType() === type"
+          (click)="selectMealType(type)"
+          class="flex-shrink-0 inline-flex items-center justify-center px-3.5 py-2 min-h-11 rounded-xl text-xs sm:text-sm font-medium border transition-colors touch-manipulation focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+          [class.text-white]="selectedMealType() === type"
+          [class.bg-orange-500]="selectedMealType() === type && type === 'COLAZIONE'"
+          [class.border-orange-500]="selectedMealType() === type && type === 'COLAZIONE'"
+          [class.bg-green-500]="selectedMealType() === type && (type === 'SPUNTINO_MATTINA' || type === 'SPUNTINO_POMERIGGIO')"
+          [class.border-green-500]="selectedMealType() === type && (type === 'SPUNTINO_MATTINA' || type === 'SPUNTINO_POMERIGGIO')"
+          [class.bg-blue-500]="selectedMealType() === type && type === 'PRANZO'"
+          [class.border-blue-500]="selectedMealType() === type && type === 'PRANZO'"
+          [class.bg-purple-500]="selectedMealType() === type && type === 'CENA'"
+          [class.border-purple-500]="selectedMealType() === type && type === 'CENA'"
+          [class.bg-white]="selectedMealType() !== type"
+          [class.text-gray-700]="selectedMealType() !== type"
+          [class.border-gray-200]="selectedMealType() !== type"
+          [class.hover:bg-gray-50]="selectedMealType() !== type">
+          {{ getMealTypeLabel(type) }}
+        </button>
+        }
+      </div>
+      }
+
       <!-- Meals Grid - Selected Day -->
-      @if (selectedDayGroup(); as dayGroup) {
+      @if (selectedDayGroup()) {
       <section class="space-y-4">
         <!-- Meals for this day -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-          @for (pasto of dayGroup.meals; track pasto.id) {
+          @for (pasto of filteredMeals(); track pasto.id) {
             <div
               class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-teal-300 transition-all duration-300 transform hover:-translate-y-1 focus-within:ring-2 focus-within:ring-teal-500 focus-within:ring-offset-2 flex flex-col">
               <!-- Card Header -->

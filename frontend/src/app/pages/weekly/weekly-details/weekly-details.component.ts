@@ -22,6 +22,14 @@ import {
   LucideEye,
 } from '@lucide/angular';
 
+const MEAL_TYPE_ORDER = [
+  'COLAZIONE',
+  'SPUNTINO_MATTINA',
+  'PRANZO',
+  'SPUNTINO_POMERIGGIO',
+  'CENA',
+];
+
 @Component({
   selector: 'app-weekly-details',
   imports: [
@@ -47,6 +55,7 @@ export class WeeklyDetailsComponent implements OnInit {
   error = signal('');
   loading = signal(true);
   selectedDay = signal<string | null>(null);
+  selectedMealType = signal<string | null>(null);
 
   // Convert route params to signal
   private params = toSignal(this.route.paramMap);
@@ -83,15 +92,6 @@ export class WeeklyDetailsComponent implements OnInit {
       grouped.set(pasto.day, dayMeals);
     });
 
-    // Sort meals within each day by meal type order
-    const mealTypeOrder: Record<string, number> = {
-      COLAZIONE: 1,
-      SPUNTINO_MATTINA: 2,
-      PRANZO: 3,
-      SPUNTINO_POMERIGGIO: 4,
-      CENA: 5,
-    };
-
     // Day order for sorting
     const dayOrder = [
       'LUNEDI',
@@ -109,9 +109,9 @@ export class WeeklyDetailsComponent implements OnInit {
         day,
         dayName: this.getDayName(day),
         meals: meals.sort((a, b) => {
-          const orderA = mealTypeOrder[a.tipoPasto.tipo] || 999;
-          const orderB = mealTypeOrder[b.tipoPasto.tipo] || 999;
-          return orderA - orderB;
+          const orderA = MEAL_TYPE_ORDER.indexOf(a.tipoPasto.tipo);
+          const orderB = MEAL_TYPE_ORDER.indexOf(b.tipoPasto.tipo);
+          return (orderA === -1 ? 999 : orderA) - (orderB === -1 ? 999 : orderB);
         }),
       }))
       .sort((a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day));
@@ -122,8 +122,26 @@ export class WeeklyDetailsComponent implements OnInit {
     return groups.find((g) => g.day === this.selectedDay()) ?? groups[0] ?? null;
   });
 
+  availableMealTypes = computed(() => {
+    const group = this.selectedDayGroup();
+    if (!group) return [];
+    const present = new Set<string>(group.meals.map((m) => m.tipoPasto.tipo));
+    return MEAL_TYPE_ORDER.filter((type) => present.has(type));
+  });
+
+  filteredMeals = computed(() => {
+    const group = this.selectedDayGroup();
+    if (!group) return [];
+    const type = this.selectedMealType();
+    return type ? group.meals.filter((m) => m.tipoPasto.tipo === type) : group.meals;
+  });
+
   selectDay(day: string): void {
     this.selectedDay.set(day);
+  }
+
+  selectMealType(type: string | null): void {
+    this.selectedMealType.set(type);
   }
 
   private fetchDiet(id: string) {
