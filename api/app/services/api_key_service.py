@@ -19,7 +19,7 @@ from app.services.encryption_service import encryption_service
 
 logger = logging.getLogger(__name__)
 
-_AVAILABLE_MODELS: dict[str, list[str]] = {
+AVAILABLE_MODELS: dict[str, list[str]] = {
     "openai": [
         "gpt-5.4",
         "gpt-5-mini",
@@ -121,7 +121,7 @@ class ApiKeyService:
         self, user_id: str, provider: str, model: str
     ) -> None:
         """Persist the user's preferred LLM provider and model."""
-        if model not in _AVAILABLE_MODELS.get(provider, []):
+        if model not in AVAILABLE_MODELS.get(provider, []):
             raise ValidationError(
                 f"Model '{model}' is not available for provider '{provider}'"
             )
@@ -145,4 +145,4 @@ class ApiKeyService:
     @staticmethod
     def get_available_models() -> AvailableModelsResponse:
         """Return the static list of supported models per provider."""
-        return AvailableModelsResponse(**_AVAILABLE_MODELS)
+        return AvailableModelsResponse(**AVAILABLE_MODELS)

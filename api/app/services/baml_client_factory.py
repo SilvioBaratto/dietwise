@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.exceptions import ApiKeyNotConfiguredError, LLMProviderError, RateLimitError
 from app.repositories import ApiKeyRepository, UserSettingsRepository
+from app.services.api_key_service import AVAILABLE_MODELS
 from app.services.encryption_service import InvalidTag, encryption_service
 from baml_client.async_client import BamlAsyncClient, b
 
@@ -51,6 +52,18 @@ class BamlClientFactory:
 
         provider = settings.preferred_provider
         model = settings.preferred_model or DEFAULT_MODEL.get(provider, "")
+        if model not in AVAILABLE_MODELS.get(provider, []):
+            logger.warning(
+                "baml_client_factory",
+                extra={
+                    "event": "stale_model_preference_fallback",
+                    "user_id": self.user_id,
+                    "provider": provider,
+                    "stored_model": model,
+                    "fallback_model": DEFAULT_MODEL.get(provider, ""),
+                },
+            )
+            model = DEFAULT_MODEL.get(provider, "")
         self.provider = provider
 
         record = self.api_key_repo.get_by_user_and_provider(self.user_id, provider)
