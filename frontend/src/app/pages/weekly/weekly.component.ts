@@ -8,7 +8,6 @@ import { PageHeaderComponent } from '../../shared/page-header/page-header.compon
 import {
   LucideAlertTriangle,
   LucideClipboard,
-  LucideChartColumn,
   LucideCalendar,
   LucideEye,
   LucideTrash2,
@@ -26,8 +25,7 @@ import {
     PageHeaderComponent,
     LucideAlertTriangle,
     LucideClipboard,
-    LucideChartColumn,
-    LucideCalendar,
+      LucideCalendar,
     LucideEye,
     LucideTrash2,
     LucideInbox,
