@@ -103,6 +103,18 @@ class IngredientRepository:
         self.db.flush()
         return ingredient
 
+    def update_unit(self, ingredient: Ingredient, unit: UnitaMisura) -> Ingredient:
+        """Refresh a reused ingredient's unit to the latest BAML output.
+
+        The catalog is deduped by name across every user/diet, so without this
+        an ingredient's unit stays frozen at whatever it was the first time
+        that name was ever created and later quantities get mislabeled.
+        """
+        if ingredient.unit != unit:
+            ingredient.unit = unit
+            self.db.flush()
+        return ingredient
+
 
 class MealIngredientRepository:
     """Repository for MealIngredient operations"""

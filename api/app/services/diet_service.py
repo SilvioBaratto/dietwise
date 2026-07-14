@@ -22,6 +22,8 @@ from app.schemas import DietaConLista, DietSummary
 from app.schemas import Ingrediente as IngredienteSchema
 from app.schemas import TipoPasto as TipoPastoSchema
 from app.services.baml_client_factory import BamlClientFactory
+from app.services.nutrition_calculator import compute_calorie_target
+from app.services.package_sizing import round_to_purchasable
 from baml_client.types import ListaSpesa as ListaSpesaSchema
 
 logger = logging.getLogger(__name__)
@@ -150,6 +152,7 @@ class DietService:
             end_date = today + timedelta(days=days_until_sunday)
 
         # Generate diet using BAML (Step 1 - only diet, no grocery list)
+        target = compute_calorie_target(settings.weight, settings.height, settings.age, settings.sex)
         try:
             external = await self._baml.get_client().GeneraDietaSettimanale(
                 dataInizio=today.isoformat(),
@@ -162,6 +165,10 @@ class DietService:
                 sesso=settings.sex,
                 obiettivo=settings.goals or "",
                 altri_dati=settings.other_data or "",
+                bmr=target.bmr,
+                tdee=target.tdee,
+                calorieMin=target.floor,
+                calorieMax=target.ceiling,
             )
         except (ApiKeyNotConfiguredError, LLMProviderError, RateLimitError):
             raise
@@ -247,6 +254,11 @@ class DietService:
         except Exception as e:
             self._baml.handle_baml_error(e)
 
+        # Drop zero/negative-quantity artifacts before rounding/persisting —
+        # GeneraListaSpesa occasionally emits a leftover duplicate row at 0.
+        grocery.ingredienti = [i for i in grocery.ingredienti if i.quantita > 0]
+        grocery.ingredienti = round_to_purchasable(grocery.ingredienti)
+
         # Save grocery list
         grocery_list = self.grocery_list_repo.create_grocery_list(
             grocery_list_id=str(uuid.uuid4()),
@@ -262,6 +274,8 @@ class DietService:
                     name=ingr.nome,
                     unit=ingr.unita,
                 )
+            else:
+                existing_ingr = self.ingredient_repo.update_unit(existing_ingr, ingr.unita)
 
             self.grocery_list_item_repo.create_grocery_item(
                 item_id=str(uuid.uuid4()),
@@ -380,6 +394,7 @@ class DietService:
         )
 
         # Call BAML to modify the diet
+        target = compute_calorie_target(settings.weight, settings.height, settings.age, settings.sex)
         try:
             today = date.today()
             modified = await self._baml.get_client().ModificaDietaSettimanale(
@@ -392,6 +407,10 @@ class DietService:
                 obiettivo=settings.goals or "",
                 oggiData=today.isoformat(),
                 oggiGiorno=get_baml_day_enum(today),
+                bmr=target.bmr,
+                tdee=target.tdee,
+                calorieMin=target.floor,
+                calorieMax=target.ceiling,
             )
         except (ApiKeyNotConfiguredError, LLMProviderError, RateLimitError):
             raise
@@ -457,6 +476,11 @@ class DietService:
         except Exception as e:
             self._baml.handle_baml_error(e)
 
+        # Drop zero/negative-quantity artifacts before rounding/persisting —
+        # GeneraListaSpesa occasionally emits a leftover duplicate row at 0.
+        grocery.ingredienti = [i for i in grocery.ingredienti if i.quantita > 0]
+        grocery.ingredienti = round_to_purchasable(grocery.ingredienti)
+
         # Save grocery list
         grocery_list = self.grocery_list_repo.create_grocery_list(
             grocery_list_id=str(uuid.uuid4()),
@@ -472,6 +496,8 @@ class DietService:
                     name=ingr.nome,
                     unit=ingr.unita,
                 )
+            else:
+                existing_ingr = self.ingredient_repo.update_unit(existing_ingr, ingr.unita)
 
             self.grocery_list_item_repo.create_grocery_item(
                 item_id=str(uuid.uuid4()),

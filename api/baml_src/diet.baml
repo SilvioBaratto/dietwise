@@ -59,7 +59,11 @@ function GeneraDietaSettimanale(
   eta: int?,
   sesso: string?,
   obiettivo: string,
-  altri_dati: string
+  altri_dati: string,
+  bmr: int,
+  tdee: int,
+  calorieMin: int,
+  calorieMax: int
 ) -> DietaSettimanale {
   client OpenAI
   prompt #"
@@ -73,8 +77,11 @@ function GeneraDietaSettimanale(
     - Età: {% if eta %}{{ eta }}{% else %}30{% endif %} anni, Sesso: {% if sesso %}{{ sesso }}{% else %}non specificato{% endif %}
     - BMI: {{ (peso / ((altezza/100) ** 2)) | round(1) }}
 
-    CALCOLO FABBISOGNO (Mifflin-St Jeor):
-    - BMR stimato + TDEE per obiettivo: {{ obiettivo }}
+    FABBISOGNO CALORICO (già calcolato, Mifflin-St Jeor + fattore attività — non ricalcolare):
+    - BMR: {{ bmr }} kcal/die (metabolismo basale a riposo)
+    - TDEE: {{ tdee }} kcal/die (fabbisogno di mantenimento con attività)
+    - Obiettivo utente: {{ obiettivo }}
+    - VINCOLO ASSOLUTO: il totale calorico di OGNI giorno deve stare tra {{ calorieMin }} e {{ calorieMax }} kcal. Mai sotto {{ calorieMin }} kcal, qualunque sia l'obiettivo di perdita peso — un deficit più aggressivo non è mai accettabile.
     - AMDR target: Carb 45-55%, Prot 20-25%, Grassi 25-30%
 
     REQUISITI PIANO:
@@ -85,7 +92,7 @@ function GeneraDietaSettimanale(
     - Ogni pasto DEVE includere il campo "giorno" con il giorno della settimana
     - 5 pasti/die (COLAZIONE, SPUNTINO_MATTINA, PRANZO, SPUNTINO_POMERIGGIO, CENA) con orari realistici
     - Ingredienti: "Nome Quantità+Unità" (g, ml, pz)
-    - Calorie per pasto bilanciate per timing metabolico
+    - Calorie per pasto bilanciate per timing metabolico, e la somma dei 5 pasti di ogni giorno deve rispettare il VINCOLO ASSOLUTO sopra
     - MACRO per ogni pasto: proteine (g), carboidrati (g), grassi (g)
     - Verifica che proteine + carboidrati + grassi × 9/4 ≈ calorie dichiarate
     - Varietà quotidiana minima 60% ingredienti
@@ -138,7 +145,11 @@ function ModificaDietaSettimanale(
   sesso: string?,
   obiettivo: string,
   oggiData: string,
-  oggiGiorno: string
+  oggiGiorno: string,
+  bmr: int,
+  tdee: int,
+  calorieMin: int,
+  calorieMax: int
 ) -> DietaSettimanale {
   client OpenAI
   prompt #"
@@ -148,8 +159,10 @@ function ModificaDietaSettimanale(
     {{ _.role("user") }}
 
     VALUTAZIONE STATO ATTUALE:
-    - BMR base: {{ peso }}kg × {{ altezza }}cm, età {{ eta|default(30) }}{% if sesso %}, sesso {{ sesso }}{% endif %}
+    - Peso {{ peso }}kg × altezza {{ altezza }}cm, età {{ eta|default(30) }}{% if sesso %}, sesso {{ sesso }}{% endif %}
     - BMI: {{ (peso / ((altezza/100) ** 2)) | round(1) }}
+    - BMR: {{ bmr }} kcal/die, TDEE: {{ tdee }} kcal/die (già calcolati — non ricalcolare)
+    - VINCOLO ASSOLUTO: il totale calorico di OGNI giorno del piano modificato deve restare tra {{ calorieMin }} e {{ calorieMax }} kcal, anche quando la richiesta di modifica non lo menziona esplicitamente
     - Piano: {{ dietaCorrente.nome }} ({{ dietaCorrente.dataInizio }} - {{ dietaCorrente.dataFine }})
     - Obiettivo iniziale: {{ obiettivo }}
 
@@ -164,7 +177,7 @@ function ModificaDietaSettimanale(
 
     PROTOCOLLO MODIFICA SCIENTIFICA:
     1. IDENTIFICA tipo modifica (specifica vs sistemica)
-    2. CALCOLA impatto su bilancio energetico e AMDR
+    2. CALCOLA impatto su bilancio energetico e AMDR, rispettando il VINCOLO ASSOLUTO sopra
     3. PRESERVA timing nutrizionale (colazione anabolica, pranzo energetico, cena recupero)
     4. MANTIENI biodisponibilità nutrienti e sinergie alimentari
     5. ASSICURA compliance AMDR: Carb 45-65%, Prot 10-35%, Grassi 20-35%

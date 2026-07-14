@@ -17,6 +17,10 @@ test GeneraDietaSettimanale_SettimanaCompleta {
     sesso "maschio"
     obiettivo "perdere peso"
     altri_dati "Nessuna restrizione alimentare. Preferisce pasti veloci a pranzo (max 20 minuti di preparazione). Fa palestra 3 volte a settimana (lunedì, mercoledì, venerdì)."
+    bmr 1828
+    tdee 2833
+    calorieMin 2124
+    calorieMax 3399
   }
 }
 
@@ -182,6 +186,10 @@ test ModificaDietaSettimanale_SostituisciCenaGiovedi {
     obiettivo "perdere peso"
     oggiData "2026-03-25"
     oggiGiorno "MERCOLEDI"
+    bmr 1828
+    tdee 2833
+    calorieMin 2124
+    calorieMax 3399
   }
 }
 

@@ -94,18 +94,18 @@ class BamlSyncClient:
     def parse_stream(self):
       return self.__llm_stream_parser
 
-    def GeneraDietaSettimanale(self, dataInizio: str,giornoInizio: str,dataFine: str,giornoFine: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,altri_dati: str,
+    def GeneraDietaSettimanale(self, dataInizio: str,giornoInizio: str,dataFine: str,giornoFine: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,altri_dati: str,bmr: int,tdee: int,calorieMin: int,calorieMax: int,
         baml_options: BamlCallOptions = {},
     ) -> types.DietaSettimanale:
         # Check if on_tick is provided
         if 'on_tick' in baml_options:
-            __stream__ = self.stream.GeneraDietaSettimanale(dataInizio=dataInizio,giornoInizio=giornoInizio,dataFine=dataFine,giornoFine=giornoFine,peso=peso,altezza=altezza,eta=eta,sesso=sesso,obiettivo=obiettivo,altri_dati=altri_dati,
+            __stream__ = self.stream.GeneraDietaSettimanale(dataInizio=dataInizio,giornoInizio=giornoInizio,dataFine=dataFine,giornoFine=giornoFine,peso=peso,altezza=altezza,eta=eta,sesso=sesso,obiettivo=obiettivo,altri_dati=altri_dati,bmr=bmr,tdee=tdee,calorieMin=calorieMin,calorieMax=calorieMax,
                 baml_options=baml_options)
             return __stream__.get_final_response()
         else:
             # Original non-streaming code
             __result__ = self.__options.merge_options(baml_options).call_function_sync(function_name="GeneraDietaSettimanale", args={
-                "dataInizio": dataInizio,"giornoInizio": giornoInizio,"dataFine": dataFine,"giornoFine": giornoFine,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"altri_dati": altri_dati,
+                "dataInizio": dataInizio,"giornoInizio": giornoInizio,"dataFine": dataFine,"giornoFine": giornoFine,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"altri_dati": altri_dati,"bmr": bmr,"tdee": tdee,"calorieMin": calorieMin,"calorieMax": calorieMax,
             })
             return typing.cast(types.DietaSettimanale, __result__.cast_to(types, types, stream_types, False, __runtime__))
     def GeneraListaSpesa(self, pasti: typing.List["types.Pasto"],
@@ -136,18 +136,18 @@ class BamlSyncClient:
                 "pasto": pasto,
             })
             return typing.cast(types.HtmlStructure, __result__.cast_to(types, types, stream_types, False, __runtime__))
-    def ModificaDietaSettimanale(self, dietaCorrente: types.DietaSettimanale,richiestaModifica: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,oggiData: str,oggiGiorno: str,
+    def ModificaDietaSettimanale(self, dietaCorrente: types.DietaSettimanale,richiestaModifica: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,oggiData: str,oggiGiorno: str,bmr: int,tdee: int,calorieMin: int,calorieMax: int,
         baml_options: BamlCallOptions = {},
     ) -> types.DietaSettimanale:
         # Check if on_tick is provided
         if 'on_tick' in baml_options:
-            __stream__ = self.stream.ModificaDietaSettimanale(dietaCorrente=dietaCorrente,richiestaModifica=richiestaModifica,peso=peso,altezza=altezza,eta=eta,sesso=sesso,obiettivo=obiettivo,oggiData=oggiData,oggiGiorno=oggiGiorno,
+            __stream__ = self.stream.ModificaDietaSettimanale(dietaCorrente=dietaCorrente,richiestaModifica=richiestaModifica,peso=peso,altezza=altezza,eta=eta,sesso=sesso,obiettivo=obiettivo,oggiData=oggiData,oggiGiorno=oggiGiorno,bmr=bmr,tdee=tdee,calorieMin=calorieMin,calorieMax=calorieMax,
                 baml_options=baml_options)
             return __stream__.get_final_response()
         else:
             # Original non-streaming code
             __result__ = self.__options.merge_options(baml_options).call_function_sync(function_name="ModificaDietaSettimanale", args={
-                "dietaCorrente": dietaCorrente,"richiestaModifica": richiestaModifica,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"oggiData": oggiData,"oggiGiorno": oggiGiorno,
+                "dietaCorrente": dietaCorrente,"richiestaModifica": richiestaModifica,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"oggiData": oggiData,"oggiGiorno": oggiGiorno,"bmr": bmr,"tdee": tdee,"calorieMin": calorieMin,"calorieMax": calorieMax,
             })
             return typing.cast(types.DietaSettimanale, __result__.cast_to(types, types, stream_types, False, __runtime__))
     
@@ -159,11 +159,11 @@ class BamlStreamClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
-    def GeneraDietaSettimanale(self, dataInizio: str,giornoInizio: str,dataFine: str,giornoFine: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,altri_dati: str,
+    def GeneraDietaSettimanale(self, dataInizio: str,giornoInizio: str,dataFine: str,giornoFine: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,altri_dati: str,bmr: int,tdee: int,calorieMin: int,calorieMax: int,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.BamlSyncStream[stream_types.DietaSettimanale, types.DietaSettimanale]:
         __ctx__, __result__ = self.__options.merge_options(baml_options).create_sync_stream(function_name="GeneraDietaSettimanale", args={
-            "dataInizio": dataInizio,"giornoInizio": giornoInizio,"dataFine": dataFine,"giornoFine": giornoFine,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"altri_dati": altri_dati,
+            "dataInizio": dataInizio,"giornoInizio": giornoInizio,"dataFine": dataFine,"giornoFine": giornoFine,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"altri_dati": altri_dati,"bmr": bmr,"tdee": tdee,"calorieMin": calorieMin,"calorieMax": calorieMax,
         })
         return baml_py.BamlSyncStream[stream_types.DietaSettimanale, types.DietaSettimanale](
           __result__,
@@ -195,11 +195,11 @@ class BamlStreamClient:
           lambda x: typing.cast(types.HtmlStructure, x.cast_to(types, types, stream_types, False, __runtime__)),
           __ctx__,
         )
-    def ModificaDietaSettimanale(self, dietaCorrente: types.DietaSettimanale,richiestaModifica: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,oggiData: str,oggiGiorno: str,
+    def ModificaDietaSettimanale(self, dietaCorrente: types.DietaSettimanale,richiestaModifica: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,oggiData: str,oggiGiorno: str,bmr: int,tdee: int,calorieMin: int,calorieMax: int,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.BamlSyncStream[stream_types.DietaSettimanale, types.DietaSettimanale]:
         __ctx__, __result__ = self.__options.merge_options(baml_options).create_sync_stream(function_name="ModificaDietaSettimanale", args={
-            "dietaCorrente": dietaCorrente,"richiestaModifica": richiestaModifica,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"oggiData": oggiData,"oggiGiorno": oggiGiorno,
+            "dietaCorrente": dietaCorrente,"richiestaModifica": richiestaModifica,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"oggiData": oggiData,"oggiGiorno": oggiGiorno,"bmr": bmr,"tdee": tdee,"calorieMin": calorieMin,"calorieMax": calorieMax,
         })
         return baml_py.BamlSyncStream[stream_types.DietaSettimanale, types.DietaSettimanale](
           __result__,
@@ -215,11 +215,11 @@ class BamlHttpRequestClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
-    def GeneraDietaSettimanale(self, dataInizio: str,giornoInizio: str,dataFine: str,giornoFine: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,altri_dati: str,
+    def GeneraDietaSettimanale(self, dataInizio: str,giornoInizio: str,dataFine: str,giornoFine: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,altri_dati: str,bmr: int,tdee: int,calorieMin: int,calorieMax: int,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
         __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GeneraDietaSettimanale", args={
-            "dataInizio": dataInizio,"giornoInizio": giornoInizio,"dataFine": dataFine,"giornoFine": giornoFine,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"altri_dati": altri_dati,
+            "dataInizio": dataInizio,"giornoInizio": giornoInizio,"dataFine": dataFine,"giornoFine": giornoFine,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"altri_dati": altri_dati,"bmr": bmr,"tdee": tdee,"calorieMin": calorieMin,"calorieMax": calorieMax,
         }, mode="request")
         return __result__
     def GeneraListaSpesa(self, pasti: typing.List["types.Pasto"],
@@ -236,11 +236,11 @@ class BamlHttpRequestClient:
             "pasto": pasto,
         }, mode="request")
         return __result__
-    def ModificaDietaSettimanale(self, dietaCorrente: types.DietaSettimanale,richiestaModifica: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,oggiData: str,oggiGiorno: str,
+    def ModificaDietaSettimanale(self, dietaCorrente: types.DietaSettimanale,richiestaModifica: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,oggiData: str,oggiGiorno: str,bmr: int,tdee: int,calorieMin: int,calorieMax: int,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
         __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="ModificaDietaSettimanale", args={
-            "dietaCorrente": dietaCorrente,"richiestaModifica": richiestaModifica,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"oggiData": oggiData,"oggiGiorno": oggiGiorno,
+            "dietaCorrente": dietaCorrente,"richiestaModifica": richiestaModifica,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"oggiData": oggiData,"oggiGiorno": oggiGiorno,"bmr": bmr,"tdee": tdee,"calorieMin": calorieMin,"calorieMax": calorieMax,
         }, mode="request")
         return __result__
     
@@ -251,11 +251,11 @@ class BamlHttpStreamRequestClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
-    def GeneraDietaSettimanale(self, dataInizio: str,giornoInizio: str,dataFine: str,giornoFine: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,altri_dati: str,
+    def GeneraDietaSettimanale(self, dataInizio: str,giornoInizio: str,dataFine: str,giornoFine: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,altri_dati: str,bmr: int,tdee: int,calorieMin: int,calorieMax: int,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
         __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GeneraDietaSettimanale", args={
-            "dataInizio": dataInizio,"giornoInizio": giornoInizio,"dataFine": dataFine,"giornoFine": giornoFine,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"altri_dati": altri_dati,
+            "dataInizio": dataInizio,"giornoInizio": giornoInizio,"dataFine": dataFine,"giornoFine": giornoFine,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"altri_dati": altri_dati,"bmr": bmr,"tdee": tdee,"calorieMin": calorieMin,"calorieMax": calorieMax,
         }, mode="stream")
         return __result__
     def GeneraListaSpesa(self, pasti: typing.List["types.Pasto"],
@@ -272,11 +272,11 @@ class BamlHttpStreamRequestClient:
             "pasto": pasto,
         }, mode="stream")
         return __result__
-    def ModificaDietaSettimanale(self, dietaCorrente: types.DietaSettimanale,richiestaModifica: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,oggiData: str,oggiGiorno: str,
+    def ModificaDietaSettimanale(self, dietaCorrente: types.DietaSettimanale,richiestaModifica: str,peso: float,altezza: float,eta: typing.Optional[int],sesso: typing.Optional[str],obiettivo: str,oggiData: str,oggiGiorno: str,bmr: int,tdee: int,calorieMin: int,calorieMax: int,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
         __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="ModificaDietaSettimanale", args={
-            "dietaCorrente": dietaCorrente,"richiestaModifica": richiestaModifica,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"oggiData": oggiData,"oggiGiorno": oggiGiorno,
+            "dietaCorrente": dietaCorrente,"richiestaModifica": richiestaModifica,"peso": peso,"altezza": altezza,"eta": eta,"sesso": sesso,"obiettivo": obiettivo,"oggiData": oggiData,"oggiGiorno": oggiGiorno,"bmr": bmr,"tdee": tdee,"calorieMin": calorieMin,"calorieMax": calorieMax,
         }, mode="stream")
         return __result__
     
