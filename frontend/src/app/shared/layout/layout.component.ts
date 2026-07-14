@@ -1,29 +1,24 @@
-import { Component, ElementRef, inject, signal, ChangeDetectionStrategy, viewChild, effect } from '@angular/core';
+import { Component, ElementRef, inject, ChangeDetectionStrategy, viewChild, effect } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { BottomTabBarComponent } from '../bottom-tab-bar/bottom-tab-bar.component';
 import { LlmErrorToastComponent } from '../llm-error-toast/llm-error-toast.component';
 import { NAV_ITEMS } from '../nav-item';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs/operators';
-import { LucideMenu } from '@lucide/angular';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, SidebarComponent, LlmErrorToastComponent, LucideMenu],
+  imports: [RouterOutlet, SidebarComponent, BottomTabBarComponent, LlmErrorToastComponent],
   templateUrl: './layout.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '(window:resize)': 'onResize()',
-  },
 })
 export class LayoutComponent {
   private router = inject(Router);
   private title = inject(Title);
 
   mainContent = viewChild<ElementRef<HTMLElement>>('mainContent');
-
-  sidebarOpen = signal(false);
 
   private currentPageLabel = toSignal(
     this.router.events.pipe(
@@ -50,21 +45,5 @@ export class LayoutComponent {
       item.exact ? path === item.route : path === item.route || path.startsWith(item.route + '/')
     );
     return match?.sidebarLabel ?? 'DietologoAI';
-  }
-
-  toggleSidebar() {
-    this.sidebarOpen.update(open => !open);
-  }
-
-  onSidebarLinkClick() {
-    if (window.innerWidth < 1024) {
-      this.sidebarOpen.set(false);
-    }
-  }
-
-  onResize() {
-    if (window.innerWidth >= 1024) {
-      this.sidebarOpen.set(false);
-    }
   }
 }

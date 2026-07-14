@@ -1,0 +1,25 @@
+<nav class="flex items-center bg-surface-raised/80 backdrop-blur-md border-t border-border/40 pb-safe"
+  aria-label="Navigazione principale">
+  @for (item of navItems; track item.route) {
+  <a [routerLink]="item.route" routerLinkActive="text-primary"
+    [routerLinkActiveOptions]="{ exact: item.exact }"
+    class="flex-1 flex flex-col items-center justify-center gap-1 min-h-13 py-2 text-text-tertiary transition-colors"
+    [attr.aria-label]="item.mobileLabel">
+    @switch (item.icon) {
+      @case ('dashboard') {
+        <svg lucideLayoutDashboard aria-hidden="true" class="w-5 h-5"></svg>
+      }
+      @case ('weekly') {
+        <svg lucideCalendarDays aria-hidden="true" class="w-5 h-5"></svg>
+      }
+      @case ('recipes') {
+        <svg lucideBookOpen aria-hidden="true" class="w-5 h-5"></svg>
+      }
+      @case ('settings') {
+        <svg lucideSettings aria-hidden="true" class="w-5 h-5"></svg>
+      }
+    }
+    <span class="text-xs font-medium">{{ item.mobileLabel }}</span>
+  </a>
+  }
+</nav>
