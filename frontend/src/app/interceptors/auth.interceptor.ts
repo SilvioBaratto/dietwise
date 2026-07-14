@@ -3,6 +3,7 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError, from } from 'rxjs';
+import type { Session } from '@supabase/supabase-js';
 import { AuthService } from '../services/auth.service';
 import { SupabaseService } from '../services/supabase.service';
 import { LlmErrorService } from '../services/llm-error.service';
@@ -83,8 +84,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Handle 401 Unauthorized - token might be expired
       if (error.status === 401) {
-        // Attempt to refresh the session using Supabase
-        return from(refreshSession(supabaseService, authService)).pipe(
+        // Attempt to refresh the session using Supabase (de-duped: concurrent
+        // 401s across in-flight requests share one refresh call)
+        return from(getOrCreateRefresh(supabaseService, authService)).pipe(
           switchMap((newSession) => {
             if (newSession?.access_token) {
               // Retry the original request with new token
@@ -113,6 +115,22 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     })
   );
 };
+
+// Shared in-flight refresh promise - concurrent 401s across multiple
+// requests all await this one call instead of each firing their own.
+let refreshPromise: Promise<Session | null> | null = null;
+
+function getOrCreateRefresh(
+  supabaseService: SupabaseService,
+  authService: AuthService
+): Promise<Session | null> {
+  if (!refreshPromise) {
+    refreshPromise = refreshSession(supabaseService, authService).finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+}
 
 /**
  * Helper function to refresh the Supabase session
