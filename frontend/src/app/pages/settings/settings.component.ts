@@ -167,6 +167,21 @@ export class SettingsComponent implements OnInit {
     return this.savedKeys().find(k => k.provider === provider);
   }
 
+  // Page-level loading, gated on all three initial fetches below
+  loading = signal(true);
+  private settingsLoaded = false;
+  private apiKeysLoaded = false;
+  private modelsLoaded = false;
+
+  private markLoaded(which: 'settings' | 'apiKeys' | 'models'): void {
+    if (which === 'settings') this.settingsLoaded = true;
+    if (which === 'apiKeys') this.apiKeysLoaded = true;
+    if (which === 'models') this.modelsLoaded = true;
+    if (this.settingsLoaded && this.apiKeysLoaded && this.modelsLoaded) {
+      this.loading.set(false);
+    }
+  }
+
   ngOnInit() {
     // Note: Authorization header is automatically added by authInterceptor
     this.http
@@ -190,11 +205,13 @@ export class SettingsComponent implements OnInit {
 
           // Trigger change detection for OnPush strategy
           this.cdr.markForCheck();
+          this.markLoaded('settings');
         },
         error: (err) => {
           if (err.status !== 404) {
             console.error('Failed to load settings', err);
           }
+          this.markLoaded('settings');
         },
       });
 
@@ -247,11 +264,15 @@ export class SettingsComponent implements OnInit {
 
   loadApiKeys(): void {
     this.apiKeyService.getKeys().subscribe({
-      next: (keys) => this.savedKeys.set(keys),
+      next: (keys) => {
+        this.savedKeys.set(keys);
+        this.markLoaded('apiKeys');
+      },
       error: (err) => {
         if (err.status !== 404) {
           this.keyError.set('Impossibile caricare le chiavi API');
         }
+        this.markLoaded('apiKeys');
       },
     });
   }
@@ -266,8 +287,12 @@ export class SettingsComponent implements OnInit {
         const provider = (prefs.provider as Provider) ?? 'openai';
         this.selectedProvider.set(provider);
         this.selectedModel.set(prefs.model ?? models[provider]?.[0] ?? '');
+        this.markLoaded('models');
       },
-      error: () => this.prefsError.set('Impossibile caricare le preferenze AI'),
+      error: () => {
+        this.prefsError.set('Impossibile caricare le preferenze AI');
+        this.markLoaded('models');
+      },
     });
   }
 
