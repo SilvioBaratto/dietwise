@@ -106,20 +106,9 @@
               <!-- Card Header -->
               <div
                 class="bg-primary-light px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
-                  <span
-                    class="inline-flex items-center px-3 py-1.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium text-white min-h-11 sm:min-h-[28px] justify-center"
-                    [class.bg-orange-500]="pasto.tipoPasto.tipo === 'COLAZIONE'"
-                    [class.bg-green-500]="pasto.tipoPasto.tipo === 'SPUNTINO_MATTINA' || pasto.tipoPasto.tipo === 'SPUNTINO_POMERIGGIO'"
-                    [class.bg-blue-500]="pasto.tipoPasto.tipo === 'PRANZO'"
-                    [class.bg-purple-500]="pasto.tipoPasto.tipo === 'CENA'"
-                    [attr.aria-label]="'Tipo pasto: ' + getMealTypeLabel(pasto.tipoPasto.tipo)">
-                    {{ getMealTypeLabel(pasto.tipoPasto.tipo) }}
-                  </span>
-                  <div class="flex items-center gap-1.5 text-sm text-gray-600">
-                    <svg lucideClock aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
-                    <time class="font-medium">{{ pasto.tipoPasto.orario || '—' }}</time>
-                  </div>
+                <div class="flex items-center gap-1.5 text-sm text-gray-600">
+                  <svg lucideClock aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
+                  <time class="font-medium">{{ pasto.tipoPasto.orario || '—' }}</time>
                 </div>
               </div>
               <!-- Card Content -->
