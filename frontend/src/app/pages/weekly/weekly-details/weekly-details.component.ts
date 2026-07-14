@@ -15,7 +15,6 @@ import { DailyGroup, DietaSettimanale, Pasto } from '../../../models/diet.types'
 import {
   LucideAlertTriangle,
   LucideCalendar,
-  LucidePlus,
   LucideClock,
   LucideZap,
   LucideChevronRight,
@@ -28,7 +27,6 @@ import {
     RouterModule,
     LucideAlertTriangle,
     LucideCalendar,
-    LucidePlus,
     LucideClock,
     LucideZap,
     LucideChevronRight,
