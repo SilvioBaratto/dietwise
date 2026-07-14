@@ -23,9 +23,6 @@ _AVAILABLE_MODELS: dict[str, list[str]] = {
     "openai": [
         "gpt-5.4",
         "gpt-5-mini",
-        "gpt-4.1",
-        "gpt-4.1-mini",
-        "gpt-4.1-nano",
     ],
     "anthropic": [
         "claude-opus-4-6",
