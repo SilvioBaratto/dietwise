@@ -24,6 +24,8 @@ import {
   LucideSave,
   LucideLoader,
   LucidePlus,
+  LucidePencil,
+  LucideTrash2,
   LucideX,
   LucideLogOut,
 } from '@lucide/angular';
@@ -46,6 +48,8 @@ import {
     LucideSave,
     LucideLoader,
     LucidePlus,
+    LucidePencil,
+    LucideTrash2,
     LucideX,
     LucideLogOut,
   ],
