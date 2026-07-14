@@ -4,6 +4,7 @@ import {
   OnInit,
   signal,
   computed,
+  effect,
   inject,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -11,7 +12,7 @@ import {
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DietService } from '../../../services/diet.service';
-import { DailyGroup, DietaSettimanale, Pasto } from '../../../models/diet.types';
+import { DietaSettimanale, Pasto } from '../../../models/diet.types';
 import {
   LucideAlertTriangle,
   LucideCalendar,
@@ -45,10 +46,19 @@ export class WeeklyDetailsComponent implements OnInit {
   diet = signal<DietaSettimanale | undefined>(undefined);
   error = signal('');
   loading = signal(true);
+  selectedDay = signal<string | null>(null);
 
   // Convert route params to signal
   private params = toSignal(this.route.paramMap);
   private dietId = computed(() => this.params()?.get('diet_id') ?? null);
+
+  // Default to the first day with meals once the diet loads
+  private readonly initSelectedDay = effect(() => {
+    const groups = this.groupedMealsByDay();
+    if (!this.selectedDay() && groups.length > 0) {
+      this.selectedDay.set(groups[0].day);
+    }
+  });
 
   ngOnInit() {
     const id = this.dietId();
@@ -107,6 +117,15 @@ export class WeeklyDetailsComponent implements OnInit {
       .sort((a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day));
   });
 
+  selectedDayGroup = computed(() => {
+    const groups = this.groupedMealsByDay();
+    return groups.find((g) => g.day === this.selectedDay()) ?? groups[0] ?? null;
+  });
+
+  selectDay(day: string): void {
+    this.selectedDay.set(day);
+  }
+
   private fetchDiet(id: string) {
     this.loading.set(true);
     // Note: Authorization header is automatically added by authInterceptor
@@ -155,7 +174,16 @@ export class WeeklyDetailsComponent implements OnInit {
     return labels[tipo] || tipo;
   }
 
-  groupMealsByDay(): DailyGroup[] {
-    return this.groupedMealsByDay();
+  getShortDayName(dayEnum: string): string {
+    const shortNames: Record<string, string> = {
+      LUNEDI: 'Lun',
+      MARTEDI: 'Mar',
+      MERCOLEDI: 'Mer',
+      GIOVEDI: 'Gio',
+      VENERDI: 'Ven',
+      SABATO: 'Sab',
+      DOMENICA: 'Dom',
+    };
+    return shortNames[dayEnum] || dayEnum.slice(0, 3);
   }
 }

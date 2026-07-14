@@ -37,26 +37,44 @@
         <time class="text-base sm:text-lg font-medium break-words">{{ diet()!.dataInizio }} — {{
           diet()!.dataFine }}</time>
       </div>
-      <!-- Meals Grid - Grouped by Day -->
-      <section class="space-y-6 sm:space-y-8">
-        @for (dayGroup of groupMealsByDay(); track dayGroup.day) {
-        <!-- Day Section -->
-        <div class="space-y-4">
-          <!-- Day Header -->
-          <div
-            class="sticky top-0 z-10 bg-primary rounded-xl px-4 sm:px-6 py-3 sm:py-4 shadow-md">
-            <h3 class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center gap-3">
-              <svg lucideCalendar aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"></svg>
-              <span>{{ dayGroup.dayName }}</span>
-              <span class="ml-auto text-sm sm:text-base font-medium bg-white/20 px-3 py-1 rounded-full">
-                {{ dayGroup.meals.length }} pasti
-              </span>
-            </h3>
-          </div>
+      <!-- Day Selector -->
+      <div class="sticky top-0 z-10 -mx-4 px-4 sm:-mx-6 sm:px-6 py-3 bg-surface/95 backdrop-blur-sm">
+        <div class="flex items-center gap-2 overflow-x-auto scrollbar-hidden" role="tablist" aria-label="Seleziona giorno">
+          @for (group of groupedMealsByDay(); track group.day) {
+          <button type="button" role="tab" [attr.aria-selected]="group.day === selectedDay()"
+            (click)="selectDay(group.day)"
+            class="flex-shrink-0 inline-flex items-center justify-center px-4 py-2.5 min-h-11 rounded-xl text-sm font-medium transition-colors touch-manipulation focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            [class.bg-primary]="group.day === selectedDay()"
+            [class.text-white]="group.day === selectedDay()"
+            [class.bg-white]="group.day !== selectedDay()"
+            [class.text-gray-700]="group.day !== selectedDay()"
+            [class.border]="group.day !== selectedDay()"
+            [class.border-gray-200]="group.day !== selectedDay()"
+            [class.hover:bg-gray-50]="group.day !== selectedDay()">
+            {{ getShortDayName(group.day) }}
+          </button>
+          }
+        </div>
+      </div>
 
-          <!-- Meals for this day -->
-          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-            @for (pasto of dayGroup.meals; track pasto.id) {
+      <!-- Meals Grid - Selected Day -->
+      @if (selectedDayGroup(); as dayGroup) {
+      <section class="space-y-4">
+        <!-- Day Header -->
+        <div
+          class="bg-primary rounded-xl px-4 sm:px-6 py-3 sm:py-4 shadow-md">
+          <h3 class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center gap-3">
+            <svg lucideCalendar aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"></svg>
+            <span>{{ dayGroup.dayName }}</span>
+            <span class="ml-auto text-sm sm:text-base font-medium bg-white/20 px-3 py-1 rounded-full">
+              {{ dayGroup.meals.length }} pasti
+            </span>
+          </h3>
+        </div>
+
+        <!-- Meals for this day -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+          @for (pasto of dayGroup.meals; track pasto.id) {
             <div
               class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-teal-300 transition-all duration-300 transform hover:-translate-y-1 focus-within:ring-2 focus-within:ring-teal-500 focus-within:ring-offset-2 flex flex-col">
               <!-- Card Header -->
@@ -121,9 +139,8 @@
             </div>
             }
           </div>
-        </div>
-        }
       </section>
+      }
     </div>
     }
 
