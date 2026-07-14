@@ -47,9 +47,6 @@
         <div
           class="bg-primary-light px-4 sm:px-5 lg:px-6 py-4 sm:py-5 border-b border-gray-200">
           <div class="flex items-center gap-3">
-            <span class="flex-shrink-0 inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white text-primary" aria-hidden="true">
-              <svg lucideCalendar class="w-4 h-4 sm:w-5 sm:h-5"></svg>
-            </span>
             <h3 class="text-base sm:text-lg lg:text-xl font-bold text-gray-900 leading-tight">
               {{ diet.name || ('Piano del ' + (diet.created_at | date:'shortDate')) }}
             </h3>
@@ -58,9 +55,12 @@
         <!-- Card Content - Optimized Mobile Spacing -->
         <div class="p-4 sm:p-5 lg:p-6 flex flex-col flex-1 gap-4">
           <!-- Date Info - Enhanced Readability -->
-          <time class="text-sm sm:text-base text-gray-600 line-clamp-1 leading-relaxed">
-            {{ diet.created_at | date:'fullDate' }}
-          </time>
+          <div class="flex items-center gap-2">
+            <svg lucideCalendar aria-hidden="true" class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-gray-500"></svg>
+            <time class="text-sm sm:text-base text-gray-600 line-clamp-1 leading-relaxed">
+              {{ diet.created_at | date:'fullDate' }}
+            </time>
+          </div>
           <!-- Action Buttons - one row, touch-optimized (44px+ targets) -->
           <div class="mt-auto flex items-center gap-2">
             <!-- Primary Action: View Diet -->
