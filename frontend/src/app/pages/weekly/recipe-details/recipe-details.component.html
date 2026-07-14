@@ -50,25 +50,9 @@
             [attr.aria-label]="'Tipo di pasto: ' + getMealTypeLabel(meal()!.tipoPasto.tipo)">
             {{ getMealTypeLabel(meal()!.tipoPasto.tipo) }}
           </span>
-          <div class="flex items-center gap-2 text-gray-600 min-h-9 sm:min-h-auto">
-            <svg lucideClock aria-hidden="true" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"></svg>
-            <time class="font-medium text-sm sm:text-xs">{{ meal()!.tipoPasto.orario || 'Orario non disponibile'
-              }}</time>
-          </div>
         </div>
       </app-page-header>
 
-      <!-- Calorie display - prominent on mobile for cooking -->
-      <div
-        class="bg-emerald-50 rounded-xl p-4 sm:p-3 text-center w-fit min-w-[140px] sm:min-w-[120px]"
-        role="status" aria-label="Informazioni caloriche">
-        <div class="flex items-center justify-center gap-2 mb-2 sm:mb-1">
-          <svg lucideZap aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 text-orange-500"></svg>
-          <span class="text-sm text-gray-600 font-medium" aria-hidden="true">Calorie</span>
-        </div>
-        <div class="text-3xl sm:text-2xl lg:text-3xl font-bold text-emerald-600"
-          aria-label="{{ meal()!.calorie }} calorie">{{ meal()!.calorie }}</div>
-      </div>
       <!-- Ingredients Section - Optimized for mobile cooking -->
       <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
         aria-labelledby="ingredients-heading">
@@ -84,14 +68,6 @@
             <p class="text-gray-800 font-medium text-base sm:text-sm leading-relaxed">
               {{ meal()!.ingredienti }}
             </p>
-          </div>
-          <!-- Mobile cooking tip -->
-          <div class="mt-4 sm:mt-6 p-3 bg-blue-50 rounded-xl border-l-4 border-blue-400 sm:hidden" role="note">
-            <div class="flex items-start gap-2">
-              <svg lucideInfo aria-hidden="true" class="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-500"></svg>
-              <p class="text-sm text-blue-800 font-medium">Prepara tutti gli ingredienti prima di iniziare la cottura
-              </p>
-            </div>
           </div>
         </div>
       </section>
