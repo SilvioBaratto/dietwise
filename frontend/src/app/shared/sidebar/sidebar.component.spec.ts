@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
@@ -13,6 +14,7 @@ describe('SidebarComponent', () => {
     await TestBed.configureTestingModule({
       imports: [SidebarComponent],
       providers: [
+        provideZonelessChangeDetection(),
         provideRouter([]),
         { provide: AuthService, useValue: { isAuthenticated$: of(false), signOut: () => Promise.resolve() } },
       ],

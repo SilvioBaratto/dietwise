@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
@@ -13,6 +14,7 @@ describe('LoginComponent', () => {
     await TestBed.configureTestingModule({
       imports: [LoginComponent],
       providers: [
+        provideZonelessChangeDetection(),
         provideRouter([]),
         { provide: AuthService, useValue: { isAuthenticated$: of(false), signInWithGoogle: () => Promise.resolve() } },
       ],

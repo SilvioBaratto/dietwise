@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
@@ -13,6 +14,7 @@ describe('RecipeDetailsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [RecipeDetailsComponent],
       providers: [
+        provideZonelessChangeDetection(),
         provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
