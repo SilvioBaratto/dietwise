@@ -34,7 +34,10 @@ _PACKAGE_RULES: list[_PackageRule] = [
     _PackageRule(re.compile(r"parmigiano|grana\s*padano|grattugiat"), {"GR": 100}),
     _PackageRule(re.compile(r"\bchia\b"), {"GR": 250}),
     _PackageRule(re.compile(r"\blino\b"), {"GR": 200}),
-    _PackageRule(re.compile(r"mandorl|\bnoci\b|nocciol|pistacch|anacard|frutta\s*secca"), {"GR": 100}),
+    _PackageRule(
+        re.compile(r"mandorl|\bnoci\b|nocciol|pistacch|anacard|frutta\s*secca"),
+        {"GR": 100},
+    ),
     _PackageRule(re.compile(r"gallett"), {"GR": 130}),
     _PackageRule(re.compile(r"cracker"), {"GR": 300}),
     _PackageRule(re.compile(r"fette\s*biscottat"), {"GR": 275}),
@@ -93,12 +96,16 @@ def round_to_purchasable(ingredienti: list[Ingrediente]) -> list[Ingrediente]:
             increment = rule.increments["GR"]
             grams = quantita * 1000 if unita == UnitaMisura.KG else quantita
             rounded = math.ceil(grams / increment) * increment
-            result.append(Ingrediente(nome=ingr.nome, quantita=rounded, unita=UnitaMisura.GR))
+            result.append(
+                Ingrediente(nome=ingr.nome, quantita=rounded, unita=UnitaMisura.GR)
+            )
         elif "ML" in rule.increments and unita in _ML_UNITS:
             increment = rule.increments["ML"]
             ml = quantita * 1000 if unita == UnitaMisura.L else quantita
             rounded = math.ceil(ml / increment) * increment
-            result.append(Ingrediente(nome=ingr.nome, quantita=rounded, unita=UnitaMisura.ML))
+            result.append(
+                Ingrediente(nome=ingr.nome, quantita=rounded, unita=UnitaMisura.ML)
+            )
         else:
             # Matched category but an unexpected unit came back (e.g. a
             # weight-based rule against a PZ item) — don't guess, pass through.

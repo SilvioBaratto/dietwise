@@ -77,8 +77,7 @@ class UserService:
 
             if settings is None:
                 raise HTTPException(
-                    status_code=404,
-                    detail="User settings not found for update"
+                    status_code=404, detail="User settings not found for update"
                 )
 
         self.db.commit()

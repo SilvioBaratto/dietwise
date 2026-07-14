@@ -48,7 +48,9 @@ class MealService:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Meal not found.")
 
         if meal.weekly_diet.user_id != user_id:
-            raise HTTPException(status.HTTP_403_FORBIDDEN, "You do not have access to that meal.")
+            raise HTTPException(
+                status.HTTP_403_FORBIDDEN, "You do not have access to that meal."
+            )
 
         return PastoSchema(
             id=meal.id,
@@ -73,7 +75,9 @@ class MealService:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Meal not found.")
 
         if meal.weekly_diet.user_id != user_id:
-            raise HTTPException(status.HTTP_403_FORBIDDEN, "You do not have access to that meal.")
+            raise HTTPException(
+                status.HTTP_403_FORBIDDEN, "You do not have access to that meal."
+            )
 
         # Build BAML Pasto directly from meal
         pasto_baml = PastoBAML(
@@ -89,7 +93,9 @@ class MealService:
         )
 
         try:
-            full_recipe: HtmlStructure = await self._baml.get_client().GeneraRicetta(pasto_baml)
+            full_recipe: HtmlStructure = await self._baml.get_client().GeneraRicetta(
+                pasto_baml
+            )
         except (ApiKeyNotConfiguredError, LLMProviderError, RateLimitError):
             raise
         except Exception as e:

@@ -25,17 +25,14 @@ __all__ = [
     "validate_supabase_token",
     "initialize_supabase",
     "close_supabase",
-
     # Security scheme
     "bearer_scheme",
-
     # Authentication dependencies
     "get_current_user",
     "get_current_user_from_token",
     "get_optional_user",
     "require_user",
     "get_user_id",
-
     # Type aliases
     "CurrentUser",
     "OptionalUser",

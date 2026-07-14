@@ -37,7 +37,8 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
         # Clean old entries for this client
         if client_ip in self.client_requests:
             self.client_requests[client_ip] = [
-                timestamp for timestamp in self.client_requests[client_ip]
+                timestamp
+                for timestamp in self.client_requests[client_ip]
                 if timestamp > current_time - self.window
             ]
         else:
@@ -60,7 +61,7 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
                     "error": {
                         "code": "RATE_LIMIT_EXCEEDED",
                         "message": f"Rate limit exceeded. Maximum {self.requests} requests per {self.window} seconds.",
-                        "retry_after": retry_after
+                        "retry_after": retry_after,
                     }
                 },
                 status_code=429,
@@ -68,9 +69,9 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
                     "Retry-After": str(retry_after),
                     "X-RateLimit-Limit": str(self.requests),
                     "X-RateLimit-Remaining": "0",
-                    "X-RateLimit-Reset": str(int(oldest_request + self.window))
+                    "X-RateLimit-Reset": str(int(oldest_request + self.window)),
                 },
-                media_type="application/json"
+                media_type="application/json",
             )
 
         # Record this request
@@ -94,7 +95,8 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
         for client_ip in list(self.client_requests.keys()):
             # Filter out old requests
             self.client_requests[client_ip] = [
-                timestamp for timestamp in self.client_requests[client_ip]
+                timestamp
+                for timestamp in self.client_requests[client_ip]
                 if timestamp > current_time - self.window
             ]
 

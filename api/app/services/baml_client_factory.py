@@ -120,9 +120,7 @@ class BamlClientFactory:
             s in error_str
             for s in ("401", "unauthorized", "invalid api key", "authentication")
         ):
-            record = self.api_key_repo.get_by_user_and_provider(
-                self.user_id, provider
-            )
+            record = self.api_key_repo.get_by_user_and_provider(self.user_id, provider)
             if record:
                 self.api_key_repo.invalidate(record.id)
                 self.db.commit()

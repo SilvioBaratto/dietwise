@@ -40,7 +40,9 @@ class DietRepository(BaseRepository[WeeklyDiet, DietSummary, DietSummary]):
         result = self.db.execute(stmt)
         return result.scalar_one_or_none()
 
-    def get_current_week_diet(self, user_id: str, today: date | None = None) -> WeeklyDiet | None:
+    def get_current_week_diet(
+        self, user_id: str, today: date | None = None
+    ) -> WeeklyDiet | None:
         """Get diet for current week with all related data"""
         if today is None:
             today = date.today()
@@ -67,12 +69,7 @@ class DietRepository(BaseRepository[WeeklyDiet, DietSummary, DietSummary]):
         return result.scalars().first()
 
     def create_diet(
-        self,
-        user_id: str,
-        diet_id: str,
-        start_date: date,
-        end_date: date,
-        name: str
+        self, user_id: str, diet_id: str, start_date: date, end_date: date, name: str
     ) -> WeeklyDiet:
         """Create a new weekly diet"""
         weekly = WeeklyDiet(

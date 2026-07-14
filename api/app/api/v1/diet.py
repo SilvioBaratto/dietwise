@@ -1,6 +1,5 @@
 """Diet API endpoints"""
 
-
 from fastapi import APIRouter, Depends, HTTPException, Path, status
 from sqlalchemy.orm import Session
 
@@ -47,7 +46,7 @@ def get_current_week_diet(
     if result is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No diet found for the current week"
+            detail="No diet found for the current week",
         )
 
     return result

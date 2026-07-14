@@ -1,6 +1,5 @@
 """User repository for data access operations"""
 
-
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -64,7 +63,7 @@ class UserSettingsRepository:
         weight: float | None = None,
         height: float | None = None,
         other_data: str | None = None,
-        goals: str | None = None
+        goals: str | None = None,
     ) -> UserSettings:
         """Create new user settings"""
         settings = UserSettings(
@@ -75,7 +74,7 @@ class UserSettingsRepository:
             weight=weight,
             height=height,
             other_data=other_data,
-            goals=goals
+            goals=goals,
         )
         self.db.add(settings)
         self.db.flush()
@@ -89,7 +88,7 @@ class UserSettingsRepository:
         weight: float | None = None,
         height: float | None = None,
         other_data: str | None = None,
-        goals: str | None = None
+        goals: str | None = None,
     ) -> UserSettings | None:
         """Update existing user settings"""
         settings = self.get_by_user_id(user_id)

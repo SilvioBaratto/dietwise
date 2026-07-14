@@ -30,9 +30,7 @@ class EncryptionService:
         try:
             key_bytes = base64.b64decode(settings.encryption_key)
         except Exception as exc:
-            raise ValueError(
-                "API_KEY_ENCRYPTION_SECRET is not valid base64"
-            ) from exc
+            raise ValueError("API_KEY_ENCRYPTION_SECRET is not valid base64") from exc
         if len(key_bytes) != _KEY_BYTES:
             raise ValueError(
                 f"API_KEY_ENCRYPTION_SECRET must decode to exactly {_KEY_BYTES} "

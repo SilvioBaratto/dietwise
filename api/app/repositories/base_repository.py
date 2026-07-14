@@ -32,7 +32,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         limit: int = 100,
         filters: dict[str, Any] | None = None,
         order_by: str | None = None,
-        order_desc: bool = False
+        order_desc: bool = False,
     ) -> list[ModelType]:
         """Get multiple records with pagination and filtering"""
         stmt = select(self.model)
@@ -89,7 +89,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     def create(self, obj_in: CreateSchemaType) -> ModelType:
         """Create new record"""
-        if hasattr(obj_in, 'model_dump'):
+        if hasattr(obj_in, "model_dump"):
             obj_data = obj_in.model_dump()
         else:
             obj_data = obj_in.dict()
@@ -105,7 +105,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db_objects = []
 
         for obj_in in objects_in:
-            if hasattr(obj_in, 'model_dump'):
+            if hasattr(obj_in, "model_dump"):
                 obj_data = obj_in.model_dump()
             else:
                 obj_data = obj_in.dict()
@@ -129,7 +129,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             return None
 
         # Update fields
-        if hasattr(obj_in, 'model_dump'):
+        if hasattr(obj_in, "model_dump"):
             obj_data = obj_in.model_dump(exclude_unset=True)
         else:
             obj_data = obj_in.dict(exclude_unset=True)

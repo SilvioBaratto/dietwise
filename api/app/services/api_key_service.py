@@ -1,12 +1,16 @@
 """ApiKeyService — orchestrates encrypt/validate/store lifecycle for BYOK keys."""
 
-import logging
 from datetime import UTC, datetime
+import logging
 
 from sqlalchemy.orm import Session
 
-from app.exceptions import ApiKeyNotConfiguredError, ConflictError, NotFoundError, ValidationError
-
+from app.exceptions import (
+    ApiKeyNotConfiguredError,
+    ConflictError,
+    NotFoundError,
+    ValidationError,
+)
 from app.repositories.api_key_repository import ApiKeyRepository
 from app.repositories.user_repository import UserSettingsRepository
 from app.schemas.api_key import (
@@ -113,13 +117,9 @@ class ApiKeyService:
         if not record.is_valid:
             raise ConflictError(f"Stored key for '{provider}' is marked invalid")
         self._audit("api_key_decrypted", user_id, provider, record.key_hint, ip)
-        return self.encryption.decrypt(
-            record.encrypted_key, record.encryption_nonce
-        )
+        return self.encryption.decrypt(record.encrypted_key, record.encryption_nonce)
 
-    def update_preferences(
-        self, user_id: str, provider: str, model: str
-    ) -> None:
+    def update_preferences(self, user_id: str, provider: str, model: str) -> None:
         """Persist the user's preferred LLM provider and model."""
         if model not in AVAILABLE_MODELS.get(provider, []):
             raise ValidationError(

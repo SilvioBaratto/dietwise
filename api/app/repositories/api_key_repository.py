@@ -14,7 +14,9 @@ class ApiKeyRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_by_user_and_provider(self, user_id: str, provider: str) -> UserApiKey | None:
+    def get_by_user_and_provider(
+        self, user_id: str, provider: str
+    ) -> UserApiKey | None:
         """Get API key by user ID and provider"""
         stmt = select(UserApiKey).where(
             UserApiKey.user_id == user_id,

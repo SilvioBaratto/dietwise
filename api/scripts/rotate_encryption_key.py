@@ -13,10 +13,11 @@ Steps:
 
 import base64
 import os
+from pathlib import Path
 import sys
 
 # Allow imports from the api package
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM  # noqa: E402
 from sqlalchemy import select  # noqa: E402

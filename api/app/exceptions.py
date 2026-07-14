@@ -20,7 +20,7 @@ class BaseAPIException(Exception):
         message: str,
         status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR,
         error_code: str | None = None,
-        details: dict[str, Any] | None = None
+        details: dict[str, Any] | None = None,
     ):
         self.message = message
         self.status_code = status_code
@@ -37,7 +37,7 @@ class ValidationError(BaseAPIException):
             message=message,
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             error_code="VALIDATION_ERROR",
-            details={"errors": errors or {}}
+            details={"errors": errors or {}},
         )
 
 
@@ -48,7 +48,7 @@ class AuthenticationError(BaseAPIException):
         super().__init__(
             message=message,
             status_code=status.HTTP_401_UNAUTHORIZED,
-            error_code="AUTHENTICATION_ERROR"
+            error_code="AUTHENTICATION_ERROR",
         )
 
 
@@ -59,7 +59,7 @@ class AuthorizationError(BaseAPIException):
         super().__init__(
             message=message,
             status_code=status.HTTP_403_FORBIDDEN,
-            error_code="AUTHORIZATION_ERROR"
+            error_code="AUTHORIZATION_ERROR",
         )
 
 
@@ -73,7 +73,7 @@ class NotFoundError(BaseAPIException):
         super().__init__(
             message=message,
             status_code=status.HTTP_404_NOT_FOUND,
-            error_code="NOT_FOUND"
+            error_code="NOT_FOUND",
         )
 
 
@@ -84,19 +84,21 @@ class ConflictError(BaseAPIException):
         super().__init__(
             message=message,
             status_code=status.HTTP_409_CONFLICT,
-            error_code="CONFLICT_ERROR"
+            error_code="CONFLICT_ERROR",
         )
 
 
 class RateLimitError(BaseAPIException):
     """Raised when rate limit is exceeded"""
 
-    def __init__(self, message: str = "Rate limit exceeded", retry_after: int | None = None):
+    def __init__(
+        self, message: str = "Rate limit exceeded", retry_after: int | None = None
+    ):
         super().__init__(
             message=message,
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             error_code="RATE_LIMIT_ERROR",
-            details={"retry_after": retry_after} if retry_after else {}
+            details={"retry_after": retry_after} if retry_after else {},
         )
 
 
@@ -108,7 +110,7 @@ class ExternalServiceError(BaseAPIException):
             message=f"{service}: {message}",
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             error_code="EXTERNAL_SERVICE_ERROR",
-            details={"service": service}
+            details={"service": service},
         )
 
 
@@ -119,14 +121,18 @@ class DatabaseError(BaseAPIException):
         super().__init__(
             message=message,
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            error_code="DATABASE_ERROR"
+            error_code="DATABASE_ERROR",
         )
 
 
 class DatabaseTimeoutError(DatabaseError):
     """Raised when database operations timeout"""
 
-    def __init__(self, message: str = "Database operation timed out", timeout_duration: float | None = None):
+    def __init__(
+        self,
+        message: str = "Database operation timed out",
+        timeout_duration: float | None = None,
+    ):
         super().__init__(message)
         self.error_code = "DATABASE_TIMEOUT_ERROR"
         if timeout_duration:
@@ -136,7 +142,11 @@ class DatabaseTimeoutError(DatabaseError):
 class DatabaseConnectionError(DatabaseError):
     """Raised when database connection fails"""
 
-    def __init__(self, message: str = "Database connection failed", connection_info: dict[str, Any] | None = None):
+    def __init__(
+        self,
+        message: str = "Database connection failed",
+        connection_info: dict[str, Any] | None = None,
+    ):
         super().__init__(message)
         self.error_code = "DATABASE_CONNECTION_ERROR"
         if connection_info:
@@ -145,10 +155,15 @@ class DatabaseConnectionError(DatabaseError):
 
 # Enhanced Authentication Exceptions
 
+
 class TokenValidationError(AuthenticationError):
     """Raised when JWT token validation fails"""
 
-    def __init__(self, message: str = "Token validation failed", token_info: dict[str, Any] | None = None):
+    def __init__(
+        self,
+        message: str = "Token validation failed",
+        token_info: dict[str, Any] | None = None,
+    ):
         super().__init__(message)
         self.details = {"token_info": token_info or {}}
 
@@ -156,7 +171,9 @@ class TokenValidationError(AuthenticationError):
 class TokenExpiredError(AuthenticationError):
     """Raised when JWT token has expired"""
 
-    def __init__(self, message: str = "Token has expired", expired_at: str | None = None):
+    def __init__(
+        self, message: str = "Token has expired", expired_at: str | None = None
+    ):
         super().__init__(message)
         if expired_at:
             self.details = {"expired_at": expired_at}
@@ -183,12 +200,16 @@ class UserInactiveError(AuthenticationError):
 class InsufficientPermissionsError(AuthorizationError):
     """Raised when user lacks specific permissions"""
 
-    def __init__(self, required_permissions: list[str], user_permissions: list[str] | None = None):
-        message = f"Insufficient permissions. Required: {', '.join(required_permissions)}"
+    def __init__(
+        self, required_permissions: list[str], user_permissions: list[str] | None = None
+    ):
+        message = (
+            f"Insufficient permissions. Required: {', '.join(required_permissions)}"
+        )
         super().__init__(message)
         self.details = {
             "required_permissions": required_permissions,
-            "user_permissions": user_permissions or []
+            "user_permissions": user_permissions or [],
         }
 
 
@@ -201,7 +222,7 @@ class SecurityViolationError(BaseAPIException):
             message=message,
             status_code=status.HTTP_403_FORBIDDEN,
             error_code="SECURITY_VIOLATION",
-            details=details or {}
+            details=details or {},
         )
 
 
@@ -289,7 +310,7 @@ class CacheError(BaseAPIException):
             message=error_message,
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             error_code="CACHE_ERROR",
-            details={"operation": operation}
+            details={"operation": operation},
         )
 
 
@@ -298,7 +319,7 @@ def create_error_response(
     message: str,
     error_code: str,
     details: dict[str, Any] | None = None,
-    request_id: str | None = None
+    request_id: str | None = None,
 ) -> JSONResponse:
     """Create a standardized error response"""
 
@@ -316,10 +337,7 @@ def create_error_response(
 
     content = {"error": error_body}
 
-    return JSONResponse(
-        status_code=status_code,
-        content=content
-    )
+    return JSONResponse(status_code=status_code, content=content)
 
 
 def setup_exception_handlers(app: FastAPI) -> None:
@@ -337,8 +355,8 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "details": exc.details,
                 "path": request.url.path,
                 "method": request.method,
-                "validation_error": True  # Flag for validation monitoring
-            }
+                "validation_error": True,  # Flag for validation monitoring
+            },
         )
 
         return create_error_response(
@@ -346,7 +364,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
             message=exc.message,
             error_code=exc.error_code,
             details=exc.details,
-            request_id=getattr(request.state, "request_id", None)
+            request_id=getattr(request.state, "request_id", None),
         )
 
     @app.exception_handler(SecurityViolationError)
@@ -364,8 +382,8 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "client_ip": request.client.host if request.client else "unknown",
                 "user_agent": request.headers.get("user-agent", "unknown"),
                 "method": request.method,
-                "security_event": True  # Flag for security monitoring
-            }
+                "security_event": True,  # Flag for security monitoring
+            },
         )
 
         # Add security-specific headers
@@ -374,7 +392,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
             message=exc.message,
             error_code=exc.error_code,
             details=exc.details,
-            request_id=getattr(request.state, "request_id", None)
+            request_id=getattr(request.state, "request_id", None),
         )
 
         # Add security headers
@@ -400,8 +418,8 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "client_ip": client_ip,
                 "user_agent": user_agent,
                 "method": request.method,
-                "auth_failure": True  # Flag for auth monitoring
-            }
+                "auth_failure": True,  # Flag for auth monitoring
+            },
         )
 
         # Create response with auth-specific headers
@@ -409,8 +427,8 @@ def setup_exception_handlers(app: FastAPI) -> None:
             status_code=exc.status_code,
             message=exc.message,
             error_code=exc.error_code,
-            details=getattr(exc, 'details', {}),
-            request_id=getattr(request.state, "request_id", None)
+            details=getattr(exc, "details", {}),
+            request_id=getattr(request.state, "request_id", None),
         )
 
         # Add authentication-specific headers
@@ -433,16 +451,16 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "path": request.url.path,
                 "client_ip": client_ip,
                 "method": request.method,
-                "authorization_failure": True  # Flag for permission monitoring
-            }
+                "authorization_failure": True,  # Flag for permission monitoring
+            },
         )
 
         response = create_error_response(
             status_code=exc.status_code,
             message=exc.message,
             error_code=exc.error_code,
-            details=getattr(exc, 'details', {}),
-            request_id=getattr(request.state, "request_id", None)
+            details=getattr(exc, "details", {}),
+            request_id=getattr(request.state, "request_id", None),
         )
 
         response.headers["X-Permission-Required"] = "true"
@@ -460,8 +478,8 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "status_code": exc.status_code,
                 "path": request.url.path,
                 "client_ip": request.client.host if request.client else "unknown",
-                "rate_limit_exceeded": True
-            }
+                "rate_limit_exceeded": True,
+            },
         )
 
         response = create_error_response(
@@ -469,7 +487,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
             message=exc.message,
             error_code=exc.error_code,
             details=exc.details,
-            request_id=getattr(request.state, "request_id", None)
+            request_id=getattr(request.state, "request_id", None),
         )
 
         # Add rate limiting headers
@@ -480,7 +498,9 @@ def setup_exception_handlers(app: FastAPI) -> None:
         return response
 
     @app.exception_handler(DatabaseTimeoutError)
-    async def database_timeout_error_handler(request: Request, exc: DatabaseTimeoutError):
+    async def database_timeout_error_handler(
+        request: Request, exc: DatabaseTimeoutError
+    ):
         """Handle database timeout errors with specific monitoring"""
 
         logger.error(
@@ -490,8 +510,8 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "status_code": exc.status_code,
                 "path": request.url.path,
                 "timeout_duration": exc.details.get("timeout_duration"),
-                "database_timeout_error": True  # Flag for database monitoring
-            }
+                "database_timeout_error": True,  # Flag for database monitoring
+            },
         )
 
         response = create_error_response(
@@ -499,7 +519,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
             message=exc.message,
             error_code=exc.error_code,
             details=exc.details,
-            request_id=getattr(request.state, "request_id", None)
+            request_id=getattr(request.state, "request_id", None),
         )
 
         response.headers["X-Database-Error"] = "timeout"
@@ -508,7 +528,9 @@ def setup_exception_handlers(app: FastAPI) -> None:
         return response
 
     @app.exception_handler(DatabaseConnectionError)
-    async def database_connection_error_handler(request: Request, exc: DatabaseConnectionError):
+    async def database_connection_error_handler(
+        request: Request, exc: DatabaseConnectionError
+    ):
         """Handle database connection errors with circuit breaker info"""
 
         logger.error(
@@ -518,8 +540,8 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "status_code": exc.status_code,
                 "path": request.url.path,
                 "connection_info": exc.details.get("connection_info"),
-                "database_connection_error": True  # Flag for database monitoring
-            }
+                "database_connection_error": True,  # Flag for database monitoring
+            },
         )
 
         response = create_error_response(
@@ -527,7 +549,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
             message=exc.message,
             error_code=exc.error_code,
             details=exc.details,
-            request_id=getattr(request.state, "request_id", None)
+            request_id=getattr(request.state, "request_id", None),
         )
 
         response.headers["X-Database-Error"] = "connection_failed"
@@ -536,7 +558,9 @@ def setup_exception_handlers(app: FastAPI) -> None:
         return response
 
     @app.exception_handler(ExternalServiceError)
-    async def external_service_error_handler(request: Request, exc: ExternalServiceError):
+    async def external_service_error_handler(
+        request: Request, exc: ExternalServiceError
+    ):
         """Handle external service errors with service monitoring"""
 
         logger.error(
@@ -546,8 +570,8 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "status_code": exc.status_code,
                 "path": request.url.path,
                 "service": exc.details.get("service", "unknown"),
-                "external_service_error": True  # Flag for service monitoring
-            }
+                "external_service_error": True,  # Flag for service monitoring
+            },
         )
 
         response = create_error_response(
@@ -555,7 +579,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
             message=exc.message,
             error_code=exc.error_code,
             details=exc.details,
-            request_id=getattr(request.state, "request_id", None)
+            request_id=getattr(request.state, "request_id", None),
         )
 
         response.headers["X-Service-Error"] = exc.details.get("service", "unknown")
@@ -599,8 +623,8 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "status_code": exc.status_code,
                 "path": request.url.path,
                 "method": request.method,
-                "database_error": True  # Flag for database monitoring
-            }
+                "database_error": True,  # Flag for database monitoring
+            },
         )
 
         return create_error_response(
@@ -608,7 +632,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
             message=exc.message,
             error_code=exc.error_code,
             details=exc.details,
-            request_id=getattr(request.state, "request_id", None)
+            request_id=getattr(request.state, "request_id", None),
         )
 
     @app.exception_handler(BaseAPIException)
@@ -622,8 +646,8 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "error_code": exc.error_code,
                 "status_code": exc.status_code,
                 "details": exc.details,
-                "path": request.url.path
-            }
+                "path": request.url.path,
+            },
         )
 
         return create_error_response(
@@ -631,11 +655,13 @@ def setup_exception_handlers(app: FastAPI) -> None:
             message=exc.message,
             error_code=exc.error_code,
             details=exc.details,
-            request_id=getattr(request.state, "request_id", None)
+            request_id=getattr(request.state, "request_id", None),
         )
 
     @app.exception_handler(RequestValidationError)
-    async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    async def validation_exception_handler(
+        request: Request, exc: RequestValidationError
+    ):
         """Handle Pydantic validation errors"""
 
         # Format validation errors
@@ -647,8 +673,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
             errors[field].append(error["msg"])
 
         logger.warning(
-            f"Validation error on {request.url.path}",
-            extra={"errors": errors}
+            f"Validation error on {request.url.path}", extra={"errors": errors}
         )
 
         return create_error_response(
@@ -656,7 +681,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
             message="Validation failed",
             error_code="VALIDATION_ERROR",
             details={"validation_errors": errors},
-            request_id=getattr(request.state, "request_id", None)
+            request_id=getattr(request.state, "request_id", None),
         )
 
     @app.exception_handler(StarletteHTTPException)
@@ -665,24 +690,21 @@ def setup_exception_handlers(app: FastAPI) -> None:
 
         logger.warning(
             f"HTTP Exception: {exc.status_code} - {exc.detail}",
-            extra={"path": request.url.path}
+            extra={"path": request.url.path},
         )
 
         return create_error_response(
             status_code=exc.status_code,
             message=str(exc.detail),
             error_code=f"HTTP_{exc.status_code}",
-            request_id=getattr(request.state, "request_id", None)
+            request_id=getattr(request.state, "request_id", None),
         )
 
     @app.exception_handler(Exception)
     async def general_exception_handler(request: Request, exc: Exception):
         """Handle unexpected exceptions"""
 
-        logger.exception(
-            f"Unexpected error on {request.url.path}",
-            exc_info=exc
-        )
+        logger.exception(f"Unexpected error on {request.url.path}", exc_info=exc)
 
         # Don't expose internal errors in production
         message = "An unexpected error occurred"
@@ -693,5 +715,5 @@ def setup_exception_handlers(app: FastAPI) -> None:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message=message,
             error_code="INTERNAL_SERVER_ERROR",
-            request_id=getattr(request.state, "request_id", None)
+            request_id=getattr(request.state, "request_id", None),
         )

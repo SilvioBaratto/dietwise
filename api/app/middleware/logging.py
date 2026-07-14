@@ -30,7 +30,11 @@ class LoggingMiddleware:
         method = scope.get("method", "")
         path = scope.get("path", "")
         query_string = scope.get("query_string", b"").decode()
-        client_ip = scope.get("client", ["unknown", None])[0] if scope.get("client") else "unknown"
+        client_ip = (
+            scope.get("client", ["unknown", None])[0]
+            if scope.get("client")
+            else "unknown"
+        )
         headers_dict = dict(scope.get("headers", []))
         user_agent = headers_dict.get(b"user-agent", b"unknown").decode()
 
@@ -44,8 +48,8 @@ class LoggingMiddleware:
                 "query": query_string if query_string else None,
                 "client_ip": client_ip,
                 "user_agent": user_agent,
-                "event_type": "request_start"
-            }
+                "event_type": "request_start",
+            },
         )
 
         # Capture response data
@@ -62,7 +66,9 @@ class LoggingMiddleware:
                 # Add request ID to response headers
                 new_headers = list(message.get("headers", []))
                 new_headers.append((b"x-request-id", request_id.encode()))
-                new_headers.append((b"x-process-time", f"{time.time() - start_time:.3f}s".encode()))
+                new_headers.append(
+                    (b"x-process-time", f"{time.time() - start_time:.3f}s".encode())
+                )
                 message["headers"] = new_headers
             elif message["type"] == "http.response.body":
                 response_body += message.get("body", b"")
@@ -81,9 +87,11 @@ class LoggingMiddleware:
         if response_body:
             try:
                 # Check if it's JSON content
-                content_type = response_headers.get(b"content-type", b"").decode().lower()
+                content_type = (
+                    response_headers.get(b"content-type", b"").decode().lower()
+                )
                 if "application/json" in content_type:
-                    response_text = response_body.decode('utf-8')
+                    response_text = response_body.decode("utf-8")
                     response_json = json.loads(response_text)
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
                 logger.debug(f"Failed to parse response JSON for {request_id}: {e}")
@@ -93,7 +101,7 @@ class LoggingMiddleware:
             "request_id": request_id,
             "status_code": response_status,
             "process_time": process_time,
-            "event_type": "request_complete"
+            "event_type": "request_complete",
         }
 
         # Add response JSON if available
@@ -104,19 +112,21 @@ class LoggingMiddleware:
         if response_json is not None:
             try:
                 # Format JSON beautifully with indentation - never truncate
-                formatted_json = json.dumps(response_json, indent=2, ensure_ascii=False, separators=(',', ': '))
+                formatted_json = json.dumps(
+                    response_json, indent=2, ensure_ascii=False, separators=(",", ": ")
+                )
 
                 logger.info(
                     f"Response {request_id}: {response_status} in {process_time:.3f}s - JSON:\n{formatted_json}",
-                    extra=log_extra
+                    extra=log_extra,
                 )
             except (TypeError, ValueError) as e:
                 logger.info(
                     f"Response {request_id}: {response_status} in {process_time:.3f}s - JSON: [serialization error: {e}]",
-                    extra=log_extra
+                    extra=log_extra,
                 )
         else:
             logger.info(
                 f"Response {request_id}: {response_status} in {process_time:.3f}s",
-                extra=log_extra
+                extra=log_extra,
             )

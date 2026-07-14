@@ -30,9 +30,10 @@ class ApiKeyValidationService:
         elif provider == "anthropic":
             if not api_key.startswith("sk-ant-") or len(api_key) <= 20:
                 return (False, "Invalid key format for Anthropic")
-        elif provider == "google":
-            if len(api_key) < 30 or not _GOOGLE_KEY_RE.fullmatch(api_key):
-                return (False, "Invalid key format for Google")
+        elif provider == "google" and (
+            len(api_key) < 30 or not _GOOGLE_KEY_RE.fullmatch(api_key)
+        ):
+            return (False, "Invalid key format for Google")
         return (True, "")
 
     async def _validate_openai(self, api_key: str) -> tuple[bool, str]:

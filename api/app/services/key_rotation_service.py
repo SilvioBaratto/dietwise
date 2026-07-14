@@ -50,9 +50,7 @@ class KeyRotationService:
                     },
                 )
             except Exception:
-                logger.exception(
-                    "Key rotation failed for record id=%s", record.id
-                )
+                logger.exception("Key rotation failed for record id=%s", record.id)
                 counts["failed"] += 1
                 continue
 

@@ -38,7 +38,7 @@ def get_baml_day_enum(date_obj: date) -> str:
         3: "GIOVEDI",
         4: "VENERDI",
         5: "SABATO",
-        6: "DOMENICA"
+        6: "DOMENICA",
     }
     return day_enums[date_obj.weekday()]
 
@@ -46,6 +46,7 @@ def get_baml_day_enum(date_obj: date) -> str:
 def _meal_to_schema(m):
     """Convert a Meal DB model to PastoSchema"""
     from app.schemas.diet import PastoSchema
+
     return PastoSchema(
         id=m.id,
         tipoPasto=TipoPastoSchema(
@@ -65,6 +66,7 @@ def _meal_to_schema(m):
 def _meals_to_baml(meals):
     """Convert DB meals to flat list of BAML Pasto objects"""
     from baml_client.types import Pasto as PastoBAML
+
     return [
         PastoBAML(
             giorno=m.day,
@@ -99,11 +101,7 @@ class DietService:
         """Get all diets for a user"""
         diets = self.diet_repo.get_user_diets(user_id)
         return [
-            DietSummary(
-                id=diet.id,
-                name=diet.name,
-                created_at=diet.created_at
-            )
+            DietSummary(id=diet.id, name=diet.name, created_at=diet.created_at)
             for diet in diets
         ]
 
@@ -115,8 +113,7 @@ class DietService:
 
         if not weekly:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Diet not found."
+                status_code=status.HTTP_404_NOT_FOUND, detail="Diet not found."
             )
 
         return DietaSettimanaleSchema(
@@ -152,7 +149,9 @@ class DietService:
             end_date = today + timedelta(days=days_until_sunday)
 
         # Generate diet using BAML (Step 1 - only diet, no grocery list)
-        target = compute_calorie_target(settings.weight, settings.height, settings.age, settings.sex)
+        target = compute_calorie_target(
+            settings.weight, settings.height, settings.age, settings.sex
+        )
         try:
             external = await self._baml.get_client().GeneraDietaSettimanale(
                 dataInizio=today.isoformat(),
@@ -209,7 +208,7 @@ class DietService:
         if not saved:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to reload created diet"
+                detail="Failed to reload created diet",
             )
 
         return DietaSettimanaleSchema(
@@ -220,24 +219,27 @@ class DietService:
             pasti=[_meal_to_schema(m) for m in saved.meals],
         )
 
-    async def create_grocery_list_for_diet(self, diet_id: str, user_id: str) -> ListaSpesaSchema:
+    async def create_grocery_list_for_diet(
+        self, diet_id: str, user_id: str
+    ) -> ListaSpesaSchema:
         """Generate and save grocery list for an existing diet (Step 2 of 2)"""
         # Verify diet exists and belongs to user
         weekly = self.diet_repo.get_with_meals(diet_id, user_id)
         if not weekly:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Diet not found."
+                status_code=status.HTTP_404_NOT_FOUND, detail="Diet not found."
             )
 
         # Check if grocery list already exists
         if weekly.grocery_list and weekly.grocery_list.items:
-            logger.info(f"Grocery list already exists for diet {diet_id}, returning existing list")
+            logger.info(
+                f"Grocery list already exists for diet {diet_id}, returning existing list"
+            )
             items = [
                 IngredienteSchema(
                     nome=gi.ingredient.name,
                     quantita=gi.quantity,
-                    unita=gi.ingredient.unit
+                    unita=gi.ingredient.unit,
                 )
                 for gi in weekly.grocery_list.items
             ]
@@ -261,8 +263,7 @@ class DietService:
 
         # Save grocery list
         grocery_list = self.grocery_list_repo.create_grocery_list(
-            grocery_list_id=str(uuid.uuid4()),
-            weekly_diet_id=weekly.id
+            grocery_list_id=str(uuid.uuid4()), weekly_diet_id=weekly.id
         )
 
         for ingr in grocery.ingredienti:
@@ -275,7 +276,9 @@ class DietService:
                     unit=ingr.unita,
                 )
             else:
-                existing_ingr = self.ingredient_repo.update_unit(existing_ingr, ingr.unita)
+                existing_ingr = self.ingredient_repo.update_unit(
+                    existing_ingr, ingr.unita
+                )
 
             self.grocery_list_item_repo.create_grocery_item(
                 item_id=str(uuid.uuid4()),
@@ -290,9 +293,7 @@ class DietService:
         return ListaSpesaSchema(
             ingredienti=[
                 IngredienteSchema(
-                    nome=ingr.nome,
-                    quantita=ingr.quantita,
-                    unita=ingr.unita
+                    nome=ingr.nome, quantita=ingr.quantita, unita=ingr.unita
                 )
                 for ingr in grocery.ingredienti
             ]
@@ -310,7 +311,9 @@ class DietService:
             for diet in all_diets:
                 logger.debug(f"Diet {diet.id}: {diet.start_date} to {diet.end_date}")
 
-            logger.info(f"No diet found for user {user_id} for the current week - this is normal")
+            logger.info(
+                f"No diet found for user {user_id} for the current week - this is normal"
+            )
             return None
 
         # Build grocery list
@@ -326,6 +329,7 @@ class DietService:
                 )
 
         from app.schemas.diet import DietaSettimanaleSchema
+
         return DietaConLista(
             dieta=DietaSettimanaleSchema(
                 id=weekly.id,
@@ -337,20 +341,21 @@ class DietService:
             listaSpesa=ListaSpesaSchema(ingredienti=items),
         )
 
-    def get_grocery_list_by_diet_id(self, diet_id: str, user_id: str) -> ListaSpesaSchema:
+    def get_grocery_list_by_diet_id(
+        self, diet_id: str, user_id: str
+    ) -> ListaSpesaSchema:
         """Get grocery list for a specific diet by ID"""
         weekly = self.diet_repo.get_with_grocery_list(diet_id, user_id)
 
         if not weekly:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Diet not found."
+                status_code=status.HTTP_404_NOT_FOUND, detail="Diet not found."
             )
 
         if not weekly.grocery_list or not weekly.grocery_list.items:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="No grocery list found for this diet."
+                detail="No grocery list found for this diet.",
             )
 
         items = []
@@ -359,7 +364,7 @@ class DietService:
                 IngredienteSchema(
                     nome=gi.ingredient.name,
                     quantita=gi.quantity,
-                    unita=gi.ingredient.unit
+                    unita=gi.ingredient.unit,
                 )
             )
 
@@ -381,8 +386,7 @@ class DietService:
         weekly = self.diet_repo.get_with_meals(diet_id, user_id)
         if not weekly:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Diet not found."
+                status_code=status.HTTP_404_NOT_FOUND, detail="Diet not found."
             )
 
         # Build flat BAML representation (TOON-friendly)
@@ -394,7 +398,9 @@ class DietService:
         )
 
         # Call BAML to modify the diet
-        target = compute_calorie_target(settings.weight, settings.height, settings.age, settings.sex)
+        target = compute_calorie_target(
+            settings.weight, settings.height, settings.age, settings.sex
+        )
         try:
             today = date.today()
             modified = await self._baml.get_client().ModificaDietaSettimanale(
@@ -450,7 +456,10 @@ class DietService:
         # Delete existing grocery list if it exists
         if weekly.grocery_list:
             from app.models import GroceryList
-            stmt = sql_delete(GroceryList).where(GroceryList.weekly_diet_id == weekly.id)
+
+            stmt = sql_delete(GroceryList).where(
+                GroceryList.weekly_diet_id == weekly.id
+            )
             self.db.execute(stmt)
             self.db.flush()
 
@@ -463,7 +472,7 @@ class DietService:
         if not saved:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to reload modified diet"
+                detail="Failed to reload modified diet",
             )
 
         # Generate new grocery list from flat pasti (TOON-friendly)
@@ -483,8 +492,7 @@ class DietService:
 
         # Save grocery list
         grocery_list = self.grocery_list_repo.create_grocery_list(
-            grocery_list_id=str(uuid.uuid4()),
-            weekly_diet_id=saved.id
+            grocery_list_id=str(uuid.uuid4()), weekly_diet_id=saved.id
         )
 
         for ingr in grocery.ingredienti:
@@ -497,7 +505,9 @@ class DietService:
                     unit=ingr.unita,
                 )
             else:
-                existing_ingr = self.ingredient_repo.update_unit(existing_ingr, ingr.unita)
+                existing_ingr = self.ingredient_repo.update_unit(
+                    existing_ingr, ingr.unita
+                )
 
             self.grocery_list_item_repo.create_grocery_item(
                 item_id=str(uuid.uuid4()),
@@ -510,11 +520,7 @@ class DietService:
         self.db.commit()
 
         grocery_items = [
-            IngredienteSchema(
-                nome=ingr.nome,
-                quantita=ingr.quantita,
-                unita=ingr.unita
-            )
+            IngredienteSchema(nome=ingr.nome, quantita=ingr.quantita, unita=ingr.unita)
             for ingr in grocery.ingredienti
         ]
 
@@ -526,7 +532,7 @@ class DietService:
                 dataFine=saved.end_date.isoformat(),
                 pasti=[_meal_to_schema(m) for m in saved.meals],
             ),
-            listaSpesa=ListaSpesaSchema(ingredienti=grocery_items)
+            listaSpesa=ListaSpesaSchema(ingredienti=grocery_items),
         )
 
     def delete_diet(self, diet_id: str, user_id: str) -> bool:
@@ -535,9 +541,8 @@ class DietService:
 
         from app.models import WeeklyDiet
 
-        stmt = (
-            sql_delete(WeeklyDiet)
-            .where(WeeklyDiet.id == diet_id, WeeklyDiet.user_id == user_id)
+        stmt = sql_delete(WeeklyDiet).where(
+            WeeklyDiet.id == diet_id, WeeklyDiet.user_id == user_id
         )
 
         result = self.db.execute(stmt)
@@ -547,13 +552,12 @@ class DietService:
             weekly = self.diet_repo.get(diet_id)
             if not weekly:
                 raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Diet not found."
+                    status_code=status.HTTP_404_NOT_FOUND, detail="Diet not found."
                 )
             else:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail="You don't have permission to delete this diet."
+                    detail="You don't have permission to delete this diet.",
                 )
 
         self.db.commit()

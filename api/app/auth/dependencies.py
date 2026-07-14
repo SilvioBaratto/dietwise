@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 bearer_scheme = HTTPBearer(
     scheme_name="Bearer",
     description="Enter your Supabase JWT token",
-    auto_error=False  # Handle missing token manually for better error messages
+    auto_error=False,  # Handle missing token manually for better error messages
 )
 
 
@@ -73,9 +73,7 @@ def get_current_user_from_token(
         email = claims_data.get("email")
 
         # Get user from our database by ID or email
-        stmt = select(User).where(
-            or_(User.id == user_id, User.email == email)
-        )
+        stmt = select(User).where(or_(User.id == user_id, User.email == email))
         result = db.execute(stmt)
         db_user = result.scalar_one_or_none()
 
@@ -107,7 +105,9 @@ def get_current_user_from_token(
             "is_approved": db_user.is_approved,
             "is_admin": db_user.is_admin,
             "terms_accepted_at": (
-                db_user.terms_accepted_at.isoformat() if db_user.terms_accepted_at else None
+                db_user.terms_accepted_at.isoformat()
+                if db_user.terms_accepted_at
+                else None
             ),
             "created_at": db_user.created_at.isoformat(),
             "role": claims_data.get("role", "authenticated"),
@@ -145,14 +145,14 @@ def get_current_user(
     if not user_data.get("is_approved") and not user_data.get("is_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Your account is pending approval. Please wait for admin approval."
+            detail="Your account is pending approval. Please wait for admin approval.",
         )
 
     # Check if user has accepted the Terms & Conditions
     if not user_data.get("terms_accepted_at"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Terms and conditions not accepted. Please accept to continue."
+            detail="Terms and conditions not accepted. Please accept to continue.",
         )
 
     return user_data
@@ -175,8 +175,7 @@ def require_admin(
     """
     if not user_data.get("is_admin"):
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin access required"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required"
         )
 
     return user_data

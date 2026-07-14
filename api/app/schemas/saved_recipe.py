@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 class SavedRecipeCreate(BaseModel):
     """Schema for creating a saved recipe"""
+
     recipe_name: str
     recipe_instructions: str
     meal_type: str  # "breakfast", "lunch", "dinner", "snack"
@@ -15,6 +16,7 @@ class SavedRecipeCreate(BaseModel):
 
 class SavedRecipeOut(BaseModel):
     """Schema for returning a saved recipe"""
+
     id: str
     recipe_name: str
     recipe_instructions: str

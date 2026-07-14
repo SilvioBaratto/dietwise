@@ -1,6 +1,5 @@
 """Admin endpoints for user management"""
 
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -15,6 +14,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 
 class UserResponse(BaseModel):
     """User response schema"""
+
     id: str
     email: str
     is_approved: bool
@@ -27,12 +27,14 @@ class UserResponse(BaseModel):
 
 class UserApprovalRequest(BaseModel):
     """Request to approve/reject a user"""
+
     user_id: str
     approved: bool
 
 
 class BulkApprovalRequest(BaseModel):
     """Request to approve/reject multiple users"""
+
     user_ids: list[str]
     approved: bool
 
@@ -75,7 +77,9 @@ def list_pending_users(
     db: Session = Depends(get_db),
 ):
     """List users pending approval (admin only)."""
-    stmt = select(User).where(User.is_approved.is_(False)).order_by(User.created_at.desc())
+    stmt = (
+        select(User).where(User.is_approved.is_(False)).order_by(User.created_at.desc())
+    )
     result = db.execute(stmt)
     users = result.scalars().all()
 
@@ -104,8 +108,7 @@ def approve_user(
 
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
 
     user.is_approved = request.approved
@@ -128,8 +131,7 @@ def bulk_approve_users(
 
     if not users:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No users found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="No users found"
         )
 
     for user in users:
@@ -154,14 +156,12 @@ def delete_user(
 
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
 
     if user.is_admin:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot delete admin users"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot delete admin users"
         )
 
     email = user.email
@@ -184,8 +184,7 @@ def make_admin(
 
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
 
     user.is_admin = True
@@ -206,7 +205,7 @@ def remove_admin(
     if user_id == admin["id"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot remove your own admin privileges"
+            detail="Cannot remove your own admin privileges",
         )
 
     stmt = select(User).where(User.id == user_id)
@@ -215,8 +214,7 @@ def remove_admin(
 
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
 
     user.is_admin = False

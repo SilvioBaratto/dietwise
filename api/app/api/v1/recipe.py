@@ -48,7 +48,7 @@ def save_recipe(
         recipe_name=recipe_data.recipe_name,
         recipe_instructions=recipe_data.recipe_instructions,
         meal_type=meal_type_enum,
-        calories=recipe_data.calories
+        calories=recipe_data.calories,
     )
 
     db.commit()
@@ -60,7 +60,7 @@ def save_recipe(
         recipe_instructions=saved_recipe.recipe_instructions,
         meal_type=saved_recipe.meal_type.value,
         calories=saved_recipe.calories,
-        created_at=saved_recipe.created_at
+        created_at=saved_recipe.created_at,
     )
 
 
@@ -86,7 +86,7 @@ def get_user_recipes(
             recipe_instructions=recipe.recipe_instructions,
             meal_type=recipe.meal_type.value,  # BAML enum .value
             calories=recipe.calories,
-            created_at=recipe.created_at
+            created_at=recipe.created_at,
         )
         for recipe in saved_recipes
     ]
@@ -115,7 +115,7 @@ def get_recipes_by_name(
             recipe_instructions=recipe.recipe_instructions,
             meal_type=recipe.meal_type.value,  # BAML enum .value
             calories=recipe.calories,
-            created_at=recipe.created_at
+            created_at=recipe.created_at,
         )
         for recipe in saved_recipes
     ]

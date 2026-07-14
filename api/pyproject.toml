@@ -148,6 +148,8 @@ extend-exclude = '''
   | build
   | dist
   | migrations
+  | alembic/versions
+  | baml_client
 )/
 '''
 
@@ -198,6 +200,7 @@ exclude = [
     "node_modules",
     "venv",
     "alembic/versions/",  # exclude migration files
+    "baml_client",  # auto-generated, never edited by hand
 ]
 
 [tool.ruff.mccabe]

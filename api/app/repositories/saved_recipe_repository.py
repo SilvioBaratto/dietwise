@@ -1,6 +1,5 @@
 """Saved recipe repository for data access operations"""
 
-
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -11,10 +10,13 @@ from app.repositories.base_repository import BaseRepository
 
 class SavedRecipeCreate(BaseModel):
     """Schema for creating a saved recipe"""
+
     pass
 
 
-class SavedRecipeRepository(BaseRepository[SavedRecipe, SavedRecipeCreate, SavedRecipeCreate]):
+class SavedRecipeRepository(
+    BaseRepository[SavedRecipe, SavedRecipeCreate, SavedRecipeCreate]
+):
     """Repository for SavedRecipe operations"""
 
     def __init__(self, db: Session):
@@ -25,15 +27,16 @@ class SavedRecipeRepository(BaseRepository[SavedRecipe, SavedRecipeCreate, Saved
         stmt = (
             select(SavedRecipe)
             .where(
-                SavedRecipe.recipe_name == recipe_name,
-                SavedRecipe.user_id == user_id
+                SavedRecipe.recipe_name == recipe_name, SavedRecipe.user_id == user_id
             )
             .order_by(SavedRecipe.created_at.desc())
         )
         result = self.db.execute(stmt)
         return list(result.scalars().all())
 
-    def get_user_recipes(self, user_id: str, meal_type: TipoPasto | None = None) -> list[SavedRecipe]:
+    def get_user_recipes(
+        self, user_id: str, meal_type: TipoPasto | None = None
+    ) -> list[SavedRecipe]:
         """Get all saved recipes for a user, optionally filtered by meal type"""
         stmt = select(SavedRecipe).where(SavedRecipe.user_id == user_id)
 
@@ -52,7 +55,7 @@ class SavedRecipeRepository(BaseRepository[SavedRecipe, SavedRecipeCreate, Saved
         recipe_name: str,
         recipe_instructions: str,
         meal_type: TipoPasto,
-        calories: int
+        calories: int,
     ) -> SavedRecipe:
         """Create a new saved recipe"""
         saved_recipe = SavedRecipe(
@@ -61,7 +64,7 @@ class SavedRecipeRepository(BaseRepository[SavedRecipe, SavedRecipeCreate, Saved
             recipe_name=recipe_name,
             recipe_instructions=recipe_instructions,
             meal_type=meal_type,
-            calories=calories
+            calories=calories,
         )
         self.db.add(saved_recipe)
         self.db.flush()

@@ -26,8 +26,11 @@ from app.middleware.security import SecurityHeadersMiddleware
 # Configure structured logging
 logging.basicConfig(
     level=getattr(logging, settings.log_level.upper()),
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s' if settings.log_format == 'text'
-           else '{"timestamp": "%(asctime)s", "name": "%(name)s", "level": "%(levelname)s", "message": "%(message)s"}'
+    format=(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        if settings.log_format == "text"
+        else '{"timestamp": "%(asctime)s", "name": "%(name)s", "level": "%(levelname)s", "message": "%(message)s"}'
+    ),
 )
 logger = logging.getLogger(__name__)
 
@@ -86,6 +89,7 @@ async def lifespan(app: FastAPI):
             # Initialize Supabase (non-blocking)
             try:
                 import asyncio
+
                 await asyncio.wait_for(initialize_supabase(), timeout=5.0)
                 logger.info("Supabase authentication initialized successfully")
             except Exception as e:
@@ -100,6 +104,7 @@ async def lifespan(app: FastAPI):
 
             # Initialize database with timeout
             import asyncio
+
             init_db()
             logger.info("Database initialized successfully")
 
@@ -113,9 +118,13 @@ async def lifespan(app: FastAPI):
                 if health_check_passed:
                     logger.info("Database health check passed")
                 else:
-                    logger.warning("Database health check failed but continuing startup")
+                    logger.warning(
+                        "Database health check failed but continuing startup"
+                    )
             except Exception as e:
-                logger.warning(f"Database health check failed but continuing startup: {e}")
+                logger.warning(
+                    f"Database health check failed but continuing startup: {e}"
+                )
 
         logger.info(f"{settings.project_name} API startup complete")
         yield
@@ -149,7 +158,9 @@ def create_application() -> FastAPI:
         description="Modern API",
         docs_url=None,  # Disable default docs - we'll set up custom ones
         redoc_url=None,  # Disable default redoc - we'll set up custom ones
-        openapi_url="/openapi.json" if settings.is_development else None,  # Keep OpenAPI JSON accessible in dev
+        openapi_url=(
+            "/openapi.json" if settings.is_development else None
+        ),  # Keep OpenAPI JSON accessible in dev
         debug=settings.debug,
         lifespan=lifespan,
     )
@@ -173,7 +184,7 @@ def create_application() -> FastAPI:
             "User-Agent",
             "X-Requested-With",
             "X-Client-Info",
-            "X-Dev-User"
+            "X-Dev-User",
         ],
         expose_headers=["X-Total-Count", "X-Rate-Limit-Remaining"],
         max_age=3600,  # Cache preflight requests for 1 hour
@@ -184,7 +195,7 @@ def create_application() -> FastAPI:
         app.add_middleware(
             RateLimitingMiddleware,
             requests=settings.rate_limit_requests,
-            window=settings.rate_limit_window
+            window=settings.rate_limit_window,
         )
 
     # 3. Security headers middleware
@@ -220,7 +231,7 @@ def setup_health_endpoints(app: FastAPI) -> None:
             "environment": settings.environment,
             "api_version": "v1",
             "docs_url": "/docs" if settings.debug else None,
-            "redoc_url": "/redoc" if settings.debug else None
+            "redoc_url": "/redoc" if settings.debug else None,
         }
 
     @app.get("/health")
@@ -243,7 +254,7 @@ def setup_health_endpoints(app: FastAPI) -> None:
                 checks["database"] = {
                     "status": "healthy" if db_healthy else "unhealthy",
                     "connection_mode": "sync_psycopg2",
-                    "timeout_protected": False
+                    "timeout_protected": False,
                 }
                 if not db_healthy:
                     all_healthy = False
@@ -264,7 +275,7 @@ def setup_health_endpoints(app: FastAPI) -> None:
                 checks["memory"] = {
                     "status": memory_status,
                     "usage_percent": memory.percent,
-                    "available_mb": round(memory.available / 1024 / 1024, 2)
+                    "available_mb": round(memory.available / 1024 / 1024, 2),
                 }
             except Exception as e:
                 checks["memory"] = {"status": "unhealthy", "error": str(e)}
@@ -272,7 +283,7 @@ def setup_health_endpoints(app: FastAPI) -> None:
 
             # Disk check
             try:
-                disk = psutil.disk_usage('/')
+                disk = psutil.disk_usage("/")
                 disk_status = "healthy"
                 if disk.percent > 90:
                     disk_status = "critical"
@@ -283,7 +294,7 @@ def setup_health_endpoints(app: FastAPI) -> None:
                 checks["disk"] = {
                     "status": disk_status,
                     "usage_percent": disk.percent,
-                    "free_gb": round(disk.free / 1024 / 1024 / 1024, 2)
+                    "free_gb": round(disk.free / 1024 / 1024 / 1024, 2),
                 }
             except Exception as e:
                 checks["disk"] = {"status": "unhealthy", "error": str(e)}
@@ -296,7 +307,7 @@ def setup_health_endpoints(app: FastAPI) -> None:
                 "instance_id": os.getenv("FLY_ALLOC_ID", "unknown"),
                 "machine_id": os.getenv("FLY_MACHINE_ID", "unknown"),
                 "public_ip": os.getenv("FLY_PUBLIC_IP", "unknown"),
-                "private_ip": os.getenv("FLY_PRIVATE_IP", "unknown")
+                "private_ip": os.getenv("FLY_PRIVATE_IP", "unknown"),
             }
 
             response_data = {
@@ -308,8 +319,8 @@ def setup_health_endpoints(app: FastAPI) -> None:
                 "system": fly_info,
                 "performance": {
                     "process_count": len(psutil.pids()),
-                    "boot_time": psutil.boot_time()
-                }
+                    "boot_time": psutil.boot_time(),
+                },
             }
 
             status_code = 200 if all_healthy else 503
@@ -322,10 +333,9 @@ def setup_health_endpoints(app: FastAPI) -> None:
                 content={
                     "status": "unhealthy",
                     "timestamp": time.time(),
-                    "error": str(e)
-                }
+                    "error": str(e),
+                },
             )
-
 
 
 def setup_documentation_endpoints(app: FastAPI) -> None:
@@ -343,7 +353,7 @@ def setup_documentation_endpoints(app: FastAPI) -> None:
                 openapi_url="/openapi.json",  # Force explicit URL for debugging
                 title=f"{app.title} – Development Docs",
                 swagger_js_url="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js",
-                swagger_css_url="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css"
+                swagger_css_url="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css",
             )
 
         @app.get("/redoc", include_in_schema=False)
@@ -353,7 +363,7 @@ def setup_documentation_endpoints(app: FastAPI) -> None:
             return get_redoc_html(
                 openapi_url="/openapi.json",
                 title=f"{app.title} – Development ReDoc",
-                redoc_js_url="https://unpkg.com/redoc@2.1.0/bundles/redoc.standalone.js"
+                redoc_js_url="https://unpkg.com/redoc@2.1.0/bundles/redoc.standalone.js",
             )
 
         @app.get("/docs-debug", include_in_schema=False)
@@ -365,7 +375,7 @@ def setup_documentation_endpoints(app: FastAPI) -> None:
                 "openapi_url": app.openapi_url,
                 "debug": settings.debug,
                 "is_development": settings.is_development,
-                "environment": settings.environment
+                "environment": settings.environment,
             }
 
     elif settings.swagger_user and settings.swagger_pass:
@@ -379,7 +389,7 @@ def setup_documentation_endpoints(app: FastAPI) -> None:
                 openapi_url="/openapi.json",
                 title=f"{app.title} – Swagger UI",
                 swagger_js_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js",
-                swagger_css_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css"
+                swagger_css_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css",
             )
 
         @app.get("/redoc", include_in_schema=False)
@@ -388,7 +398,7 @@ def setup_documentation_endpoints(app: FastAPI) -> None:
             return get_redoc_html(
                 openapi_url="/openapi.json",
                 title=f"{app.title} – ReDoc",
-                redoc_js_url="https://cdn.jsdelivr.net/npm/redoc@2.0.0/bundles/redoc.standalone.js"
+                redoc_js_url="https://cdn.jsdelivr.net/npm/redoc@2.0.0/bundles/redoc.standalone.js",
             )
 
     else:
@@ -396,6 +406,7 @@ def setup_documentation_endpoints(app: FastAPI) -> None:
 
     # Always provide OpenAPI JSON if development or authenticated production
     if settings.is_development or (settings.swagger_user and settings.swagger_pass):
+
         @app.get("/openapi.json", include_in_schema=False)
         def get_openapi_json():
             """OpenAPI JSON schema"""
@@ -410,15 +421,16 @@ def setup_monitoring_endpoints(app: FastAPI) -> None:
         """Prometheus metrics endpoint for Fly.io monitoring"""
         try:
             from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+
             return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
         except ImportError:
             # Fallback if prometheus_client is not available
             return JSONResponse(
                 content={
                     "error": "Prometheus client not installed",
-                    "message": "Install prometheus-client package for metrics"
+                    "message": "Install prometheus-client package for metrics",
                 },
-                status_code=503
+                status_code=503,
             )
 
     @app.get("/fly/system", response_model=None)
@@ -429,7 +441,7 @@ def setup_monitoring_endpoints(app: FastAPI) -> None:
         try:
             # Get system information
             memory = psutil.virtual_memory()
-            disk = psutil.disk_usage('/')
+            disk = psutil.disk_usage("/")
             cpu_percent = psutil.cpu_percent(interval=1)
 
             return {
@@ -440,30 +452,34 @@ def setup_monitoring_endpoints(app: FastAPI) -> None:
                     "instance_id": os.getenv("FLY_ALLOC_ID", "unknown"),
                     "machine_id": os.getenv("FLY_MACHINE_ID", "unknown"),
                     "public_ip": os.getenv("FLY_PUBLIC_IP", "unknown"),
-                    "private_ip": os.getenv("FLY_PRIVATE_IP", "unknown")
+                    "private_ip": os.getenv("FLY_PRIVATE_IP", "unknown"),
                 },
                 "system": {
                     "cpu_percent": cpu_percent,
                     "memory": {
                         "total_mb": round(memory.total / 1024 / 1024, 2),
                         "available_mb": round(memory.available / 1024 / 1024, 2),
-                        "percent": memory.percent
+                        "percent": memory.percent,
                     },
                     "disk": {
                         "total_gb": round(disk.total / 1024 / 1024 / 1024, 2),
                         "free_gb": round(disk.free / 1024 / 1024 / 1024, 2),
-                        "percent": round((disk.used / disk.total) * 100, 2)
+                        "percent": round((disk.used / disk.total) * 100, 2),
                     },
-                    "processes": len(psutil.pids())
+                    "processes": len(psutil.pids()),
                 },
-                "database": {"status": "simplified_version"}
+                "database": {"status": "simplified_version"},
             }
         except Exception as e:
             logger.error(f"System info error: {e}")
             return JSONResponse(
-                content={"error": "Failed to gather system information", "details": str(e)},
-                status_code=500
+                content={
+                    "error": "Failed to gather system information",
+                    "details": str(e),
+                },
+                status_code=500,
             )
+
 
 # Create the application instance
 app = create_application()
@@ -471,10 +487,11 @@ app = create_application()
 # For development server compatibility
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",
         port=8000,
         reload=settings.debug,
-        log_level=settings.log_level.lower()
+        log_level=settings.log_level.lower(),
     )

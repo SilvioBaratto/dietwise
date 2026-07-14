@@ -1,11 +1,11 @@
 import logging
 from logging.config import fileConfig
 import os
+from pathlib import Path
 import sys
 from urllib.parse import urlsplit
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 
@@ -20,7 +20,7 @@ if config.config_file_name is not None:
 
 logger = logging.getLogger("alembic.env")
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # Prefer DIRECT_DATABASE_URL (non-pooled) for migrations - Supabase's transaction
 # pooler (port 6543) doesn't reliably support the prepared statements/DDL Alembic
@@ -29,13 +29,18 @@ direct_database_url = os.getenv("DIRECT_DATABASE_URL")
 database_url = direct_database_url or os.getenv("SUPABASE_DB_URL")
 if database_url:
     config.set_main_option("sqlalchemy.url", database_url)
-    source = "DIRECT_DATABASE_URL" if direct_database_url else "SUPABASE_DB_URL (fallback)"
+    source = (
+        "DIRECT_DATABASE_URL" if direct_database_url else "SUPABASE_DB_URL (fallback)"
+    )
     parsed = urlsplit(database_url)
     logger.info(
         "alembic: using %s -> host=%s port=%s (password redacted)",
-        source, parsed.hostname, parsed.port,
+        source,
+        parsed.hostname,
+        parsed.port,
     )
-from app.models import Base
+from app.models import Base  # noqa: E402
+
 target_metadata = Base.metadata
 
 
@@ -77,9 +82,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

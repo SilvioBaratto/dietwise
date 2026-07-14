@@ -1,10 +1,9 @@
 """Database models for Diet API"""
 
 # Import base classes
-from app.models.base import Base
-
 # Import all models for easy access
 from app.models.api_key import UserApiKey
+from app.models.base import Base
 from app.models.diet import (
     GroceryList,
     GroceryListItem,

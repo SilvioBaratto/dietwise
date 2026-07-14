@@ -5,6 +5,7 @@ Revises: ff39b099730f
 Create Date: 2026-07-14 21:44:50.587982
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -12,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'f7c2d2e1cc98'
-down_revision: Union[str, Sequence[str], None] = 'ff39b099730f'
+revision: str = "f7c2d2e1cc98"
+down_revision: Union[str, Sequence[str], None] = "ff39b099730f"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -26,18 +27,12 @@ def upgrade() -> None:
     op.create_check_constraint(
         "chk_weekly_diets_date_range", "weekly_diets", "start_date < end_date"
     )
-    op.create_check_constraint(
-        "chk_meals_positive_calories", "meals", "calories >= 0"
-    )
-    op.create_check_constraint(
-        "chk_meals_positive_proteine", "meals", "proteine >= 0"
-    )
+    op.create_check_constraint("chk_meals_positive_calories", "meals", "calories >= 0")
+    op.create_check_constraint("chk_meals_positive_proteine", "meals", "proteine >= 0")
     op.create_check_constraint(
         "chk_meals_positive_carboidrati", "meals", "carboidrati >= 0"
     )
-    op.create_check_constraint(
-        "chk_meals_positive_grassi", "meals", "grassi >= 0"
-    )
+    op.create_check_constraint("chk_meals_positive_grassi", "meals", "grassi >= 0")
     op.create_check_constraint(
         "chk_ingredients_non_empty_name", "ingredients", "name != ''"
     )

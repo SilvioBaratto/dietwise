@@ -1,7 +1,7 @@
 """BYOK API key management endpoints."""
 
-import logging
 from datetime import UTC, datetime
+import logging
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Request, Response, status
@@ -65,7 +65,9 @@ async def save_api_key(
     rate_limit_keys(http_request, current_user)
     service = ApiKeyService(db)
     return await service.save_key(
-        current_user["id"], request.provider, request.api_key,
+        current_user["id"],
+        request.provider,
+        request.api_key,
         ip=_get_ip(http_request),
     )
 
@@ -107,9 +109,7 @@ def delete_api_key(
     _set_no_cache(response)
     rate_limit_keys(http_request, current_user)
     service = ApiKeyService(db)
-    deleted = service.delete_key(
-        current_user["id"], provider, ip=_get_ip(http_request)
-    )
+    deleted = service.delete_key(current_user["id"], provider, ip=_get_ip(http_request))
     if not deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -134,9 +134,7 @@ async def validate_api_key(
     _set_no_cache(response)
     rate_limit_validate(http_request, current_user)
     validator = ApiKeyValidationService()
-    is_valid, error_msg = await validator.validate(
-        request.provider, request.api_key
-    )
+    is_valid, error_msg = await validator.validate(request.provider, request.api_key)
     logger.info(
         "api_key_event",
         extra={
@@ -172,9 +170,7 @@ def set_preferences(
     _set_no_cache(response)
     rate_limit_keys(http_request, current_user)
     service = ApiKeyService(db)
-    service.update_preferences(
-        current_user["id"], request.provider, request.model
-    )
+    service.update_preferences(current_user["id"], request.provider, request.model)
     return None
 
 

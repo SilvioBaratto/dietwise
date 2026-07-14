@@ -1,6 +1,5 @@
 """Meal repository for data access operations"""
 
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
@@ -92,7 +91,9 @@ class IngredientRepository:
         result = self.db.execute(stmt)
         return result.scalar_one_or_none()
 
-    def create_ingredient(self, ingredient_id: str, name: str, unit: UnitaMisura) -> Ingredient:
+    def create_ingredient(
+        self, ingredient_id: str, name: str, unit: UnitaMisura
+    ) -> Ingredient:
         """Create a new ingredient"""
         ingredient = Ingredient(
             id=ingredient_id,
@@ -123,11 +124,7 @@ class MealIngredientRepository:
         self.db = db
 
     def create_meal_ingredient(
-        self,
-        meal_ingredient_id: str,
-        meal_id: str,
-        ingredient_id: str,
-        quantity: float
+        self, meal_ingredient_id: str, meal_id: str, ingredient_id: str, quantity: float
     ) -> MealIngredient:
         """Create a new meal ingredient relationship"""
         meal_ingredient = MealIngredient(
@@ -147,12 +144,11 @@ class GroceryListRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_grocery_list(self, grocery_list_id: str, weekly_diet_id: str) -> GroceryList:
+    def create_grocery_list(
+        self, grocery_list_id: str, weekly_diet_id: str
+    ) -> GroceryList:
         """Create a new grocery list"""
-        grocery_list = GroceryList(
-            id=grocery_list_id,
-            weekly_diet_id=weekly_diet_id
-        )
+        grocery_list = GroceryList(id=grocery_list_id, weekly_diet_id=weekly_diet_id)
         self.db.add(grocery_list)
         self.db.flush()
         return grocery_list
@@ -165,11 +161,7 @@ class GroceryListItemRepository:
         self.db = db
 
     def create_grocery_item(
-        self,
-        item_id: str,
-        grocery_list_id: str,
-        ingredient_id: str,
-        quantity: float
+        self, item_id: str, grocery_list_id: str, ingredient_id: str, quantity: float
     ) -> GroceryListItem:
         """Create a new grocery list item"""
         item = GroceryListItem(

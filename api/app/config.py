@@ -1,6 +1,5 @@
 """Application configuration using Pydantic Settings v2"""
 
-
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -9,16 +8,15 @@ class Settings(BaseSettings):
     """Application settings with environment variable support"""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        case_sensitive=False,
-        extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=False, extra="ignore"
     )
 
     # Project Information
     project_name: str = "API Diet"
     version: str = "1.0.0"
-    environment: str = Field(default="development", pattern="^(development|production)$")
+    environment: str = Field(
+        default="development", pattern="^(development|production)$"
+    )
     debug: bool = Field(default=False, alias="DEBUG")
 
     # API Configuration
@@ -38,8 +36,12 @@ class Settings(BaseSettings):
     direct_database_url: str | None = Field(default=None, alias="DIRECT_DATABASE_URL")
 
     # Pool Configuration - Conservative settings for Supabase Micro (15 pool limit)
-    database_pool_size: int = Field(default=15)  # Reduced from 8 - safer for multiple instances
-    database_max_overflow: int = Field(default=3)  # Reduced from 5 - total = 8 connections max
+    database_pool_size: int = Field(
+        default=15
+    )  # Reduced from 8 - safer for multiple instances
+    database_max_overflow: int = Field(
+        default=3
+    )  # Reduced from 5 - total = 8 connections max
     database_pool_timeout: int = Field(default=10)  # Increased for better reliability
     database_pool_recycle: int = Field(default=300)  # 15 minutes - faster recycling
     database_pool_pre_ping: bool = Field(default=True)  # Connection health checking
@@ -47,11 +49,15 @@ class Settings(BaseSettings):
     database_command_timeout: int = Field(default=30)  # Increased for stability
 
     # CRITICAL: Prepared Statement Configuration (fixes DuplicatePreparedStatementError)
-    database_statement_cache_size: int = Field(default=0)  # DISABLED by default - prevents conflicts
+    database_statement_cache_size: int = Field(
+        default=0
+    )  # DISABLED by default - prevents conflicts
     database_enable_prepared_statements: bool = Field(default=False)  # Safer default
 
     # Connection Resilience - Optimized for cloud environments
-    database_pool_reset_on_return: str = Field(default="rollback")  # Clean connection state
+    database_pool_reset_on_return: str = Field(
+        default="rollback"
+    )  # Clean connection state
     database_connection_ping_interval: int = Field(default=60)  # TCP keepalive interval
 
     # Supabase
@@ -65,9 +71,7 @@ class Settings(BaseSettings):
     cache_ttl_leagues: int = Field(default=1800)
 
     # CORS
-    cors_origins: str = Field(
-        default="http://localhost:4200,http://localhost:4300"
-    )
+    cors_origins: str = Field(default="http://localhost:4200,http://localhost:4300")
 
     @property
     def cors_origins_list(self) -> list[str]:
@@ -76,9 +80,11 @@ class Settings(BaseSettings):
             return [
                 "http://localhost:4200",
                 "http://localhost:4300",
-                "http://127.0.0.1:4200"
+                "http://127.0.0.1:4200",
             ]
-        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+        return [
+            origin.strip() for origin in self.cors_origins.split(",") if origin.strip()
+        ]
 
     # Security
     swagger_user: str | None = Field(default=None, alias="SWAGGER_USER")
@@ -108,7 +114,9 @@ class Settings(BaseSettings):
     def async_database_url(self) -> str:
         """Convert database URL to async format"""
         if self.database_url.startswith("postgresql://"):
-            return self.database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+            return self.database_url.replace(
+                "postgresql://", "postgresql+asyncpg://", 1
+            )
         return self.database_url
 
     @property

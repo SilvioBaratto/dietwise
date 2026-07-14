@@ -1,6 +1,5 @@
 """Security middleware for adding security headers"""
 
-
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -21,19 +20,14 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         headers = {
             # XSS Protection
             "X-XSS-Protection": "1; mode=block",
-
             # Content Type Options
             "X-Content-Type-Options": "nosniff",
-
             # Frame Options
             "X-Frame-Options": "DENY",
-
             # Referrer Policy
             "Referrer-Policy": "strict-origin-when-cross-origin",
-
             # HSTS (HTTPS only)
             "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-
             # Permissions Policy (disable unnecessary features)
             "Permissions-Policy": (
                 "geolocation=(), "
@@ -45,7 +39,6 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
                 "gyroscope=(), "
                 "fullscreen=()"
             ),
-
             # Custom security headers
             "X-API-Version": "1.0.0",
             "X-Powered-By": "FastAPI",

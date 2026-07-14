@@ -20,6 +20,7 @@ from app.models.base import Base
 
 class UserApiKey(Base):
     """Stores encrypted LLM API keys per user per provider"""
+
     __tablename__ = "user_api_keys"
 
     id: Mapped[str] = mapped_column(String, primary_key=True, nullable=False)
@@ -31,7 +32,7 @@ class UserApiKey(Base):
     encryption_nonce: Mapped[str] = mapped_column(Text, nullable=False)
     key_hint: Mapped[str] = mapped_column(String(8), nullable=False)
     is_valid: Mapped[bool] = mapped_column(
-        Boolean, default=True, server_default='true', nullable=False
+        Boolean, default=True, server_default="true", nullable=False
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
