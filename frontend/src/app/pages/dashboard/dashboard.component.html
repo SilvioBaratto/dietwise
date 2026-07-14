@@ -92,7 +92,6 @@
     @if (dietaConLista) {
     <div class="space-y-4 sm:space-y-6">
       <app-page-header [title]="dietaConLista.dieta.nome">
-        <svg page-header-icon lucideCheck aria-hidden="true" class="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 flex-shrink-0 text-green-500"></svg>
         <p page-header-subtitle class="text-sm sm:text-base lg:text-lg text-gray-600 flex items-center gap-2 mt-2">
           <svg lucideCalendar aria-hidden="true" class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-gray-500"></svg>
           <span class="font-medium">{{ dietaConLista.dieta.dataInizio }} — {{ dietaConLista.dieta.dataFine }}</span>
@@ -115,7 +114,7 @@
           <button (click)="openModifyDialog()"
             class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
             aria-label="Modifica dieta">
-            <svg lucideClipboard aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
+            <svg lucidePencil aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
             <span class="hidden sm:inline">Modifica</span>
           </button>
 
@@ -129,181 +128,117 @@
         </div>
       </app-page-header>
 
-      <!-- Daily Meals Section - Enhanced responsive layout -->
-      <div class="space-y-4 sm:space-y-5">
-        @for (day of dailyMeals; track day.date) {
-        <div
-          class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-shadow duration-200 hover:shadow-md">
-          <!-- Day Header -->
+      <!-- Day Selector -->
+      <div class="sticky top-0 z-10 -mx-4 px-4 sm:-mx-6 sm:px-6 py-3 bg-surface/95 backdrop-blur-sm md:static md:mx-0 md:px-0 md:bg-transparent md:backdrop-blur-none">
+        <div class="flex items-center gap-2 overflow-x-auto scrollbar-hidden" role="tablist" aria-label="Seleziona giorno">
+          @for (day of dailyMeals; track day.date) {
+          <button type="button" role="tab" [attr.aria-selected]="day.day === selectedDay"
+            (click)="selectDay(day.day!)"
+            class="flex-shrink-0 inline-flex items-center justify-center px-4 py-2.5 min-h-11 rounded-xl text-sm font-medium transition-colors touch-manipulation focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            [class.bg-primary]="day.day === selectedDay"
+            [class.text-white]="day.day === selectedDay"
+            [class.text-gray-700]="day.day !== selectedDay"
+            [class.hover:bg-gray-100]="day.day !== selectedDay">
+            {{ getShortDayName(day.day!) }}
+          </button>
+          }
+        </div>
+      </div>
+
+      <!-- Meal Type Selector -->
+      @if (availableMealTypes().length > 1) {
+      <div class="flex items-center gap-2 overflow-x-auto scrollbar-hidden -mt-2" role="tablist" aria-label="Seleziona pasto">
+        <button type="button" role="tab" [attr.aria-selected]="selectedMealType === null"
+          (click)="selectMealType(null)"
+          class="flex-shrink-0 inline-flex items-center justify-center px-3.5 py-2 min-h-11 rounded-xl text-xs sm:text-sm font-medium border transition-colors touch-manipulation focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+          [class.bg-gray-800]="selectedMealType === null"
+          [class.text-white]="selectedMealType === null"
+          [class.border-gray-800]="selectedMealType === null"
+          [class.bg-white]="selectedMealType !== null"
+          [class.text-gray-700]="selectedMealType !== null"
+          [class.border-gray-200]="selectedMealType !== null"
+          [class.hover:bg-gray-50]="selectedMealType !== null">
+          Tutti
+        </button>
+        @for (type of availableMealTypes(); track type) {
+        <button type="button" role="tab" [attr.aria-selected]="selectedMealType === type"
+          (click)="selectMealType(type)"
+          class="flex-shrink-0 inline-flex items-center justify-center px-3.5 py-2 min-h-11 rounded-xl text-xs sm:text-sm font-medium border transition-colors touch-manipulation focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+          [class.text-white]="selectedMealType === type"
+          [class.bg-orange-500]="selectedMealType === type && type === 'COLAZIONE'"
+          [class.border-orange-500]="selectedMealType === type && type === 'COLAZIONE'"
+          [class.bg-green-500]="selectedMealType === type && (type === 'SPUNTINO_MATTINA' || type === 'SPUNTINO_POMERIGGIO')"
+          [class.border-green-500]="selectedMealType === type && (type === 'SPUNTINO_MATTINA' || type === 'SPUNTINO_POMERIGGIO')"
+          [class.bg-blue-500]="selectedMealType === type && type === 'PRANZO'"
+          [class.border-blue-500]="selectedMealType === type && type === 'PRANZO'"
+          [class.bg-purple-500]="selectedMealType === type && type === 'CENA'"
+          [class.border-purple-500]="selectedMealType === type && type === 'CENA'"
+          [class.bg-white]="selectedMealType !== type"
+          [class.text-gray-700]="selectedMealType !== type"
+          [class.border-gray-200]="selectedMealType !== type"
+          [class.hover:bg-gray-50]="selectedMealType !== type">
+          {{ getMealTypeLabel(type) }}
+        </button>
+        }
+      </div>
+      }
+
+      <!-- Meals Grid - Selected Day -->
+      @if (selectedDayGroup()) {
+      <section class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+          @for (pasto of filteredMeals(); track pasto.id) {
           <div
-            class="bg-primary-light px-4 sm:px-6 lg:px-8 py-4 sm:py-5 border-b border-gray-200">
-            <div class="flex items-center justify-between gap-3">
-              <div class="flex items-center gap-3 min-w-0 flex-1">
-                <svg lucideCalendar aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-teal-600"></svg>
-                <h2 class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">{{ day.dayName | titlecase
-                  }}</h2>
+            class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-teal-300 transition-all duration-300 transform hover:-translate-y-1 focus-within:ring-2 focus-within:ring-teal-500 focus-within:ring-offset-2 flex flex-col">
+            <!-- Card Header -->
+            <div class="bg-primary-light px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+              <div class="flex items-center gap-1.5 text-sm text-gray-600">
+                <svg lucideZap aria-hidden="true" class="w-4 h-4 flex-shrink-0 text-orange-500"></svg>
+                <span class="font-medium">{{ pasto.calorie }} kcal</span>
               </div>
-              <span
-                class="text-xs sm:text-sm lg:text-base font-medium text-gray-600 bg-white px-3 py-1 sm:px-4 sm:py-1.5 rounded-full whitespace-nowrap flex-shrink-0 shadow-sm">{{
-                day.date }}</span>
             </div>
-          </div>
+            <!-- Card Content -->
+            <div class="p-4 sm:p-6 flex flex-col flex-1">
+              <!-- Recipe Title -->
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-gray-900 leading-tight mb-3 sm:mb-4 line-clamp-2">
+                {{ pasto.tipoPasto.ricetta }}
+              </h3>
 
-          <!-- Meals Grid -->
-          <div class="p-4 sm:p-6 lg:p-8">
-            @if (day.meals.length === 0) {
-            <div class="text-center py-12 sm:py-16 text-gray-500">
-              <svg lucideInbox aria-hidden="true" class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 text-gray-400"></svg>
-              <p class="text-sm sm:text-base font-medium">Nessun pasto pianificato per questo giorno</p>
-            </div>
-            } @else {
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-              @for (pasto of day.meals; track pasto.id) {
-              <div
-                class="group relative bg-gray-50 rounded-xl p-4 sm:p-5 hover:bg-gray-100 transition-all duration-200 hover:shadow-md border border-transparent hover:border-gray-200 touch-manipulation cursor-pointer focus-within:ring-2 focus-within:ring-teal-500 focus-within:ring-offset-2 flex flex-col"
-                (click)="navigateToRecipe(pasto.id)" (keydown.enter)="navigateToRecipe(pasto.id)"
-                (keydown.space)="navigateToRecipe(pasto.id); $event.preventDefault()" tabindex="0" role="button"
-                [attr.aria-label]="'Visualizza ricetta: ' + pasto.tipoPasto.ricetta">
-                <!-- Meal Header -->
-                <div class="flex items-start justify-between mb-3 gap-2">
-                  <div class="flex flex-wrap items-center gap-2">
-                    <span
-                      class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-semibold text-white whitespace-nowrap"
-                      [class.bg-orange-500]="pasto.tipoPasto.tipo === 'COLAZIONE'"
-                      [class.bg-green-500]="pasto.tipoPasto.tipo === 'SPUNTINO_MATTINA' || pasto.tipoPasto.tipo === 'SPUNTINO_POMERIGGIO'"
-                      [class.bg-blue-500]="pasto.tipoPasto.tipo === 'PRANZO'"
-                      [class.bg-purple-500]="pasto.tipoPasto.tipo === 'CENA'">
-                      {{ getMealTypeLabel(pasto.tipoPasto.tipo) }}
-                    </span>
-                    <span class="text-xs sm:text-sm text-gray-600 font-medium">
-                      {{ pasto.tipoPasto.orario || '—' }}
-                    </span>
-                  </div>
-                  <div
-                    class="flex items-center gap-1 text-sm sm:text-base text-gray-700 bg-white px-2.5 py-1 rounded-xl shadow-sm flex-shrink-0"
-                    aria-label="{{ pasto.calorie }} calorie">
-                    <svg lucideZap aria-hidden="true" class="w-4 h-4 sm:w-5 sm:h-5 text-orange-500"></svg>
-                    <span class="font-bold">{{ pasto.calorie }}</span>
-                  </div>
-                </div>
-
-                <!-- Recipe Name -->
-                <div class="flex items-start justify-between mb-3 gap-2">
-                  <h3
-                    class="text-base sm:text-lg lg:text-xl font-bold text-gray-900 leading-tight line-clamp-2 flex-1">
-                    {{ pasto.tipoPasto.ricetta }}
-                  </h3>
-                  <svg lucideChevronRight aria-hidden="true"
-                    class="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-all duration-200 flex-shrink-0 text-gray-400"></svg>
-                </div>
-
-                <!-- Ingredients Display - Always at bottom -->
-                <details class="group/details mt-auto">
+              <!-- Content that should align at bottom -->
+              <div class="mt-auto space-y-4">
+                <!-- Ingredients -->
+                <details class="group">
                   <summary
-                    class="flex items-center gap-2 text-sm sm:text-base text-teal-600 hover:text-teal-800 cursor-pointer font-semibold py-2 px-3 -mx-3 rounded-xl hover:bg-teal-50 transition-colors min-h-[44px] touch-manipulation list-none focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                    (click)="$event.stopPropagation()" aria-label="Mostra ingredienti">
+                    class="flex items-center gap-2 text-sm sm:text-base text-teal-600 hover:text-teal-800 cursor-pointer font-medium mb-2 py-2 px-1 rounded-xl hover:bg-teal-50 transition-colors touch-manipulation min-h-11 sm:min-h-[36px] list-none focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                    aria-label="Mostra o nascondi ingredienti">
                     <svg lucideChevronRight aria-hidden="true"
-                      class="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-open/details:rotate-90 flex-shrink-0 text-gray-400"></svg>
+                      class="w-4 h-4 transition-transform group-open:rotate-90 flex-shrink-0"></svg>
                     <span>Ingredienti</span>
                   </summary>
-                  <div class="mt-3 pt-3 border-t border-gray-200">
+                  <div class="mt-2 sm:mt-3 p-3 sm:p-4 bg-gray-50 rounded-xl">
                     <p class="text-sm sm:text-base text-gray-700 leading-relaxed">{{ pasto.ingredienti }}</p>
                   </div>
                 </details>
+
+                <!-- Action Button -->
+                <button type="button" (click)="navigateToRecipe(pasto.id)"
+                  class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+                  [attr.aria-label]="'Visualizza ricetta per ' + pasto.tipoPasto.ricetta">
+                  <svg lucideEye aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
+                  <span>Visualizza Ricetta</span>
+                </button>
               </div>
-              }
             </div>
-            }
           </div>
-        </div>
-        }
-      </div>
-    </div>
-    }
-
-    <!-- Modify Diet Modal - Enhanced Mobile-First Responsiveness -->
-    @if (showModifyDialog) {
-    <div
-      class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto"
-      (click)="closeModifyDialog()" role="dialog" aria-modal="true" aria-labelledby="modify-modal-title">
-      <div
-        class="bg-white rounded-t-xl sm:rounded-xl shadow-2xl w-full sm:max-w-lg lg:max-w-2xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden flex flex-col"
-        (click)="$event.stopPropagation()">
-        <!-- Modal Header - Touch-Optimized -->
-        <div
-          class="flex items-center justify-between p-5 sm:p-6 lg:p-7 border-b border-gray-200 bg-blue-50 flex-shrink-0">
-          <div class="flex items-center gap-3">
-            <svg lucideFileText aria-hidden="true" class="w-6 h-6 sm:w-7 sm:h-7 text-blue-500"></svg>
-            <h3 id="modify-modal-title" class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Modifica Dieta</h3>
-          </div>
-          <button (click)="closeModifyDialog()"
-            class="p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 min-h-11 min-w-11 flex items-center justify-center touch-manipulation"
-            aria-label="Chiudi modifica dieta">
-            <svg lucideX aria-hidden="true" class="w-6 h-6 text-gray-400"></svg>
-          </button>
-        </div>
-
-        <!-- Modal Body - Enhanced Mobile Scrolling -->
-        <div class="p-5 sm:p-6 lg:p-7 overflow-y-auto flex-1">
-          <p class="text-gray-600 text-base sm:text-lg leading-relaxed mb-5 sm:mb-6">
-            Descrivi cosa vuoi cambiare nella tua dieta. L'intelligenza artificiale modificherà solo gli aspetti
-            richiesti mantenendo il resto invariato.
-          </p>
-
-          <!-- Examples Box -->
-          <div class="mb-5 sm:mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-            <p class="text-sm sm:text-base font-semibold text-blue-900 mb-2">Esempi di richieste:</p>
-            <ul class="text-sm sm:text-base text-blue-800 space-y-1 list-disc list-inside">
-              <li>"Sostituisci la colazione di lunedì con qualcosa senza uova"</li>
-              <li>"Voglio più proteine in tutte le cene"</li>
-              <li>"Cambia tutti gli spuntini con frutta"</li>
-              <li>"Rendi la dieta più mediterranea"</li>
-            </ul>
-          </div>
-
-          <!-- Text Input -->
-          <div class="space-y-2">
-            <label for="modification-prompt" class="block text-sm sm:text-base font-semibold text-gray-900">
-              Cosa vuoi modificare?
-            </label>
-            <textarea id="modification-prompt" name="modificationPrompt" [(ngModel)]="modificationPrompt" rows="4"
-              placeholder="Es: Sostituisci la colazione di martedì con qualcosa senza latticini..."
-              class="w-full px-4 py-3 text-base sm:text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
-              [disabled]="modifying"></textarea>
-          </div>
-
-          <!-- Character count hint -->
-          @if (modificationPrompt.length > 0) {
-          <p class="mt-2 text-sm text-gray-500">
-            {{ modificationPrompt.length }} caratteri
-          </p>
           }
         </div>
-
-        <!-- Modal Footer - Touch-Optimized -->
-        <div class="px-5 sm:px-6 lg:px-7 py-4 sm:py-5 bg-gray-50 border-t border-gray-200 flex-shrink-0">
-          <div class="flex flex-col sm:flex-row gap-3">
-            <button (click)="closeModifyDialog()" [disabled]="modifying"
-              class="flex-1 px-4 py-2.5 min-h-11 rounded-xl bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="Annulla modifica">
-              Annulla
-            </button>
-            <button (click)="modifyDiet()" [disabled]="modifying || modificationPrompt.trim().length === 0"
-              class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="Conferma modifica dieta">
-              @if (modifying) {
-              <svg lucideLoader aria-hidden="true" class="w-4 h-4 animate-spin flex-shrink-0"></svg>
-              <span>Modifica in corso...</span>
-              } @else {
-              <svg lucideCheck aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
-              <span>Modifica</span>
-              }
-            </button>
-          </div>
-        </div>
-      </div>
+      </section>
+      }
     </div>
     }
+
+    <app-modify-diet-sheet [isOpen]="showModifyDialog" [modifying]="modifying"
+      (closed)="closeModifyDialog()" (submitted)="modifyDiet($event)" />
 
     <app-grocery-list-sheet [isOpen]="showGroceryList" [groceryList]="currentGroceryList"
       (closed)="closeGroceryList()" />

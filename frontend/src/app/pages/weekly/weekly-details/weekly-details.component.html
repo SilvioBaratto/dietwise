@@ -38,7 +38,7 @@
           diet()!.dataFine }}</time>
       </div>
       <!-- Day Selector -->
-      <div class="sticky top-0 z-10 -mx-4 px-4 sm:-mx-6 sm:px-6 py-3 bg-surface/95 backdrop-blur-sm">
+      <div class="sticky top-0 z-10 -mx-4 px-4 sm:-mx-6 sm:px-6 py-3 bg-surface/95 backdrop-blur-sm md:static md:mx-0 md:px-0 md:bg-transparent md:backdrop-blur-none">
         <div class="flex items-center gap-2 overflow-x-auto scrollbar-hidden" role="tablist" aria-label="Seleziona giorno">
           @for (group of groupedMealsByDay(); track group.day) {
           <button type="button" role="tab" [attr.aria-selected]="group.day === selectedDay()"
@@ -46,11 +46,8 @@
             class="flex-shrink-0 inline-flex items-center justify-center px-4 py-2.5 min-h-11 rounded-xl text-sm font-medium transition-colors touch-manipulation focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
             [class.bg-primary]="group.day === selectedDay()"
             [class.text-white]="group.day === selectedDay()"
-            [class.bg-white]="group.day !== selectedDay()"
             [class.text-gray-700]="group.day !== selectedDay()"
-            [class.border]="group.day !== selectedDay()"
-            [class.border-gray-200]="group.day !== selectedDay()"
-            [class.hover:bg-gray-50]="group.day !== selectedDay()">
+            [class.hover:bg-gray-100]="group.day !== selectedDay()">
             {{ getShortDayName(group.day) }}
           </button>
           }

@@ -1,46 +1,48 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SettingsService } from '../../services/settings.service';
 import { DietService } from '../../services/diet.service';
-import { DietaConLista, ListaSpesa, DailyGroup } from '../../models/diet.types';
+import { DietaConLista, ListaSpesa, DailyGroup, Pasto } from '../../models/diet.types';
 import { PageHeaderComponent } from '../../shared/page-header/page-header.component';
 import { GroceryListSheetComponent } from '../../shared/grocery-list-sheet/grocery-list-sheet';
+import { ModifyDietSheetComponent } from '../../shared/modify-diet-sheet/modify-diet-sheet';
 import {
   LucidePlus,
-  LucideCheck,
   LucideCalendar,
   LucideLoader,
   LucideRefreshCw,
-  LucideClipboard,
+  LucidePencil,
   LucideShoppingCart,
-  LucideInbox,
   LucideZap,
   LucideChevronRight,
-  LucideFileText,
-  LucideX,
+  LucideEye,
 } from '@lucide/angular';
+
+const MEAL_TYPE_ORDER = [
+  'COLAZIONE',
+  'SPUNTINO_MATTINA',
+  'PRANZO',
+  'SPUNTINO_POMERIGGIO',
+  'CENA',
+];
 
 @Component({
   selector: 'app-dashboard',
   imports: [
     CommonModule,
-    FormsModule,
     PageHeaderComponent,
     GroceryListSheetComponent,
+    ModifyDietSheetComponent,
     LucidePlus,
-    LucideCheck,
     LucideCalendar,
     LucideLoader,
     LucideRefreshCw,
-    LucideClipboard,
+    LucidePencil,
     LucideShoppingCart,
-    LucideInbox,
     LucideZap,
     LucideChevronRight,
-    LucideFileText,
-    LucideX,
+    LucideEye,
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
@@ -54,6 +56,8 @@ export class DashboardComponent implements OnInit {
 
   dietaConLista: DietaConLista | null = null;
   dailyMeals: DailyGroup[] = [];
+  selectedDay: string | null = null;
+  selectedMealType: string | null = null;
   error: string | null = null;
   loading = true;       // Start with loading true to prevent flash of empty state
   showGroceryList = false;
@@ -65,7 +69,6 @@ export class DashboardComponent implements OnInit {
 
   // Diet modification properties
   showModifyDialog = false;
-  modificationPrompt: string = '';
   modifying = false;
 
   ngOnInit(): void {
@@ -209,14 +212,67 @@ export class DashboardComponent implements OnInit {
         const weekday = dateObj.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
         const dayEnum = weekdayToDayEnum[weekday];
 
-        // Filter meals that match this day's enum
-        const meals = pasti.filter(pasto => pasto.day === dayEnum);
+        // Filter meals that match this day's enum, ordered like the weekly-details page
+        const meals = pasti
+          .filter(pasto => pasto.day === dayEnum)
+          .sort((a, b) => {
+            const orderA = MEAL_TYPE_ORDER.indexOf(a.tipoPasto.tipo);
+            const orderB = MEAL_TYPE_ORDER.indexOf(b.tipoPasto.tipo);
+            return (orderA === -1 ? 999 : orderA) - (orderB === -1 ? 999 : orderB);
+          });
 
         const dayName = dateObj.toLocaleDateString('it-IT', { weekday: 'long' });
-        return { date: iso, dayName, meals };
+        return { date: iso, day: dayEnum, dayName, meals };
       })
       // Only show days that actually have meals
       .filter(day => day.meals.length > 0);
+
+    if (!this.selectedDay || !this.dailyMeals.some(g => g.day === this.selectedDay)) {
+      this.selectedDay = this.dailyMeals[0]?.day ?? null;
+    }
+    this.selectedMealType = null;
+  }
+
+  selectDay(day: string): void {
+    this.selectedDay = day;
+    this.cdr.markForCheck();
+  }
+
+  selectMealType(type: string | null): void {
+    this.selectedMealType = type;
+    this.cdr.markForCheck();
+  }
+
+  selectedDayGroup(): DailyGroup | null {
+    return this.dailyMeals.find(g => g.day === this.selectedDay) ?? this.dailyMeals[0] ?? null;
+  }
+
+  availableMealTypes(): string[] {
+    const group = this.selectedDayGroup();
+    if (!group) return [];
+    const present = new Set<string>(group.meals.map(m => m.tipoPasto.tipo));
+    return MEAL_TYPE_ORDER.filter(type => present.has(type));
+  }
+
+  filteredMeals(): Pasto[] {
+    const group = this.selectedDayGroup();
+    if (!group) return [];
+    return this.selectedMealType
+      ? group.meals.filter(m => m.tipoPasto.tipo === this.selectedMealType)
+      : group.meals;
+  }
+
+  getShortDayName(dayEnum: string): string {
+    const shortNames: Record<string, string> = {
+      LUNEDI: 'Lun',
+      MARTEDI: 'Mar',
+      MERCOLEDI: 'Mer',
+      GIOVEDI: 'Gio',
+      VENERDI: 'Ven',
+      SABATO: 'Sab',
+      DOMENICA: 'Dom',
+    };
+    return shortNames[dayEnum] || dayEnum.slice(0, 3);
   }
 
   navigateToRecipe(mealId: string): void {
@@ -248,19 +304,17 @@ export class DashboardComponent implements OnInit {
   }
 
   openModifyDialog(): void {
-    this.modificationPrompt = '';
     this.showModifyDialog = true;
     this.cdr.markForCheck();
   }
 
   closeModifyDialog(): void {
     this.showModifyDialog = false;
-    this.modificationPrompt = '';
     this.cdr.markForCheck();
   }
 
-  modifyDiet(): void {
-    if (!this.dietaConLista || !this.modificationPrompt.trim()) {
+  modifyDiet(prompt: string): void {
+    if (!this.dietaConLista) {
       return;
     }
 
@@ -269,7 +323,7 @@ export class DashboardComponent implements OnInit {
 
     const dietId = this.dietaConLista.dieta.id;
 
-    this.dietService.modifyDiet(dietId, this.modificationPrompt.trim())
+    this.dietService.modifyDiet(dietId, prompt)
       .subscribe({
         next: modifiedDietaConLista => {
           // Update with the modified diet and automatically regenerated grocery list
