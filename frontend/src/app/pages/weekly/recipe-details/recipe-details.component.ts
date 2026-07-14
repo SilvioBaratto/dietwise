@@ -17,7 +17,6 @@ import { Pasto } from '../../../models/diet.types';
 import { HtmlStructure, SavedRecipe } from '../../../models/recipe.types';
 import { PageHeaderComponent } from '../../../shared/page-header/page-header.component';
 import {
-  LucidePlus,
   LucideAlertTriangle,
   LucideScrollText,
   LucideClock,
@@ -40,7 +39,6 @@ import {
     CommonModule,
     RouterModule,
     PageHeaderComponent,
-    LucidePlus,
     LucideAlertTriangle,
     LucideScrollText,
     LucideClock,

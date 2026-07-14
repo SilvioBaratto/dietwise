@@ -1,38 +1,69 @@
 <section class="min-h-screen">
   <div class="mx-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10 max-w-7xl">
 
-    <!-- Loading Spinner with Progress Bar - Improved mobile spacing -->
+    <!-- Loading -->
     @if (loading && !dietaConLista && !error) {
-    <div class="flex flex-col justify-center items-center min-h-[60vh] sm:min-h-[70vh]">
-      <div class="relative">
-        <div class="w-16 h-16 sm:w-20 sm:h-20 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin">
-        </div>
-        <div class="absolute inset-0 flex items-center justify-center">
-          <svg lucidePlus aria-hidden="true" class="w-6 h-6 sm:w-8 sm:h-8 text-teal-600"></svg>
-        </div>
-      </div>
-      <p class="mt-4 sm:mt-6 text-base sm:text-lg text-gray-600 font-medium">Caricamento in corso...</p>
-
-      <!-- Progress Bar (shown only during diet generation) -->
       @if (generationProgress > 0) {
-      <div class="w-full max-w-md mt-6 sm:mt-8">
-        <div class="mb-2 flex items-center justify-between">
-          <span class="text-sm sm:text-base font-medium text-gray-700">{{ generationMessage }}</span>
-          <span class="text-sm sm:text-base font-bold text-teal-600">{{ generationProgress }}%</span>
-        </div>
-        <div class="w-full bg-gray-200 rounded-full h-3 sm:h-4 overflow-hidden shadow-inner">
-          <div
-            class="h-full bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full transition-all duration-500 ease-out"
-            [style.width.%]="generationProgress" role="progressbar" [attr.aria-valuenow]="generationProgress"
-            aria-valuemin="0" aria-valuemax="100">
+      <!-- Diet generation in progress (up to ~2 min) - real progress feedback, not a content skeleton -->
+      <div class="flex flex-col justify-center items-center min-h-[60vh] sm:min-h-[70vh]" role="status" aria-live="polite">
+        <div class="relative">
+          <div class="w-16 h-16 sm:w-20 sm:h-20 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin">
+          </div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <svg lucidePlus aria-hidden="true" class="w-6 h-6 sm:w-8 sm:h-8 text-teal-600"></svg>
           </div>
         </div>
-        <p class="mt-2 text-xs sm:text-sm text-gray-500 text-center">
-          @if (generationProgress < 50) { Fase 1 di 2: Creazione piano settimanale } @else if (generationProgress < 100)
-            { Fase 2 di 2: Generazione lista della spesa } @else { Completato con successo! } </p>
+        <p class="mt-4 sm:mt-6 text-base sm:text-lg text-gray-600 font-medium">Caricamento in corso...</p>
+        <div class="w-full max-w-md mt-6 sm:mt-8">
+          <div class="mb-2 flex items-center justify-between">
+            <span class="text-sm sm:text-base font-medium text-gray-700">{{ generationMessage }}</span>
+            <span class="text-sm sm:text-base font-bold text-teal-600">{{ generationProgress }}%</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-3 sm:h-4 overflow-hidden shadow-inner">
+            <div
+              class="h-full bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full transition-all duration-500 ease-out"
+              [style.width.%]="generationProgress" role="progressbar" [attr.aria-valuenow]="generationProgress"
+              aria-valuemin="0" aria-valuemax="100">
+            </div>
+          </div>
+          <p class="mt-2 text-xs sm:text-sm text-gray-500 text-center">
+            @if (generationProgress < 50) { Fase 1 di 2: Creazione piano settimanale } @else if (generationProgress < 100)
+              { Fase 2 di 2: Generazione lista della spesa } @else { Completato con successo! } </p>
+        </div>
+      </div>
+      } @else {
+      <!-- Fetching existing diet - skeleton matching the page-header + day-section layout below -->
+      <div class="space-y-4 sm:space-y-6" role="status" aria-busy="true" aria-label="Caricamento dashboard">
+        <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8">
+          <div class="flex flex-col gap-4 sm:gap-5">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded shimmer-bg"></div>
+                <div class="h-7 sm:h-8 w-48 sm:w-64 rounded shimmer-bg"></div>
+              </div>
+              <div class="h-4 w-40 rounded shimmer-bg ml-10 sm:ml-11"></div>
+            </div>
+            <div class="flex flex-row gap-2 sm:gap-3">
+              <div class="flex-1 sm:flex-initial sm:w-32 h-12 sm:h-[52px] rounded-xl shimmer-bg"></div>
+              <div class="flex-1 sm:flex-initial sm:w-32 h-12 sm:h-[52px] rounded-xl shimmer-bg"></div>
+              <div class="flex-1 sm:flex-initial sm:w-32 h-12 sm:h-[52px] rounded-xl shimmer-bg"></div>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-4 sm:space-y-5">
+          @for (i of [1, 2]; track i) {
+          <div class="space-y-3">
+            <div class="h-11 rounded-xl shimmer-bg"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+              @for (j of [1, 2, 3]; track j) {
+              <div class="h-48 rounded-xl shimmer-bg"></div>
+              }
+            </div>
+          </div>
+          }
+        </div>
       </div>
       }
-    </div>
     }
 
     <!-- No Diet Yet: show Generate button - Mobile-first spacing -->

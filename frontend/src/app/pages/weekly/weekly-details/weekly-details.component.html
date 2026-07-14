@@ -1,17 +1,28 @@
 <section class="min-h-screen">
   <div class="mx-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10 max-w-7xl">
 
-    <!-- Loading Spinner -->
+    <!-- Loading - skeleton matching the page-header + stats + day-grouped meal grid below -->
     @if (loading()) {
-    <div class="flex flex-col justify-center items-center h-64 sm:h-80 lg:h-96" role="status" aria-live="polite">
-      <div class="relative">
-        <div class="w-12 h-12 sm:w-16 sm:h-16 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin"
-          aria-hidden="true"></div>
-        <div class="absolute inset-0 flex items-center justify-center">
-          <svg lucideClipboard aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 text-teal-600"></svg>
+    <div class="space-y-6 sm:space-y-8" role="status" aria-busy="true" aria-label="Caricamento dettagli dieta">
+      <div class="mb-6 sm:mb-8">
+        <div class="h-7 sm:h-8 lg:h-9 w-2/3 sm:w-1/2 rounded shimmer-bg mb-3"></div>
+        <div class="h-5 w-56 rounded shimmer-bg"></div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          @for (i of [1, 2, 3, 4]; track i) {
+          <div class="h-16 sm:h-20 rounded-lg shimmer-bg"></div>
+          }
         </div>
       </div>
-      <p class="mt-3 sm:mt-4 text-sm sm:text-base text-gray-600 font-medium">Caricamento dettagli dieta...</p>
+      <div class="space-y-4">
+        <div class="h-11 rounded-lg shimmer-bg"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+          @for (i of [1, 2, 3]; track i) {
+          <div class="h-52 rounded-xl shimmer-bg"></div>
+          }
+        </div>
+      </div>
     </div>
     }
 

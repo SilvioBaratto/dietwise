@@ -14,7 +14,6 @@ import { DietService } from '../../../services/diet.service';
 import { DailyGroup, DietaSettimanale, Pasto } from '../../../models/diet.types';
 import { PageHeaderComponent } from '../../../shared/page-header/page-header.component';
 import {
-  LucideClipboard,
   LucideAlertTriangle,
   LucideCalendar,
   LucidePlus,
@@ -29,7 +28,6 @@ import {
   imports: [
     RouterModule,
     PageHeaderComponent,
-    LucideClipboard,
     LucideAlertTriangle,
     LucideCalendar,
     LucidePlus,

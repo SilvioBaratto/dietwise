@@ -4,6 +4,7 @@
 @theme {
   --color-surface: var(--color-white);
   --color-surface-raised: var(--color-white);
+  --color-surface-inset: var(--color-gray-100);
   --color-border: var(--color-gray-200);
   --color-text: var(--color-gray-900);
   --color-text-secondary: var(--color-gray-600);
@@ -25,6 +26,27 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Shimmer skeleton loading */
+.shimmer-bg {
+  background: linear-gradient(90deg, var(--color-surface-inset) 25%, var(--color-border) 50%, var(--color-surface-inset) 75%);
+  background-size: 200% 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .shimmer-bg {
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
 }
 

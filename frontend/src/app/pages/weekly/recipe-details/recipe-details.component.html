@@ -1,17 +1,27 @@
 <section class="min-h-screen">
   <div class="mx-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10 max-w-7xl">
 
-    <!-- Loading Spinner -->
+    <!-- Loading - skeleton matching the recipe-detail layout below -->
     @if (loading()) {
-    <div class="flex flex-col justify-center items-center h-96" role="status" aria-live="polite">
-      <div class="relative">
-        <div class="w-16 h-16 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin" aria-hidden="true">
-        </div>
-        <div class="absolute inset-0 flex items-center justify-center">
-          <svg lucidePlus aria-hidden="true" class="w-6 h-6 text-teal-600"></svg>
+    <div class="space-y-6 sm:space-y-8" role="status" aria-busy="true" aria-label="Caricamento ricetta">
+      <div class="h-5 w-32 rounded shimmer-bg"></div>
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded shimmer-bg"></div>
+        <div class="h-7 sm:h-8 lg:h-9 w-2/3 rounded shimmer-bg"></div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="h-6 w-24 rounded-full shimmer-bg"></div>
+        <div class="h-5 w-16 rounded shimmer-bg"></div>
+      </div>
+      <div class="h-24 w-40 rounded-xl shimmer-bg"></div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="h-12 shimmer-bg"></div>
+        <div class="p-4 sm:p-6 space-y-2">
+          <div class="h-4 w-full rounded shimmer-bg"></div>
+          <div class="h-4 w-5/6 rounded shimmer-bg"></div>
         </div>
       </div>
-      <p class="mt-4 text-gray-600 font-medium">Caricamento ricetta...</p>
+      <div class="h-20 rounded-xl shimmer-bg"></div>
     </div>
     }
 
