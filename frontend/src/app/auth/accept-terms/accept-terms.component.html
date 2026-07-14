@@ -1,5 +1,5 @@
 <div class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-  <div class="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl max-h-[90vh] flex flex-col">
+  <div class="relative w-full max-w-3xl bg-white rounded-xl shadow-2xl max-h-[90vh] flex flex-col">
 
     <!-- Header -->
     <div class="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
@@ -16,7 +16,7 @@
     <div class="flex-1 overflow-y-auto p-6" (scroll)="onTermsScroll($event)">
 
       <!-- Medical Disclaimer -->
-      <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r-lg">
+      <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r-xl">
         <h3 class="font-bold text-amber-800 mb-2">AVVISO IMPORTANTE - DISCLAIMER MEDICO</h3>
         <p class="text-amber-700 text-sm mb-2"><strong>Questa applicazione NON fornisce consulenza medica, diagnosi o
             trattamenti.</strong></p>
@@ -73,7 +73,7 @@
       </ul>
 
       <!-- Categories at Risk -->
-      <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
+      <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-xl">
         <h4 class="font-bold text-red-800 mb-2">CATEGORIE A RISCHIO</h4>
         <p class="text-red-700 text-sm mb-2">Si sconsiglia vivamente l'utilizzo dell'Applicazione a:</p>
         <ul class="list-disc list-inside text-red-700 text-sm space-y-1 mb-2">
@@ -127,7 +127,7 @@
       </p>
 
       <!-- Final Acceptance Box -->
-      <div class="bg-teal-50 border border-teal-200 p-4 rounded-lg">
+      <div class="bg-teal-50 border border-teal-200 p-4 rounded-xl">
         <h4 class="font-bold text-teal-800 mb-2">Accettazione dei Termini</h4>
         <p class="text-teal-700 text-sm">Utilizzando l'Applicazione, l'utente dichiara di aver letto, compreso e
           accettato integralmente i presenti Termini e Condizioni, incluso il disclaimer medico e le condizioni di
@@ -137,7 +137,7 @@
     </div>
 
     <!-- Footer with Accept Button -->
-    <div class="flex-shrink-0 p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+    <div class="flex-shrink-0 p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
       @if (error()) {
         <p class="text-sm text-red-600 mb-3">{{ error() }}</p>
       }
@@ -156,8 +156,8 @@
         }
 
         <button (click)="acceptTerms()" [disabled]="!hasScrolledToBottom() || submitting()" [class]="hasScrolledToBottom() && !submitting()
-                    ? 'px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium'
-                    : 'px-6 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed font-medium'">
+                    ? 'px-6 py-2 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors font-medium'
+                    : 'px-6 py-2 bg-gray-300 text-gray-500 rounded-xl cursor-not-allowed font-medium'">
           {{ submitting() ? 'Attendere...' : 'Accetto i Termini' }}
         </button>
       </div>

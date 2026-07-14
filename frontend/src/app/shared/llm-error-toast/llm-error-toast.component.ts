@@ -38,7 +38,7 @@ import { LlmErrorService } from '../../services/llm-error.service';
             }
           </div>
           <button type="button"
-                  class="flex-shrink-0 rounded-md p-1.5
+                  class="flex-shrink-0 rounded-xl p-1.5
                          {{ isRateLimit() ? 'text-amber-500 hover:bg-amber-100' : 'text-red-500 hover:bg-red-100' }}"
                   aria-label="Chiudi"
                   (click)="dismiss()">

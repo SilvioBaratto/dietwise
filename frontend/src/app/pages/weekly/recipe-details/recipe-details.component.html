@@ -27,7 +27,7 @@
 
     <!-- Error Banner -->
     @if (error() && !loading()) {
-    <div class="mb-8 p-4 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-lg shadow-sm" role="alert"
+    <div class="mb-8 p-4 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-xl shadow-sm" role="alert"
       aria-live="assertive">
       <div class="flex items-center">
         <svg lucideAlertTriangle aria-hidden="true" class="w-5 h-5 mr-3 flex-shrink-0 text-red-500"></svg>
@@ -87,7 +87,7 @@
             </p>
           </div>
           <!-- Mobile cooking tip -->
-          <div class="mt-4 sm:mt-6 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400 sm:hidden" role="note">
+          <div class="mt-4 sm:mt-6 p-3 bg-blue-50 rounded-xl border-l-4 border-blue-400 sm:hidden" role="note">
             <div class="flex items-start gap-2">
               <svg lucideInfo aria-hidden="true" class="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-500"></svg>
               <p class="text-sm text-blue-800 font-medium">Prepara tutti gli ingredienti prima di iniziare la cottura
@@ -129,7 +129,7 @@
           @if (generatedRecipe() && generatedRecipe().h1) {
           <div class="space-y-4 sm:space-y-6">
             <div
-              class="flex items-center gap-3 text-green-600 p-3 sm:p-0 bg-green-50 sm:bg-transparent rounded-lg sm:rounded-none"
+              class="flex items-center gap-3 text-green-600 p-3 sm:p-0 bg-green-50 sm:bg-transparent rounded-xl sm:rounded-none"
               role="status" aria-live="polite">
               <svg lucideCheck aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0"></svg>
               <span class="font-semibold text-base sm:text-sm">Ricetta generata con successo!</span>
@@ -137,7 +137,7 @@
 
             <!-- Recipe content - structured display -->
             <article
-              class="bg-gray-50 rounded-2xl shadow-lg border border-gray-200 overflow-hidden"
+              class="bg-gray-50 rounded-xl shadow-lg border border-gray-200 overflow-hidden"
               aria-labelledby="generated-recipe-title">
 
               <!-- Recipe Title -->
@@ -154,7 +154,7 @@
                 <div class="flex flex-col sm:flex-row gap-5 sm:gap-8">
                   @if (generatedRecipe().p[0]) {
                   <div class="flex items-center gap-3">
-                    <div class="bg-amber-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
+                    <div class="bg-amber-100 p-3 rounded-xl flex-shrink-0" aria-hidden="true">
                       <svg lucideClock aria-hidden="true" class="w-6 h-6 text-amber-700"></svg>
                     </div>
                     <span class="text-gray-800 font-semibold text-lg sm:text-sm">{{ generatedRecipe().p[0] }}</span>
@@ -162,7 +162,7 @@
                   }
                   @if (generatedRecipe().p[1]) {
                   <div class="flex items-center gap-3">
-                    <div class="bg-orange-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
+                    <div class="bg-orange-100 p-3 rounded-xl flex-shrink-0" aria-hidden="true">
                       <svg lucideFlame aria-hidden="true" class="w-6 h-6 text-orange-700"></svg>
                     </div>
                     <span class="text-gray-800 font-semibold text-lg sm:text-sm">{{ generatedRecipe().p[1] }}</span>
@@ -177,7 +177,7 @@
               <section class="px-6 py-8 sm:px-6 sm:py-8 border-b border-gray-200"
                 aria-labelledby="generated-ingredients-heading">
                 <div class="flex items-center gap-3 mb-6">
-                  <div class="bg-teal-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
+                  <div class="bg-teal-100 p-3 rounded-xl flex-shrink-0" aria-hidden="true">
                     <svg lucideBox aria-hidden="true" class="w-7 h-7 sm:w-5 sm:h-5 text-teal-700"></svg>
                   </div>
                   <h4 id="generated-ingredients-heading" class="text-xl sm:text-2xl font-bold text-gray-900">{{
@@ -203,7 +203,7 @@
               <section class="px-6 py-8 sm:px-6 sm:py-8 bg-gray-50"
                 aria-labelledby="generated-instructions-heading">
                 <div class="flex items-center gap-3 mb-6">
-                  <div class="bg-purple-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
+                  <div class="bg-purple-100 p-3 rounded-xl flex-shrink-0" aria-hidden="true">
                     <svg lucideClipboard aria-hidden="true" class="w-7 h-7 sm:w-5 sm:h-5 text-purple-700"></svg>
                   </div>
                   <h4 id="generated-instructions-heading" class="text-xl sm:text-2xl font-bold text-gray-900">{{
@@ -233,7 +233,7 @@
               <aside class="px-6 py-6 sm:px-6 bg-blue-50 border-t border-gray-200"
                 role="note" aria-labelledby="recipe-tip-heading">
                 <div class="flex items-start gap-4">
-                  <div class="bg-blue-100 p-3 rounded-lg flex-shrink-0 mt-1" aria-hidden="true">
+                  <div class="bg-blue-100 p-3 rounded-xl flex-shrink-0 mt-1" aria-hidden="true">
                     <svg lucideInfo aria-hidden="true" class="w-6 h-6 text-blue-700"></svg>
                   </div>
                   <div class="flex-1">
@@ -272,7 +272,7 @@
 
             <!-- Success message -->
             @if (saveSuccess()) {
-            <div class="mt-4 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg" role="alert" aria-live="polite">
+            <div class="mt-4 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-xl" role="alert" aria-live="polite">
               <div class="flex items-center">
                 <svg lucideCheck aria-hidden="true" class="w-5 h-5 mr-3 flex-shrink-0 text-green-500"></svg>
                 <span class="text-green-800 font-medium">Ricetta salvata con successo!</span>
@@ -312,7 +312,7 @@
                     | date:'short' }}</time>
                 </div>
                 <div
-                  class="flex items-center gap-2 text-xs font-medium text-gray-600 bg-white px-2 py-1 rounded-lg flex-shrink-0"
+                  class="flex items-center gap-2 text-xs font-medium text-gray-600 bg-white px-2 py-1 rounded-xl flex-shrink-0"
                   aria-label="{{ recipe.calories }} calorie">
                   <svg lucideZap aria-hidden="true" class="w-4 h-4 text-orange-500"></svg>
                   {{ recipe.calories }}

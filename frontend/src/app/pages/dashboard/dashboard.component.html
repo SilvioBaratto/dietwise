@@ -34,7 +34,7 @@
       } @else {
       <!-- Fetching existing diet - skeleton matching the page-header + day-section layout below -->
       <div class="space-y-4 sm:space-y-6" role="status" aria-busy="true" aria-label="Caricamento dashboard">
-        <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8">
           <div class="flex flex-col gap-4 sm:gap-5">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-3 mb-2">
@@ -133,7 +133,7 @@
       <div class="space-y-4 sm:space-y-5">
         @for (day of dailyMeals; track day.date) {
         <div
-          class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 overflow-hidden transition-shadow duration-200 hover:shadow-md">
+          class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-shadow duration-200 hover:shadow-md">
           <!-- Day Header -->
           <div
             class="bg-primary-light px-4 sm:px-6 lg:px-8 py-4 sm:py-5 border-b border-gray-200">
@@ -180,7 +180,7 @@
                     </span>
                   </div>
                   <div
-                    class="flex items-center gap-1 text-sm sm:text-base text-gray-700 bg-white px-2.5 py-1 rounded-lg shadow-sm flex-shrink-0"
+                    class="flex items-center gap-1 text-sm sm:text-base text-gray-700 bg-white px-2.5 py-1 rounded-xl shadow-sm flex-shrink-0"
                     aria-label="{{ pasto.calorie }} calorie">
                     <svg lucideZap aria-hidden="true" class="w-4 h-4 sm:w-5 sm:h-5 text-orange-500"></svg>
                     <span class="font-bold">{{ pasto.calorie }}</span>
@@ -200,7 +200,7 @@
                 <!-- Ingredients Display - Always at bottom -->
                 <details class="group/details mt-auto">
                   <summary
-                    class="flex items-center gap-2 text-sm sm:text-base text-teal-600 hover:text-teal-800 cursor-pointer font-semibold py-2 px-3 -mx-3 rounded-lg hover:bg-teal-50 transition-colors min-h-[44px] touch-manipulation list-none focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                    class="flex items-center gap-2 text-sm sm:text-base text-teal-600 hover:text-teal-800 cursor-pointer font-semibold py-2 px-3 -mx-3 rounded-xl hover:bg-teal-50 transition-colors min-h-[44px] touch-manipulation list-none focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                     (click)="$event.stopPropagation()" aria-label="Mostra ingredienti">
                     <svg lucideChevronRight aria-hidden="true"
                       class="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-open/details:rotate-90 flex-shrink-0 text-gray-400"></svg>
@@ -227,7 +227,7 @@
       class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto"
       (click)="closeModifyDialog()" role="dialog" aria-modal="true" aria-labelledby="modify-modal-title">
       <div
-        class="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-lg lg:max-w-2xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden flex flex-col"
+        class="bg-white rounded-t-xl sm:rounded-xl shadow-2xl w-full sm:max-w-lg lg:max-w-2xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden flex flex-col"
         (click)="$event.stopPropagation()">
         <!-- Modal Header - Touch-Optimized -->
         <div

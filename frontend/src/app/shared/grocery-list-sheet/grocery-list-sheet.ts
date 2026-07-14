@@ -33,7 +33,7 @@ import { LucideX, LucideShoppingCart } from '@lucide/angular';
       <!-- Sheet -->
       <div
         #sheetEl
-        class="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-2xl bg-surface-raised rounded-t-2xl shadow-2xl max-h-[85dvh] flex flex-col animate-slide-up motion-reduce:animate-none"
+        class="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-2xl bg-surface-raised rounded-t-xl shadow-2xl max-h-[85dvh] flex flex-col animate-slide-up motion-reduce:animate-none"
         [class.is-closing]="closing()"
         role="dialog"
         aria-modal="true"
