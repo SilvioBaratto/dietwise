@@ -109,6 +109,7 @@
                 <!-- Recipe Meta -->
                 <div class="px-4 sm:px-6 pt-4 sm:pt-6">
                     <div class="flex items-center gap-3 text-xs sm:text-sm text-gray-600 mb-2">
+                        @if (selectedMealType() === null) {
                         <span class="font-bold uppercase tracking-wide"
                             [class.text-orange-600]="recipe.meal_type === 'COLAZIONE'"
                             [class.text-green-600]="recipe.meal_type === 'SPUNTINO_MATTINA' || recipe.meal_type === 'SPUNTINO_POMERIGGIO'"
@@ -116,6 +117,7 @@
                             [class.text-purple-600]="recipe.meal_type === 'CENA'">
                             {{ getMealTypeLabel(recipe.meal_type) }}
                         </span>
+                        }
                         <span class="flex items-center gap-1.5">
                             <svg lucideFlame aria-hidden="true" class="w-4 h-4 text-gray-400"></svg>
                             {{ recipe.calories }} kcal
