@@ -11,7 +11,7 @@ const AUTH_PROCESSING_KEY = 'auth_callback_processing';
     imports: [],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
+        <div class="flex items-center justify-center min-h-screen bg-gray-50">
             <div class="text-center">
                 <div class="w-16 h-16 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto mb-4"></div>
                 <p class="text-lg text-gray-700 font-medium">Autenticazione in corso...</p>

@@ -61,7 +61,7 @@
 
       <!-- Calorie display - prominent on mobile for cooking -->
       <div
-        class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 sm:p-3 text-center w-fit min-w-[140px] sm:min-w-[120px]"
+        class="bg-emerald-50 rounded-xl p-4 sm:p-3 text-center w-fit min-w-[140px] sm:min-w-[120px]"
         role="status" aria-label="Informazioni caloriche">
         <div class="flex items-center justify-center gap-2 mb-2 sm:mb-1">
           <svg lucideZap aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 text-orange-500"></svg>
@@ -73,7 +73,7 @@
       <!-- Ingredients Section - Optimized for mobile cooking -->
       <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
         aria-labelledby="ingredients-heading">
-        <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-4 py-4 sm:px-6 border-b border-gray-200">
+        <div class="bg-primary-light px-4 py-4 sm:px-6 border-b border-gray-200">
           <div class="flex items-center gap-3">
             <svg lucideBox aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0 text-blue-500"></svg>
             <h2 id="ingredients-heading" class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Ingredienti</h2>
@@ -99,7 +99,7 @@
       <!-- Recipe Generation Section -->
       <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
         aria-labelledby="recipe-generation-heading">
-        <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-4 sm:px-6 border-b border-gray-200">
+        <div class="bg-purple-50 px-4 py-4 sm:px-6 border-b border-gray-200">
           <div class="flex items-center gap-3">
             <svg lucideLightbulb aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 text-yellow-500"></svg>
             <h2 id="recipe-generation-heading" class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Ricetta Completa</h2>
@@ -113,15 +113,15 @@
           <!-- Generate Button -->
           <div class="text-center">
             <button (click)="generateRecipe()" [disabled]="generating()" type="button"
-              class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-4 sm:px-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 active:from-purple-800 active:to-pink-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 min-h-14 touch-manipulation"
+              class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 min-h-11 rounded-xl bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
               [attr.aria-busy]="generating()">
               @if (generating()) {
-              <svg lucideLoader aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 animate-spin flex-shrink-0"></svg>
+              <svg lucideLoader aria-hidden="true" class="w-4 h-4 flex-shrink-0 animate-spin"></svg>
               }
               @if (!generating()) {
-              <svg lucideLightbulb aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 flex-shrink-0"></svg>
+              <svg lucideLightbulb aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
               }
-              <span class="text-base sm:text-sm">{{ generating() ? 'Sto Generando...' : 'Genera Ricetta Completa'
+              <span class="text-sm">{{ generating() ? 'Sto Generando...' : 'Genera Ricetta Completa'
                 }}</span>
             </button>
           </div>
@@ -137,11 +137,11 @@
 
             <!-- Recipe content - structured display -->
             <article
-              class="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-200 overflow-hidden"
+              class="bg-gray-50 rounded-2xl shadow-lg border border-gray-200 overflow-hidden"
               aria-labelledby="generated-recipe-title">
 
               <!-- Recipe Title -->
-              <header class="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-8 sm:px-6 sm:py-8">
+              <header class="bg-purple-600 px-6 py-8 sm:px-6 sm:py-8">
                 <h3 id="generated-recipe-title"
                   class="font-display text-3xl lg:text-4xl font-bold text-white leading-tight">{{ generatedRecipe().h1 }}
                 </h3>
@@ -150,7 +150,7 @@
               <!-- Times Section -->
               @if (generatedRecipe().p && generatedRecipe().p.length > 0) {
               <div
-                class="px-6 py-6 sm:px-6 lg:px-8 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-gray-200">
+                class="px-6 py-6 sm:px-6 lg:px-8 bg-amber-50 border-b border-gray-200">
                 <div class="flex flex-col sm:flex-row gap-5 sm:gap-8">
                   @if (generatedRecipe().p[0]) {
                   <div class="flex items-center gap-3">
@@ -187,7 +187,7 @@
                   @for (item of generatedRecipe().ul; track item) {
                   <li class="flex items-start gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                     <div class="mt-2 flex-shrink-0">
-                      <div class="w-3 h-3 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-full"
+                      <div class="w-3 h-3 bg-primary rounded-full"
                         aria-hidden="true"></div>
                     </div>
                     <span class="text-gray-800 font-medium text-lg sm:text-sm leading-relaxed flex-1">{{ item
@@ -200,7 +200,7 @@
 
               <!-- Instructions Section -->
               @if (generatedRecipe().h2 && generatedRecipe().h2.length > 1 && generatedRecipe().ol) {
-              <section class="px-6 py-8 sm:px-6 sm:py-8 bg-gradient-to-br from-gray-50 to-white"
+              <section class="px-6 py-8 sm:px-6 sm:py-8 bg-gray-50"
                 aria-labelledby="generated-instructions-heading">
                 <div class="flex items-center gap-3 mb-6">
                   <div class="bg-purple-100 p-3 rounded-lg flex-shrink-0" aria-hidden="true">
@@ -215,7 +215,7 @@
                     class="flex items-start gap-5 p-5 sm:p-3 bg-white rounded-xl border-2 border-gray-200 hover:border-purple-300 transition-colors shadow-sm">
                     <div class="flex-shrink-0">
                       <div
-                        class="w-10 h-10 sm:w-8 sm:h-8 bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold rounded-full flex items-center justify-center text-lg sm:text-base shadow-md"
+                        class="w-10 h-10 sm:w-8 sm:h-8 bg-purple-500 text-white font-bold rounded-full flex items-center justify-center text-lg sm:text-base shadow-md"
                         aria-hidden="true">
                         {{ idx + 1 }}
                       </div>
@@ -230,7 +230,7 @@
 
               <!-- Tips Section (optional) -->
               @if (generatedRecipe().p && generatedRecipe().p.length > 2 && generatedRecipe().p[2]) {
-              <aside class="px-6 py-6 sm:px-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-t border-gray-200"
+              <aside class="px-6 py-6 sm:px-6 bg-blue-50 border-t border-gray-200"
                 role="note" aria-labelledby="recipe-tip-heading">
                 <div class="flex items-start gap-4">
                   <div class="bg-blue-100 p-3 rounded-lg flex-shrink-0 mt-1" aria-hidden="true">
@@ -251,22 +251,22 @@
             <div class="flex flex-col-reverse sm:flex-row justify-center gap-3 pt-2" role="group"
               aria-label="Azioni ricetta">
               <button (click)="saveRecipe()" [disabled]="savingRecipe()" type="button"
-                class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-4 sm:px-4 sm:py-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 active:from-teal-800 active:to-emerald-800 rounded-xl sm:rounded-lg text-white hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 min-h-14 sm:min-h-11 touch-manipulation font-semibold sm:font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                 [attr.aria-busy]="savingRecipe()">
                 @if (savingRecipe()) {
-                <svg lucideLoader aria-hidden="true" class="w-5 h-5 sm:w-4 sm:h-4 animate-spin flex-shrink-0"></svg>
+                <svg lucideLoader aria-hidden="true" class="w-4 h-4 flex-shrink-0 animate-spin"></svg>
                 }
                 @if (!savingRecipe()) {
-                <svg lucideBookmark aria-hidden="true" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"></svg>
+                <svg lucideBookmark aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
                 }
-                <span class="text-base sm:text-sm">{{ savingRecipe() ? 'Salvataggio...' : 'Salva Ricetta' }}</span>
+                <span class="text-sm">{{ savingRecipe() ? 'Salvataggio...' : 'Salva Ricetta' }}</span>
               </button>
 
               <button (click)="copyRecipe()" type="button"
-                class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-4 sm:px-4 sm:py-2 bg-white border-2 border-purple-300 hover:border-purple-400 rounded-xl sm:rounded-lg text-purple-700 hover:bg-purple-50 active:bg-purple-100 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 min-h-14 sm:min-h-11 touch-manipulation font-semibold sm:font-medium"
+                class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 min-h-11 rounded-xl bg-white border-2 border-purple-300 hover:border-purple-400 text-purple-700 hover:bg-purple-50 active:bg-purple-100 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 touch-manipulation"
                 aria-label="Copia il testo della ricetta negli appunti">
-                <svg lucideCopy aria-hidden="true" class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0"></svg>
-                <span class="text-base sm:text-sm">Copia Ricetta</span>
+                <svg lucideCopy aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
+                <span class="text-sm">Copia Ricetta</span>
               </button>
             </div>
 
@@ -288,7 +288,7 @@
       @if (savedRecipes().length > 0) {
       <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
         aria-labelledby="saved-recipes-heading">
-        <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-4 py-4 sm:px-6 border-b border-gray-200">
+        <div class="bg-primary-light px-4 py-4 sm:px-6 border-b border-gray-200">
           <div class="flex items-center gap-3">
             <svg lucideBookmark aria-hidden="true" class="w-6 h-6 sm:w-5 sm:h-5 text-teal-600"></svg>
             <h2 id="saved-recipes-heading" class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Ricette Salvate</h2>
@@ -319,9 +319,9 @@
                 </div>
               </div>
               <button (click)="viewSavedRecipe(recipe)" type="button"
-                class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 text-sm min-h-11 touch-manipulation"
+                class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 touch-manipulation"
                 [attr.aria-label]="'Visualizza ricetta: ' + recipe.recipe_name">
-                <svg lucideEye aria-hidden="true" class="w-4 h-4"></svg>
+                <svg lucideEye aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
                 <span>Visualizza</span>
               </button>
             </li>

@@ -57,7 +57,7 @@
         <!-- Empty State -->
         @if (!loading() && !hasRecipes() && !error()) {
         <div class="flex flex-col items-center justify-center py-16 sm:py-20 lg:py-24">
-            <div class="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6"
+            <div class="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6"
                 aria-hidden="true">
                 <svg lucideBookOpen aria-hidden="true" class="w-10 h-10 sm:w-12 sm:h-12 opacity-50 text-gray-400"></svg>
             </div>
@@ -66,9 +66,9 @@
                 Inizia a salvare le tue ricette preferite dai piani settimanali per vederle qui.
             </p>
             <a routerLink="/weekly"
-                class="inline-flex items-center justify-center gap-3 px-6 py-3 min-h-11 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Vai ai piani settimanali per salvare ricette">
-                <svg lucideCalendar aria-hidden="true" class="w-5 h-5"></svg>
+                <svg lucideCalendar aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
                 <span>Vai ai Piani Settimanali</span>
             </a>
         </div>
@@ -82,7 +82,7 @@
                 class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] flex flex-col">
 
                 <!-- Recipe Header -->
-                <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-4 sm:px-6 py-4 border-b border-gray-200">
+                <div class="bg-primary-light px-4 sm:px-6 py-4 border-b border-gray-200">
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <h3 class="text-base sm:text-lg lg:text-xl font-bold text-gray-900 leading-tight line-clamp-2 flex-1">
                             {{ recipe.recipe_name }}
@@ -124,9 +124,9 @@
                 <div class="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
                     <!-- View Full Recipe Button -->
                     <button (click)="viewRecipe(recipe)" type="button"
-                        class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 min-h-11 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md text-sm touch-manipulation"
+                        class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                         aria-label="Visualizza ricetta completa: {{ recipe.recipe_name }}">
-                        <svg lucideEye aria-hidden="true" class="w-4 h-4"></svg>
+                        <svg lucideEye aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
                         <span>Visualizza</span>
                     </button>
 
@@ -164,7 +164,7 @@
             class="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl transform transition-all">
 
             <!-- Modal Header -->
-            <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-6 sm:px-8 py-6 border-b border-gray-200">
+            <div class="bg-primary-light px-6 sm:px-8 py-6 border-b border-gray-200">
                 <div class="flex items-start justify-between gap-4">
                     <div class="flex-1">
                         <h2 id="modal-title" class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-3">
@@ -234,13 +234,13 @@
             <!-- Modal Footer -->
             <div class="bg-gray-50 px-6 sm:px-8 py-4 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
                 <button (click)="copyRecipe()" type="button"
-                    class="flex-1 inline-flex items-center justify-center gap-3 px-6 py-3 min-h-11 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md touch-manipulation"
+                    class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 text-sm font-medium transition-colors touch-manipulation"
                     aria-label="Copia ricetta negli appunti">
-                    <svg lucideCopy aria-hidden="true" class="w-5 h-5"></svg>
+                    <svg lucideCopy aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
                     <span>Copia Ricetta</span>
                 </button>
                 <button (click)="closeModal()" type="button"
-                    class="flex-1 inline-flex items-center justify-center gap-3 px-6 py-3 min-h-11 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md touch-manipulation"
+                    class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                     aria-label="Chiudi finestra ricetta">
                     <span>Chiudi</span>
                 </button>

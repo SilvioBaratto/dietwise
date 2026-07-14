@@ -11,7 +11,7 @@
 
   <!-- MOBILE TOPBAR - logo only, no actions -->
   <header class="md:hidden flex items-center gap-2 px-4 h-14 border-b border-border bg-surface-raised shrink-0">
-    <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-lg flex items-center justify-center">
+    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
       <img src="assets/logo/logo.svg" alt="" class="w-5 h-5">
     </div>
     <span class="font-display font-semibold text-text text-sm tracking-tight">DietologoAI</span>
@@ -19,7 +19,7 @@
 
   <!-- MAIN CONTENT -->
   <main #mainContent id="main-content" tabindex="-1"
-    class="flex-1 min-h-0 overflow-y-auto md:overflow-visible md:h-auto md:pl-64 focus:outline-none bg-gradient-to-br from-slate-50 to-gray-100">
+    class="flex-1 min-h-0 overflow-y-auto md:overflow-visible md:h-auto md:pl-64 focus:outline-none bg-gray-50">
     <router-outlet></router-outlet>
   </main>
 

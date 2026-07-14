@@ -59,21 +59,20 @@
 
 /* Shimmer skeleton loading */
 .shimmer-bg {
-  background: linear-gradient(90deg, var(--color-surface-inset) 25%, var(--color-border) 50%, var(--color-surface-inset) 75%);
-  background-size: 200% 100%;
+  background-color: var(--color-surface-inset);
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .shimmer-bg {
-    animation: shimmer 1.5s infinite;
+    animation: shimmer-pulse 1.5s ease-in-out infinite;
   }
 
-  @keyframes shimmer {
-    0% {
-      background-position: 200% 0;
+  @keyframes shimmer-pulse {
+    0%, 100% {
+      opacity: 1;
     }
-    100% {
-      background-position: -200% 0;
+    50% {
+      opacity: 0.6;
     }
   }
 }

@@ -50,22 +50,22 @@
       <!-- Stats Overview -->
       <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6" aria-label="Statistiche dieta">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div class="text-center p-3 sm:p-4 bg-gradient-to-br from-teal-50 to-teal-100 rounded-lg">
+          <div class="text-center p-3 sm:p-4 bg-teal-50 rounded-lg">
             <div class="text-2xl sm:text-3xl font-bold text-teal-600" aria-label="Numero pasti totali">{{
               diet()!.pasti.length }}</div>
             <div class="text-xs sm:text-sm text-gray-700 font-medium mt-1">Pasti totali</div>
           </div>
-          <div class="text-center p-3 sm:p-4 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg">
+          <div class="text-center p-3 sm:p-4 bg-emerald-50 rounded-lg">
             <div class="text-2xl sm:text-3xl font-bold text-emerald-600" aria-label="Calorie totali">{{
               getTotalCalories() }}</div>
             <div class="text-xs sm:text-sm text-gray-700 font-medium mt-1">Calorie totali</div>
           </div>
-          <div class="text-center p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+          <div class="text-center p-3 sm:p-4 bg-blue-50 rounded-lg">
             <div class="text-2xl sm:text-3xl font-bold text-blue-600" aria-label="Giorni coperti">{{ getUniqueDays() }}
             </div>
             <div class="text-xs sm:text-sm text-gray-700 font-medium mt-1">Giorni coperti</div>
           </div>
-          <div class="text-center p-3 sm:p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
+          <div class="text-center p-3 sm:p-4 bg-purple-50 rounded-lg">
             <div class="text-2xl sm:text-3xl font-bold text-purple-600" aria-label="Ingredienti unici">{{
               getUniqueIngredients() }}</div>
             <div class="text-xs sm:text-sm text-gray-700 font-medium mt-1">Ingredienti unici</div>
@@ -84,7 +84,7 @@
         <div class="space-y-4">
           <!-- Day Header -->
           <div
-            class="sticky top-0 z-10 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-lg px-4 sm:px-6 py-3 sm:py-4 shadow-md">
+            class="sticky top-0 z-10 bg-primary rounded-lg px-4 sm:px-6 py-3 sm:py-4 shadow-md">
             <h3 class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center gap-3">
               <svg lucideCalendar aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"></svg>
               <span>{{ dayGroup.dayName }}</span>
@@ -101,7 +101,7 @@
               class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-teal-300 transition-all duration-300 transform hover:-translate-y-1 focus-within:ring-2 focus-within:ring-teal-500 focus-within:ring-offset-2 flex flex-col">
               <!-- Card Header -->
               <div
-                class="bg-gradient-to-r from-teal-50 to-emerald-50 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+                class="bg-primary-light px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
                   <span
                     class="inline-flex items-center px-3 py-1.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium text-white min-h-11 sm:min-h-[28px] justify-center"
@@ -128,7 +128,7 @@
                 <!-- Content that should align at bottom -->
                 <div class="mt-auto space-y-4">
                   <!-- Calorie Info -->
-                  <div class="flex items-center gap-2 p-3 bg-gradient-to-r from-gray-50 to-emerald-50 rounded-lg"
+                  <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg"
                     role="group" aria-label="Informazioni caloriche">
                     <svg lucideZap aria-hidden="true" class="w-5 h-5 flex-shrink-0 text-orange-500"></svg>
                     <span class="text-gray-700 text-sm sm:text-base">Calorie:</span>
@@ -151,9 +151,9 @@
 
                   <!-- Action Button -->
                   <button type="button" (click)="viewRecipe(pasto.id)"
-                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-3.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 active:scale-95 touch-manipulation min-h-11 text-sm sm:text-base"
+                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                     [attr.aria-label]="'Visualizza ricetta per ' + pasto.tipoPasto.ricetta">
-                    <svg lucideEye aria-hidden="true" class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"></svg>
+                    <svg lucideEye aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
                     <span>Visualizza Ricetta</span>
                   </button>
                 </div>

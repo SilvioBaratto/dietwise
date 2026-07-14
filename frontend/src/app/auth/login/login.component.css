@@ -30,67 +30,11 @@
   }
 }
 
-/* Scroll progress indicator */
-.scroll-progress {
-  background: linear-gradient(to right, #0d9488 var(--scroll-progress, 0%), #e5e7eb var(--scroll-progress, 0%));
-  height: 3px;
-  border-radius: 9999px;
-  transition: background 0.1s ease;
-}
-
-/* Custom scrollbar for terms content */
-.terms-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.terms-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 4px;
-}
-
-.terms-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #0d9488 0%, #14b8a6 100%);
-  border-radius: 4px;
-}
-
-.terms-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #0f766e 0%, #0d9488 100%);
-}
-
-/* Firefox scrollbar */
-.terms-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #0d9488 #f1f5f9;
-}
-
 /* Glassmorphism effect for modal */
 .glass-effect {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-}
-
-/* Button hover glow effect */
-.btn-glow {
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-glow::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  transition: width 0.4s ease, height 0.4s ease;
-}
-
-.btn-glow:hover::before {
-  width: 300%;
-  height: 300%;
 }
 
 /* Pulse animation for scroll indicator */
@@ -128,14 +72,6 @@
   }
 }
 
-/* Gradient text effect */
-.gradient-text {
-  background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 /* Card hover lift effect */
 .card-lift {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -157,27 +93,6 @@
   }
   50% {
     transform: translateY(-10px);
-  }
-}
-
-/* Shimmer effect for loading states */
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    #f0f0f0 25%,
-    #e0e0e0 50%,
-    #f0f0f0 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
   }
 }
 
