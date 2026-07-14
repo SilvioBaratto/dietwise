@@ -5,15 +5,12 @@
 
 <span class="sr-only" role="status" aria-live="polite">{{ routeAnnouncement() }}</span>
 
-<div class="h-dvh overflow-hidden bg-surface flex flex-col lg:block lg:h-auto lg:overflow-visible lg:min-h-screen">
-  <!-- SIDEBAR - Desktop only, fixed positioning (interim lg/w-80 breakpoint, harmonized to md/w-64 in a later phase) -->
-  <aside
-    class="hidden lg:flex lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:w-80 lg:flex-col bg-white/95 backdrop-blur-xl border-r border-gray-200/80 shadow-lg overflow-y-auto scrollbar-hidden">
-    <app-sidebar></app-sidebar>
-  </aside>
+<div class="h-dvh overflow-hidden bg-surface flex flex-col md:block md:h-auto md:overflow-visible md:min-h-screen">
+  <!-- SIDEBAR - desktop only, fixed positioning (own visibility breakpoint lives inside SidebarComponent) -->
+  <app-sidebar></app-sidebar>
 
   <!-- MOBILE TOPBAR - logo only, no actions -->
-  <header class="lg:hidden flex items-center gap-2 px-4 h-14 border-b border-border bg-surface-raised shrink-0">
+  <header class="md:hidden flex items-center gap-2 px-4 h-14 border-b border-border bg-surface-raised shrink-0">
     <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-lg flex items-center justify-center">
       <img src="assets/logo/logo.svg" alt="" class="w-5 h-5">
     </div>
@@ -22,7 +19,7 @@
 
   <!-- MAIN CONTENT -->
   <main #mainContent id="main-content" tabindex="-1"
-    class="flex-1 min-h-0 overflow-y-auto lg:overflow-visible lg:h-auto lg:pl-80 focus:outline-none bg-gradient-to-br from-slate-50 to-gray-100">
+    class="flex-1 min-h-0 overflow-y-auto md:overflow-visible md:h-auto md:pl-64 focus:outline-none bg-gradient-to-br from-slate-50 to-gray-100">
     <router-outlet></router-outlet>
   </main>
 

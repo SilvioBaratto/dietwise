@@ -3,8 +3,10 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 
 import { SettingsComponent } from './settings.component';
+import { AuthService } from '../../services/auth.service';
 
 describe('SettingsComponent', () => {
   let component: SettingsComponent;
@@ -18,6 +20,7 @@ describe('SettingsComponent', () => {
         provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
+        { provide: AuthService, useValue: { user$: of(null), signOut: () => Promise.resolve() } },
       ],
     }).compileComponents();
 

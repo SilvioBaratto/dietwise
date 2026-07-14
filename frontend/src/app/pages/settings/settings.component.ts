@@ -1,12 +1,14 @@
 import { Component, OnInit, signal, computed, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { AsyncPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { forkJoin } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiKeyService } from '../../services/api-key.service';
+import { AuthService } from '../../services/auth.service';
 import { ApiKeyResponse, AvailableModels, Provider } from '../../models/api-key.types';
 import { UserSettingsIn, UserSettingsOut } from '../../models/user-settings.types';
 import { CostBadgeComponent } from '../../shared/cost-badge/cost-badge.component';
@@ -25,6 +27,7 @@ import {
   LucideLoader,
   LucidePlus,
   LucideX,
+  LucideLogOut,
 } from '@lucide/angular';
 
 @Component({
@@ -32,6 +35,7 @@ import {
   imports: [
     FormsModule,
     ReactiveFormsModule,
+    AsyncPipe,
     CostBadgeComponent,
     LucideSettings,
     LucideInfo,
@@ -47,6 +51,7 @@ import {
     LucideLoader,
     LucidePlus,
     LucideX,
+    LucideLogOut,
   ],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css'],
@@ -58,6 +63,7 @@ export class SettingsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private apiKeyService = inject(ApiKeyService);
+  auth = inject(AuthService);
 
   // Form data (plain object for ngModel compatibility)
   settings: UserSettingsIn = {};
@@ -350,5 +356,14 @@ export class SettingsComponent implements OnInit {
     this.selectedProvider.set(provider);
     const models = this.availableModels()[provider];
     this.selectedModel.set(models?.[0] ?? '');
+  }
+
+  async onLogout(): Promise<void> {
+    try {
+      await this.auth.signOut();
+      this.router.navigate(['/login']);
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
   }
 }

@@ -16,7 +16,7 @@ describe('SidebarComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         provideRouter([]),
-        { provide: AuthService, useValue: { isAuthenticated$: of(false), signOut: () => Promise.resolve() } },
+        { provide: AuthService, useValue: { isAuthenticated$: of(false), user$: of(null), signOut: () => Promise.resolve() } },
       ],
     }).compileComponents();
 
