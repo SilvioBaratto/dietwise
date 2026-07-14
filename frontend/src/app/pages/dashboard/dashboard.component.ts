@@ -8,7 +8,6 @@ import { DietaConLista, ListaSpesa, Ingrediente, DailyGroup } from '../../models
 import { PageHeaderComponent } from '../../shared/page-header/page-header.component';
 import {
   LucidePlus,
-  LucideClock,
   LucideCheck,
   LucideCalendar,
   LucideLoader,
@@ -29,7 +28,6 @@ import {
     FormsModule,
     PageHeaderComponent,
     LucidePlus,
-    LucideClock,
     LucideCheck,
     LucideCalendar,
     LucideLoader,

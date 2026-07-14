@@ -78,12 +78,6 @@
         <p class="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">Non hai ancora un piano per questa
           settimana. Generane uno personalizzato in pochi minuti con l'intelligenza artificiale.</p>
 
-        <!-- Generation meta: time -->
-        <div class="mb-6 sm:mb-8 flex items-center justify-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
-          <svg lucideClock aria-hidden="true" class="w-4 h-4 flex-shrink-0 text-gray-400"></svg>
-          <span>Generazione: fino a 2 minuti</span>
-        </div>
-
         <button (click)="generateNewDiet()" [disabled]="loading"
           class="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
           aria-label="Genera nuova dieta settimanale">
