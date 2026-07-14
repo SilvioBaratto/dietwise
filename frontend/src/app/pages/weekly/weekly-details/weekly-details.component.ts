@@ -12,7 +12,6 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DietService } from '../../../services/diet.service';
 import { DailyGroup, DietaSettimanale, Pasto } from '../../../models/diet.types';
-import { PageHeaderComponent } from '../../../shared/page-header/page-header.component';
 import {
   LucideAlertTriangle,
   LucideCalendar,
@@ -27,7 +26,6 @@ import {
   selector: 'app-weekly-details',
   imports: [
     RouterModule,
-    PageHeaderComponent,
     LucideAlertTriangle,
     LucideCalendar,
     LucidePlus,
@@ -63,63 +61,6 @@ export class WeeklyDetailsComponent implements OnInit {
     }
     this.fetchDiet(id);
   }
-
-  // Computed signals for derived state
-  totalCalories = computed(() => {
-    const dietData = this.diet();
-    return (
-      dietData?.pasti.reduce((total, pasto) => total + pasto.calorie, 0) || 0
-    );
-  });
-
-  uniqueDays = computed(() => {
-    const dietData = this.diet();
-    if (!dietData) return 0;
-
-    // Count unique days from the pasti
-    const uniqueDays = new Set(dietData.pasti.map((p) => p.day));
-    return uniqueDays.size;
-  });
-
-  uniqueIngredients = computed(() => {
-    const dietData = this.diet();
-    if (!dietData) return 0;
-
-    const uniqueIngredients = new Set<string>();
-    dietData.pasti.forEach((pasto) => {
-      // Parse comma-separated ingredient string
-      const ingredients = pasto.ingredienti.split(',').map((i) => i.trim());
-      ingredients.forEach((ing) => {
-        // Extract ingredient name from formats like "200 gr di riso" or "150 ml di latte"
-        // Look for "di " (of) which indicates the ingredient name follows
-        const diIndex = ing.toLowerCase().indexOf(' di ');
-        let name = '';
-
-        if (diIndex !== -1) {
-          // Extract everything after "di "
-          name = ing
-            .substring(diIndex + 4)
-            .trim()
-            .toLowerCase();
-        } else {
-          // No "di" found - try to extract last word(s) after units
-          // Remove common units and numbers to get ingredient name
-          name = ing
-            .replace(/\d+(\.\d+)?/g, '') // Remove numbers
-            .replace(
-              /\b(gr|g|kg|ml|l|pz|cucchiai|cucchiaio|tazza|tazze)\b/gi,
-              ''
-            ) // Remove units
-            .trim()
-            .toLowerCase();
-        }
-
-        if (name) uniqueIngredients.add(name);
-      });
-    });
-
-    return uniqueIngredients.size;
-  });
 
   groupedMealsByDay = computed(() => {
     const dietData = this.diet();
@@ -190,19 +131,6 @@ export class WeeklyDetailsComponent implements OnInit {
 
   viewRecipe(mealId: string) {
     this.router.navigate(['/recipe', mealId]);
-  }
-
-  // Expose computed signals as methods for template compatibility
-  getTotalCalories(): number {
-    return this.totalCalories();
-  }
-
-  getUniqueDays(): number {
-    return this.uniqueDays();
-  }
-
-  getUniqueIngredients(): number {
-    return this.uniqueIngredients();
   }
 
   getDayName(dayEnum: string): string {
