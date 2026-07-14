@@ -8,22 +8,8 @@ import { forkJoin } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiKeyService } from '../../services/api-key.service';
 import { ApiKeyResponse, AvailableModels, Provider } from '../../models/api-key.types';
+import { UserSettingsIn, UserSettingsOut } from '../../models/user-settings.types';
 import { CostBadgeComponent } from '../../shared/cost-badge/cost-badge.component';
-
-interface UserSettingsIn {
-  age?: number;
-  sex?: string;
-  weight?: number;
-  height?: number;
-  other_data?: string;
-  goals?: string;
-}
-interface UserSettingsOut extends UserSettingsIn {
-  id: string;
-  user_id: string;
-  created_at: string;
-  updated_at: string;
-}
 
 @Component({
   selector: 'app-settings',

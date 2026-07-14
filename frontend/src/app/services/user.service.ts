@@ -3,10 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-
-interface AcceptTermsResponse {
-  readonly terms_accepted_at: string;
-}
+import { AcceptTermsResponse } from '../models/user.types';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

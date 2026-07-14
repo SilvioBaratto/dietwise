@@ -41,7 +41,8 @@ export interface DietaConLista {
 }
 
 export interface DailyGroup {
-  readonly date: string;     // "YYYY-MM-DD"
+  readonly date?: string;    // "YYYY-MM-DD" - populated when grouping by real diet dates
+  readonly day?: string;     // BAML enum key ("LUNEDI", "MARTEDI"...) - populated when grouping by weekday enum
   readonly dayName: string;  // "lunedì", "martedì"… (it-IT)
   readonly meals: Pasto[];
 }

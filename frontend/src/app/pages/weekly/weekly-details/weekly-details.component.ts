@@ -11,13 +11,7 @@ import {
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DietService } from '../../../services/diet.service';
-import { DietaSettimanale, Pasto } from '../../../models/diet.types';
-
-interface DayGroup {
-  day: string;
-  dayName: string;
-  meals: Pasto[];
-}
+import { DailyGroup, DietaSettimanale, Pasto } from '../../../models/diet.types';
 
 @Component({
   selector: 'app-weekly-details',
@@ -215,7 +209,7 @@ export class WeeklyDetailsComponent implements OnInit {
     return labels[tipo] || tipo;
   }
 
-  groupMealsByDay(): DayGroup[] {
+  groupMealsByDay(): DailyGroup[] {
     return this.groupedMealsByDay();
   }
 }

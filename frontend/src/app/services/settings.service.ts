@@ -4,17 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-
-interface UserSettingsOut {
-  readonly id: string;
-  readonly user_id: string;
-  readonly weight?: number;
-  readonly height?: number;
-  readonly other_data?: string;
-  readonly goals?: string;
-  readonly created_at: string;
-  readonly updated_at: string;
-}
+import { UserSettingsOut } from '../models/user-settings.types';
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
