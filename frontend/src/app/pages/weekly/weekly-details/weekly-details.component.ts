@@ -16,7 +16,6 @@ import { DietaSettimanale, Pasto } from '../../../models/diet.types';
 import {
   LucideAlertTriangle,
   LucideCalendar,
-  LucideClock,
   LucideZap,
   LucideChevronRight,
   LucideEye,
@@ -36,7 +35,6 @@ const MEAL_TYPE_ORDER = [
     RouterModule,
     LucideAlertTriangle,
     LucideCalendar,
-    LucideClock,
     LucideZap,
     LucideChevronRight,
     LucideEye,
