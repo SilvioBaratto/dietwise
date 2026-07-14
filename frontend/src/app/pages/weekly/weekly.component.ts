@@ -3,8 +3,9 @@ import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@ang
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { DietService } from '../../services/diet.service';
-import { DietSummary, ListaSpesa, Ingrediente } from '../../models/diet.types';
+import { DietSummary, ListaSpesa } from '../../models/diet.types';
 import { PageHeaderComponent } from '../../shared/page-header/page-header.component';
+import { GroceryListSheetComponent } from '../../shared/grocery-list-sheet/grocery-list-sheet';
 import {
   LucideAlertTriangle,
   LucideClipboard,
@@ -13,8 +14,6 @@ import {
   LucideTrash2,
   LucideInbox,
   LucideArrowLeft,
-  LucideShoppingCart,
-  LucideX,
 } from '@lucide/angular';
 
 @Component({
@@ -23,15 +22,14 @@ import {
     CommonModule,
     RouterModule,
     PageHeaderComponent,
+    GroceryListSheetComponent,
     LucideAlertTriangle,
     LucideClipboard,
-      LucideCalendar,
+    LucideCalendar,
     LucideEye,
     LucideTrash2,
     LucideInbox,
     LucideArrowLeft,
-    LucideShoppingCart,
-    LucideX,
   ],
   templateUrl: './weekly.component.html',
   styleUrls: ['./weekly.component.css'],
@@ -91,10 +89,6 @@ export class WeeklyComponent implements OnInit {
   closeGroceryList(): void {
     this.showGroceryList.set(false);
     this.currentGroceryList.set(null);
-  }
-
-  trackByNome(_index: number, ingrediente: Ingrediente): string {
-    return ingrediente.nome;
   }
 
   deleteDiet(dietId: string, dietName: string | undefined): void {
