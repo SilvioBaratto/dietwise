@@ -70,19 +70,13 @@
     @if (!dietaConLista && !loading) {
     <div class="flex items-center justify-center min-h-[60vh] sm:min-h-[70vh]">
       <div class="text-center max-w-md">
-        <!-- 404 Diet Not Found -->
-        <div class="mb-6 sm:mb-8">
-          <div
-            class="text-8xl sm:text-9xl font-black text-primary leading-none mb-2">
-            404
-          </div>
-          <div class="text-2xl sm:text-3xl font-bold text-gray-700">
-            DIET NOT FOUND
-          </div>
+        <!-- Empty state: no diet plan yet for this week -->
+        <div class="w-20 h-20 sm:w-24 sm:h-24 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-6" aria-hidden="true">
+          <svg lucideCalendar aria-hidden="true" class="w-10 h-10 sm:w-12 sm:h-12 text-primary"></svg>
         </div>
-        <h3 class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Nessuna dieta trovata</h3>
-        <p class="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">Non è ancora stata creata una dieta
-          per questa settimana. Inizia creandone una personalizzata.</p>
+        <h3 class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Crea il tuo piano alimentare</h3>
+        <p class="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">Non hai ancora un piano per questa
+          settimana. Generane uno personalizzato in pochi minuti con l'intelligenza artificiale.</p>
 
         <!-- Time Warning Info Box -->
         <div class="mb-6 sm:mb-8 p-4 bg-amber-50 border border-amber-200 rounded-xl text-left">
