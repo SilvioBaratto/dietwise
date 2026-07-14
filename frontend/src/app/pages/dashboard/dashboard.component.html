@@ -78,18 +78,10 @@
         <p class="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">Non hai ancora un piano per questa
           settimana. Generane uno personalizzato in pochi minuti con l'intelligenza artificiale.</p>
 
-        <!-- Generation meta: time + cost, compact and calm -->
-        <div class="mb-6 sm:mb-8 flex flex-col items-center gap-2">
-          <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
-            <svg lucideClock aria-hidden="true" class="w-4 h-4 flex-shrink-0 text-gray-400"></svg>
-            <span>Generazione: fino a 2 minuti</span>
-          </div>
-          @if (activeModel()) {
-            <app-cost-badge
-              [provider]="activeProvider()"
-              [model]="activeModel()"
-            />
-          }
+        <!-- Generation meta: time -->
+        <div class="mb-6 sm:mb-8 flex items-center justify-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
+          <svg lucideClock aria-hidden="true" class="w-4 h-4 flex-shrink-0 text-gray-400"></svg>
+          <span>Generazione: fino a 2 minuti</span>
         </div>
 
         <button (click)="generateNewDiet()" [disabled]="loading"
