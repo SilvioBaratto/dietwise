@@ -7,19 +7,10 @@ import { Provider } from '../../models/api-key.types';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (costEstimate()) {
-      <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl">
-        <div class="flex items-start gap-3">
-          <span class="text-amber-600 text-lg flex-shrink-0 mt-0.5" aria-hidden="true">&#x1f4b0;</span>
-          <div class="text-sm sm:text-base text-amber-900">
-            <p class="font-semibold mb-1">
-              Costo stimato per generazione: <span class="text-amber-700">{{ costEstimate() }}</span>
-            </p>
-            <p class="text-xs sm:text-sm text-amber-700">
-              Stima indicativa basata sui prezzi pubblici del provider.
-              Il costo effettivo dipende dalla lunghezza della risposta e dai prezzi correnti del provider.
-            </p>
-          </div>
-        </div>
+      <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600"
+        title="Stima indicativa basata sui prezzi pubblici del provider. Il costo effettivo dipende dalla lunghezza della risposta e dai prezzi correnti del provider.">
+        <span class="flex-shrink-0" aria-hidden="true">&#x1f4b0;</span>
+        <span>Costo stimato: <span class="font-semibold text-gray-900">{{ costEstimate() }}</span></span>
       </div>
     }
   `,

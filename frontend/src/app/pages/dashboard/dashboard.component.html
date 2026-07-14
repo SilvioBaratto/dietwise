@@ -68,7 +68,7 @@
 
     <!-- No Diet Yet: show Generate button - Mobile-first spacing -->
     @if (!dietaConLista && !loading) {
-    <div class="flex items-center justify-center min-h-[60vh] sm:min-h-[70vh]">
+    <div class="flex flex-col items-center justify-center py-8 sm:py-12 sm:min-h-[60vh]">
       <div class="text-center max-w-md">
         <!-- Empty state: no diet plan yet for this week -->
         <div class="w-20 h-20 sm:w-24 sm:h-24 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-6" aria-hidden="true">
@@ -78,26 +78,19 @@
         <p class="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">Non hai ancora un piano per questa
           settimana. Generane uno personalizzato in pochi minuti con l'intelligenza artificiale.</p>
 
-        <!-- Time Warning Info Box -->
-        <div class="mb-6 sm:mb-8 p-4 bg-amber-50 border border-amber-200 rounded-xl text-left">
-          <div class="flex items-start gap-3">
-            <svg lucideClock aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-0.5 text-gray-500"></svg>
-            <div class="text-sm sm:text-base text-amber-900">
-              <p class="font-semibold mb-1">Tempo di generazione: fino a 2 minuti</p>
-              <p class="text-amber-800">La tua dieta personalizzata viene creata dall'intelligenza artificiale.</p>
-            </div>
+        <!-- Generation meta: time + cost, compact and calm -->
+        <div class="mb-6 sm:mb-8 flex flex-col items-center gap-2">
+          <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
+            <svg lucideClock aria-hidden="true" class="w-4 h-4 flex-shrink-0 text-gray-400"></svg>
+            <span>Generazione: fino a 2 minuti</span>
           </div>
-        </div>
-
-        <!-- Cost Estimate Badge -->
-        @if (activeModel()) {
-          <div class="mb-6 sm:mb-8">
+          @if (activeModel()) {
             <app-cost-badge
               [provider]="activeProvider()"
               [model]="activeModel()"
             />
-          </div>
-        }
+          }
+        </div>
 
         <button (click)="generateNewDiet()" [disabled]="loading"
           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
