@@ -2,12 +2,13 @@
   aria-label="Navigazione principale">
   @if (activeIndex() !== null) {
   <div
-    class="absolute top-1.5 w-10 h-10 -translate-x-1/2 rounded-full bg-primary-light transition-[left] duration-300 ease-out motion-reduce:transition-none"
-    [style.left.%]="(100 / navItems.length) * (activeIndex()! + 0.5)"
+    class="absolute top-1.5 bottom-1.5 rounded-xl bg-primary transition-[left] duration-300 ease-out motion-reduce:transition-none"
+    [style.left]="'calc(' + (100 / navItems.length) * activeIndex()! + '% + 5px)'"
+    [style.width]="'calc(' + (100 / navItems.length) + '% - 10px)'"
     aria-hidden="true"></div>
   }
   @for (item of navItems; track item.route) {
-  <a [routerLink]="item.route" routerLinkActive="text-primary"
+  <a [routerLink]="item.route" routerLinkActive="text-white"
     [routerLinkActiveOptions]="{ exact: item.exact }"
     class="relative z-10 flex-1 flex flex-col items-center justify-center gap-1 min-h-13 py-2 text-text-tertiary transition-colors"
     [attr.aria-label]="item.mobileLabel">

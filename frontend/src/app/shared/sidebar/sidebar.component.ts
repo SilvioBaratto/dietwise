@@ -70,25 +70,30 @@ export class SidebarComponent {
     return index === -1 ? null : index;
   });
 
-  // Position of the sliding active-indicator circle, measured from the
-  // rendered icon (relative to the nav container's own bounding box, not
+  // Position/size of the sliding active-indicator pill, measured from the
+  // rendered row (relative to the nav container's own bounding box, not
   // offsetParent — the nav rows are themselves positioned for z-index
   // stacking, which would otherwise throw off plain offsetTop/offsetLeft).
   private readonly navRef = viewChild<ElementRef<HTMLElement>>('navEl');
-  private readonly iconRefs = viewChildren<ElementRef<HTMLElement>>('navIcon');
+  private readonly rowRefs = viewChildren<ElementRef<HTMLElement>>('navRow');
   indicatorTop = signal(0);
   indicatorLeft = signal(0);
+  indicatorWidth = signal(0);
+  indicatorHeight = signal(0);
 
   constructor() {
     effect(() => {
       const index = this.activeIndex();
-      const icons = this.iconRefs();
+      const rows = this.rowRefs();
       const nav = this.navRef()?.nativeElement;
-      if (index === null || !icons[index] || !nav) return;
-      const iconRect = icons[index].nativeElement.getBoundingClientRect();
+      if (index === null || !rows[index] || !nav) return;
+      const rowRect = rows[index].nativeElement.getBoundingClientRect();
       const navRect = nav.getBoundingClientRect();
-      this.indicatorTop.set(iconRect.top - navRect.top + iconRect.height / 2);
-      this.indicatorLeft.set(iconRect.left - navRect.left + iconRect.width / 2);
+      const inset = 5;
+      this.indicatorTop.set(rowRect.top - navRect.top + inset);
+      this.indicatorLeft.set(rowRect.left - navRect.left + inset);
+      this.indicatorWidth.set(rowRect.width - inset * 2);
+      this.indicatorHeight.set(rowRect.height - inset * 2);
     });
   }
 
