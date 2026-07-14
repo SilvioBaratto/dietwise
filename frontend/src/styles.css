@@ -12,6 +12,34 @@
   --color-primary: var(--color-teal-600);
   --color-primary-hover: var(--color-teal-700);
   --color-primary-light: var(--color-teal-50);
+
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+
+  /* Type scale ported from ITAL-IA (px-based, consistent mobile/desktop).
+     Font-size only — Tailwind's default line-heights for these tokens
+     already land close to the source values. */
+  --text-xs: 0.8125rem;    /* 13px  (was 12) */
+  --text-sm: 0.9375rem;    /* 15px  (was 14) */
+  --text-base: 1.0625rem;  /* 17px  (was 16) */
+  --text-lg: 1.25rem;      /* 20px  (was 18) */
+  --text-xl: 1.5rem;       /* 24px  (was 20) */
+  --text-2xl: 2rem;        /* 32px  (was 24) */
+  --text-3xl: 2.25rem;     /* 36px  (was 30) */
+  --text-4xl: 2.75rem;     /* 44px  (was 36, kept above 3xl) */
+}
+
+@layer base {
+  /* Prevent iOS auto-zoom on form inputs (triggers below 16px). Several
+     inputs in this app use text-sm/text-xs for visual density; without
+     !important those utilities win the cascade and iOS re-enables the
+     focus-zoom. Mobile-only so desktop density stays intact. */
+  @media (max-width: 767px) {
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+  }
 }
 
 @utility pb-safe {
