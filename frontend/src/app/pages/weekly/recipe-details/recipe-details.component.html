@@ -40,7 +40,6 @@
     @if (meal() && !loading()) {
     <div class="space-y-6 sm:space-y-8">
       <app-page-header [title]="meal()!.tipoPasto.ricetta" backLabel="Torna Indietro" (back)="goBack()">
-        <svg page-header-icon lucideScrollText aria-hidden="true" class="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 text-teal-600"></svg>
         <div page-header-subtitle class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 mt-2">
           <span
             class="inline-flex items-center justify-center px-4 py-2 sm:px-3 sm:py-1 rounded-full text-sm sm:text-xs font-medium text-white min-h-9 sm:min-h-auto w-fit"

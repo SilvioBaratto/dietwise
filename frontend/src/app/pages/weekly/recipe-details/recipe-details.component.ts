@@ -18,7 +18,6 @@ import { HtmlStructure, SavedRecipe } from '../../../models/recipe.types';
 import { PageHeaderComponent } from '../../../shared/page-header/page-header.component';
 import {
   LucideAlertTriangle,
-  LucideScrollText,
   LucideClock,
   LucideZap,
   LucideBox,
@@ -40,7 +39,6 @@ import {
     RouterModule,
     PageHeaderComponent,
     LucideAlertTriangle,
-    LucideScrollText,
     LucideClock,
     LucideZap,
     LucideBox,
