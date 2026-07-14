@@ -18,20 +18,26 @@
   </div>
 
   <!-- Navigation -->
-  <nav class="flex-1 p-4 space-y-1">
+  <nav #navEl class="relative flex-1 p-4 space-y-1">
+    @if (activeIndex() !== null) {
+    <div
+      class="absolute w-8 h-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-light transition-[top,left] duration-300 ease-out motion-reduce:transition-none"
+      [style.top.px]="indicatorTop()"
+      [style.left.px]="indicatorLeft()"
+      aria-hidden="true"></div>
+    }
     @for (item of navItems; track item.route) {
     <a [routerLink]="item.route"
-      routerLinkActive="bg-primary-light text-primary"
-      [class.bg-primary-light]="isLinkActive(item.route)"
+      routerLinkActive="text-primary"
       [class.text-primary]="isLinkActive(item.route)"
       [routerLinkActiveOptions]="{ exact: item.exact }"
-      class="group flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary
-             hover:bg-primary-light hover:text-primary
+      class="group relative z-10 flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary
+             hover:text-primary
              transition-colors duration-200
              focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2
              min-h-11"
       [attr.aria-label]="'Vai a ' + item.sidebarLabel">
-      <div class="flex-shrink-0">
+      <div #navIcon class="flex-shrink-0">
         @switch (item.icon) {
           @case ('dashboard') {
             <svg lucideLayoutDashboard aria-hidden="true" class="w-4 h-4"></svg>
