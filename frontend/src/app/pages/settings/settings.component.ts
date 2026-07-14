@@ -21,8 +21,6 @@ import {
   LucideUser,
   LucideWeight,
   LucideRuler,
-  LucideCalculator,
-  LucideFileText,
   LucideTarget,
   LucideSave,
   LucideLoader,
@@ -46,8 +44,6 @@ import {
     LucideUser,
     LucideWeight,
     LucideRuler,
-    LucideCalculator,
-    LucideFileText,
     LucideTarget,
     LucideSave,
     LucideLoader,
@@ -77,57 +73,6 @@ export class SettingsComponent implements OnInit {
   // Convert queryParams observable to signal
   private queryParams = toSignal(this.route.queryParams, { initialValue: {} as Record<string, string> });
   isFirstTime = computed(() => this.queryParams()?.['firstTime'] === 'true');
-
-  // Weight and height as signals for reactive BMI calculation
-  private weight = signal<number | undefined>(undefined);
-  private height = signal<number | undefined>(undefined);
-
-  // Computed signals for BMI calculations
-  bmi = computed(() => {
-    const w = this.weight();
-    const h = this.height();
-
-    if (w && h) {
-      const heightInMeters = h / 100;
-      const bmiValue = w / (heightInMeters * heightInMeters);
-      return parseFloat(bmiValue.toFixed(1));
-    }
-    return 0;
-  });
-
-  bmiDisplay = computed(() => {
-    const bmiValue = this.bmi();
-    return bmiValue === 0 ? '0' : bmiValue.toFixed(1);
-  });
-
-  bmiCategory = computed(() => {
-    const bmiValue = this.bmi();
-
-    if (bmiValue === 0) {
-      return '';
-    } else if (bmiValue < 18.5) {
-      return 'Sottopeso';
-    } else if (bmiValue < 25) {
-      return 'Normopeso';
-    } else if (bmiValue < 30) {
-      return 'Sovrappeso';
-    } else if (bmiValue < 35) {
-      return 'Obesità Classe I';
-    } else if (bmiValue < 40) {
-      return 'Obesità Classe II';
-    } else {
-      return 'Obesità Classe III';
-    }
-  });
-
-  // Watchers to sync form changes with signal-based BMI calculation
-  updateWeightSignal() {
-    this.weight.set(this.settings.weight);
-  }
-
-  updateHeightSignal() {
-    this.height.set(this.settings.height);
-  }
 
   // BYOK state
   savedKeys = signal<ApiKeyResponse[]>([]);
@@ -199,10 +144,6 @@ export class SettingsComponent implements OnInit {
             goals: data.goals,
           };
 
-          // Initialize weight and height signals for BMI calculation
-          this.weight.set(data.weight);
-          this.height.set(data.height);
-
           // Trigger change detection for OnPush strategy
           this.cdr.markForCheck();
           this.markLoaded('settings');
@@ -252,14 +193,6 @@ export class SettingsComponent implements OnInit {
   }
 
   // Expose computed signals to template
-  getBMI(): string {
-    return this.bmiDisplay();
-  }
-
-  getBMICategory(): string {
-    return this.bmiCategory();
-  }
-
   // --- BYOK Methods ---
 
   loadApiKeys(): void {
