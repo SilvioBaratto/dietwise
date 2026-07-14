@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { RecipeService } from '../../services/recipe.service';
 import { SavedRecipe } from '../../models/recipe.types';
 import { PageHeaderComponent } from '../../shared/page-header/page-header.component';
+import { RecipeDetailSheetComponent } from '../../shared/recipe-detail-sheet/recipe-detail-sheet';
 import {
   LucideBookOpen,
   LucideAlertTriangle,
@@ -12,15 +13,22 @@ import {
   LucideFlame,
   LucideEye,
   LucideTrash2,
-  LucideX,
-  LucideCopy,
 } from '@lucide/angular';
+
+const MEAL_TYPE_ORDER = [
+  'COLAZIONE',
+  'SPUNTINO_MATTINA',
+  'PRANZO',
+  'SPUNTINO_POMERIGGIO',
+  'CENA',
+];
 
 @Component({
   selector: 'app-recipes',
   imports: [
     RouterModule,
     PageHeaderComponent,
+    RecipeDetailSheetComponent,
     LucideBookOpen,
     LucideAlertTriangle,
     LucideLoader,
@@ -28,8 +36,6 @@ import {
     LucideFlame,
     LucideEye,
     LucideTrash2,
-    LucideX,
-    LucideCopy,
   ],
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.css',
@@ -45,10 +51,23 @@ export class RecipesComponent implements OnInit {
   deletingRecipeId = signal<string | null>(null);
   selectedRecipe = signal<SavedRecipe | null>(null);
   showModal = signal(false);
+  selectedMealType = signal<string | null>(null);
 
-  // Computed signal for recipe count
-  recipeCount = computed(() => this.recipes().length);
   hasRecipes = computed(() => this.recipes().length > 0);
+
+  availableMealTypes = computed(() => {
+    const present = new Set<string>(this.recipes().map((r) => r.meal_type));
+    return MEAL_TYPE_ORDER.filter((type) => present.has(type));
+  });
+
+  filteredRecipes = computed(() => {
+    const type = this.selectedMealType();
+    return type ? this.recipes().filter((r) => r.meal_type === type) : this.recipes();
+  });
+
+  selectMealType(type: string | null): void {
+    this.selectedMealType.set(type);
+  }
 
   ngOnInit() {
     this.loadRecipes();
@@ -108,17 +127,6 @@ export class RecipesComponent implements OnInit {
     return labels[mealType] || mealType;
   }
 
-  getMealTypeColor(mealType: string): string {
-    const colors: { [key: string]: string } = {
-      'COLAZIONE': 'bg-amber-100 text-amber-800',
-      'SPUNTINO_MATTINA': 'bg-green-100 text-green-800',
-      'PRANZO': 'bg-blue-100 text-blue-800',
-      'SPUNTINO_POMERIGGIO': 'bg-green-100 text-green-800',
-      'CENA': 'bg-purple-100 text-purple-800'
-    };
-    return colors[mealType] || 'bg-gray-100 text-gray-800';
-  }
-
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('it-IT', {
@@ -140,17 +148,6 @@ export class RecipesComponent implements OnInit {
     this.selectedRecipe.set(null);
   }
 
-  copyRecipe() {
-    const recipe = this.selectedRecipe();
-    if (recipe) {
-      navigator.clipboard.writeText(recipe.recipe_instructions).then(() => {
-        console.log('Recipe copied to clipboard');
-      }).catch(err => {
-        console.error('Failed to copy recipe: ', err);
-      });
-    }
-  }
-
   /**
    * Get a preview of the recipe instructions (first few lines, excluding title)
    */
@@ -162,73 +159,4 @@ export class RecipesComponent implements OnInit {
     );
     return contentLines.slice(0, 3).join(' ').substring(0, 150) + (contentLines.length > 3 ? '...' : '');
   }
-
-  /**
-   * Parse recipe instructions text into structured sections for rendering
-   */
-  parseRecipeInstructions(instructions: string): RecipeSection[] {
-    const lines = instructions.split('\n').filter(line => line.trim());
-    const sections: RecipeSection[] = [];
-
-    let currentBullets: string[] = [];
-    let currentNumbered: string[] = [];
-
-    const flushBullets = () => {
-      if (currentBullets.length > 0) {
-        sections.push({ type: 'bullet', items: [...currentBullets] });
-        currentBullets = [];
-      }
-    };
-
-    const flushNumbered = () => {
-      if (currentNumbered.length > 0) {
-        sections.push({ type: 'numbered', items: [...currentNumbered] });
-        currentNumbered = [];
-      }
-    };
-
-    lines.forEach((line, index) => {
-      // Skip the first line (it's the title, already shown in header)
-      if (index === 0) return;
-
-      if (line.startsWith('•')) {
-        flushNumbered();
-        currentBullets.push(line.substring(1).trim());
-      } else if (/^\d+\.\s/.test(line)) {
-        flushBullets();
-        currentNumbered.push(line.replace(/^\d+\.\s*/, ''));
-      } else if (this.isHeading(line)) {
-        flushBullets();
-        flushNumbered();
-        sections.push({ type: 'heading', content: line });
-      } else if (line.trim()) {
-        flushBullets();
-        flushNumbered();
-        sections.push({ type: 'paragraph', content: line });
-      }
-    });
-
-    // Flush any remaining items
-    flushBullets();
-    flushNumbered();
-
-    return sections;
-  }
-
-  /**
-   * Determine if a line is likely a heading (short, no period at end)
-   */
-  private isHeading(line: string): boolean {
-    const trimmed = line.trim();
-    return trimmed.length < 60 &&
-           !trimmed.endsWith('.') &&
-           !trimmed.endsWith(':') &&
-           trimmed.length > 0;
-  }
-}
-
-interface RecipeSection {
-  type: 'heading' | 'paragraph' | 'bullet' | 'numbered';
-  content?: string;
-  items?: string[];
 }

@@ -2,19 +2,45 @@
 <div class="min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
 
-        <app-page-header title="Le Tue Ricette" subtitle="Tutte le ricette che hai salvato dai tuoi piani alimentari">
-            @if (!loading() && hasRecipes()) {
-            <div page-header-actions
-                class="flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-sm border border-gray-200"
-                role="status" aria-live="polite">
-                <svg lucideBookOpen aria-hidden="true" class="w-6 h-6 text-teal-600"></svg>
-                <div>
-                    <p class="text-2xl font-bold text-gray-900">{{ recipeCount() }}</p>
-                    <p class="text-xs text-gray-600">{{ recipeCount() === 1 ? 'Ricetta' : 'Ricette' }}</p>
-                </div>
-            </div>
+        <app-page-header title="Le Tue Ricette" subtitle="Tutte le ricette che hai salvato dai tuoi piani alimentari" />
+
+        <!-- Meal Type Filter -->
+        @if (!loading() && hasRecipes() && availableMealTypes().length > 1) {
+        <div class="flex items-center gap-2 overflow-x-auto scrollbar-hidden mb-6" role="tablist" aria-label="Filtra per tipo di pasto">
+            <button type="button" role="tab" [attr.aria-selected]="selectedMealType() === null"
+                (click)="selectMealType(null)"
+                class="flex-shrink-0 inline-flex items-center justify-center px-3.5 py-2 min-h-11 rounded-xl text-xs sm:text-sm font-medium border transition-colors touch-manipulation focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                [class.bg-gray-800]="selectedMealType() === null"
+                [class.text-white]="selectedMealType() === null"
+                [class.border-gray-800]="selectedMealType() === null"
+                [class.bg-white]="selectedMealType() !== null"
+                [class.text-gray-700]="selectedMealType() !== null"
+                [class.border-gray-200]="selectedMealType() !== null"
+                [class.hover:bg-gray-50]="selectedMealType() !== null">
+                Tutti
+            </button>
+            @for (type of availableMealTypes(); track type) {
+            <button type="button" role="tab" [attr.aria-selected]="selectedMealType() === type"
+                (click)="selectMealType(type)"
+                class="flex-shrink-0 inline-flex items-center justify-center px-3.5 py-2 min-h-11 rounded-xl text-xs sm:text-sm font-medium border transition-colors touch-manipulation focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                [class.text-white]="selectedMealType() === type"
+                [class.bg-orange-500]="selectedMealType() === type && type === 'COLAZIONE'"
+                [class.border-orange-500]="selectedMealType() === type && type === 'COLAZIONE'"
+                [class.bg-green-500]="selectedMealType() === type && (type === 'SPUNTINO_MATTINA' || type === 'SPUNTINO_POMERIGGIO')"
+                [class.border-green-500]="selectedMealType() === type && (type === 'SPUNTINO_MATTINA' || type === 'SPUNTINO_POMERIGGIO')"
+                [class.bg-blue-500]="selectedMealType() === type && type === 'PRANZO'"
+                [class.border-blue-500]="selectedMealType() === type && type === 'PRANZO'"
+                [class.bg-purple-500]="selectedMealType() === type && type === 'CENA'"
+                [class.border-purple-500]="selectedMealType() === type && type === 'CENA'"
+                [class.bg-white]="selectedMealType() !== type"
+                [class.text-gray-700]="selectedMealType() !== type"
+                [class.border-gray-200]="selectedMealType() !== type"
+                [class.hover:bg-gray-50]="selectedMealType() !== type">
+                {{ getMealTypeLabel(type) }}
+            </button>
             }
-        </app-page-header>
+        </div>
+        }
 
         <!-- Error Message -->
         @if (error()) {
@@ -77,71 +103,59 @@
         <!-- Recipes Grid -->
         @if (!loading() && hasRecipes()) {
         <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-            @for (recipe of recipes(); track recipe.id) {
-            <article
-                class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] flex flex-col">
+            @for (recipe of filteredRecipes(); track recipe.id) {
+            <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-teal-300 transition-all duration-300 flex flex-col">
 
-                <!-- Recipe Header -->
-                <div class="bg-primary-light px-4 sm:px-6 py-4 border-b border-gray-200">
-                    <div class="flex items-start justify-between gap-3 mb-3">
-                        <h3 class="text-base sm:text-lg lg:text-xl font-bold text-gray-900 leading-tight line-clamp-2 flex-1">
-                            {{ recipe.recipe_name }}
-                        </h3>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0"
-                            [class.bg-amber-100]="recipe.meal_type === 'COLAZIONE'"
-                            [class.text-amber-800]="recipe.meal_type === 'COLAZIONE'"
-                            [class.bg-green-100]="recipe.meal_type === 'SPUNTINO_MATTINA' || recipe.meal_type === 'SPUNTINO_POMERIGGIO'"
-                            [class.text-green-800]="recipe.meal_type === 'SPUNTINO_MATTINA' || recipe.meal_type === 'SPUNTINO_POMERIGGIO'"
-                            [class.bg-blue-100]="recipe.meal_type === 'PRANZO'"
-                            [class.text-blue-800]="recipe.meal_type === 'PRANZO'"
-                            [class.bg-purple-100]="recipe.meal_type === 'CENA'"
-                            [class.text-purple-800]="recipe.meal_type === 'CENA'">
+                <!-- Recipe Meta -->
+                <div class="px-4 sm:px-6 pt-4 sm:pt-6">
+                    <div class="flex items-center gap-3 text-xs sm:text-sm text-gray-600 mb-2">
+                        <span class="font-bold uppercase tracking-wide"
+                            [class.text-orange-600]="recipe.meal_type === 'COLAZIONE'"
+                            [class.text-green-600]="recipe.meal_type === 'SPUNTINO_MATTINA' || recipe.meal_type === 'SPUNTINO_POMERIGGIO'"
+                            [class.text-blue-600]="recipe.meal_type === 'PRANZO'"
+                            [class.text-purple-600]="recipe.meal_type === 'CENA'">
                             {{ getMealTypeLabel(recipe.meal_type) }}
                         </span>
-                    </div>
-
-                    <!-- Recipe Meta -->
-                    <div class="flex items-center gap-4 text-sm text-gray-600">
-                        <div class="flex items-center gap-2">
+                        <span class="flex items-center gap-1.5">
                             <svg lucideFlame aria-hidden="true" class="w-4 h-4 text-gray-400"></svg>
-                            <span class="font-medium">{{ recipe.calories }} kcal</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <svg lucideCalendar aria-hidden="true" class="w-4 h-4 text-gray-500"></svg>
-                            <span class="text-xs">{{ formatDate(recipe.created_at) }}</span>
-                        </div>
+                            {{ recipe.calories }} kcal
+                        </span>
+                    </div>
+                    <h3 class="text-base sm:text-lg lg:text-xl font-bold text-gray-900 leading-tight mb-1">
+                        {{ recipe.recipe_name }}
+                    </h3>
+                    <div class="flex items-center gap-1.5 text-xs text-gray-500 mb-3">
+                        <svg lucideCalendar aria-hidden="true" class="w-3.5 h-3.5"></svg>
+                        {{ formatDate(recipe.created_at) }}
                     </div>
                 </div>
 
                 <!-- Recipe Instructions Preview -->
-                <div class="px-4 sm:px-6 py-4 flex-1">
-                    <div class="text-sm text-gray-700 line-clamp-4 recipe-preview">
+                <div class="px-4 sm:px-6 flex-1">
+                    <p class="text-sm text-gray-600 line-clamp-4">
                         {{ getRecipePreview(recipe.recipe_instructions) }}
-                    </div>
+                    </p>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
-                    <!-- View Full Recipe Button -->
+                <div class="p-4 sm:p-6 flex items-center gap-2">
                     <button (click)="viewRecipe(recipe)" type="button"
-                        class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+                        class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                         aria-label="Visualizza ricetta completa: {{ recipe.recipe_name }}">
                         <svg lucideEye aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
                         <span>Visualizza</span>
                     </button>
 
-                    <!-- Delete Button -->
                     <button (click)="deleteRecipe(recipe.id, recipe.recipe_name)" type="button"
                         [disabled]="deletingRecipeId() === recipe.id"
-                        class="sm:flex-shrink-0 inline-flex items-center justify-center px-4 py-3 min-h-11 min-w-11 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white border border-red-200 hover:border-red-500 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm touch-manipulation"
+                        class="flex-shrink-0 inline-flex items-center justify-center min-h-11 min-w-11 rounded-xl bg-white text-red-600 border-2 border-red-500 hover:bg-red-50 active:bg-red-100 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 touch-manipulation"
                         [attr.aria-label]="deletingRecipeId() === recipe.id ? 'Eliminazione in corso' : 'Elimina ricetta: ' + recipe.recipe_name">
                         @if (deletingRecipeId() === recipe.id) {
-                        <svg lucideLoader aria-hidden="true" class="w-4 h-4 animate-spin"></svg>
+                        <svg lucideLoader aria-hidden="true" class="w-4 h-4 animate-spin flex-shrink-0"></svg>
                         }
                         @if (deletingRecipeId() !== recipe.id) {
-                        <svg lucideTrash2 aria-hidden="true" class="w-4 h-4"></svg>
+                        <svg lucideTrash2 aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
                         }
-                        <span class="sm:sr-only">Elimina</span>
                     </button>
                 </div>
             </article>
@@ -151,101 +165,4 @@
     </div>
 </div>
 
-<!-- Recipe Detail Modal -->
-@if (showModal() && selectedRecipe()) {
-<div class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title"
-    (click)="closeModal()" (keydown.escape)="closeModal()">
-    <!-- Backdrop -->
-    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
-
-    <!-- Modal Content -->
-    <div class="flex min-h-screen items-center justify-center p-4 sm:p-6">
-        <div (click)="$event.stopPropagation()"
-            class="relative w-full max-w-4xl bg-white rounded-xl shadow-2xl transform transition-all">
-
-            <!-- Modal Header -->
-            <div class="bg-primary-light px-6 sm:px-8 py-6 border-b border-gray-200">
-                <div class="flex items-start justify-between gap-4">
-                    <div class="flex-1">
-                        <h2 id="modal-title" class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-3">
-                            {{ selectedRecipe()!.recipe_name }}
-                        </h2>
-                        <div class="flex flex-wrap items-center gap-3">
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold"
-                                [class.bg-amber-100]="selectedRecipe()!.meal_type === 'COLAZIONE'"
-                                [class.text-amber-800]="selectedRecipe()!.meal_type === 'COLAZIONE'"
-                                [class.bg-green-100]="selectedRecipe()!.meal_type === 'SPUNTINO_MATTINA' || selectedRecipe()!.meal_type === 'SPUNTINO_POMERIGGIO'"
-                                [class.text-green-800]="selectedRecipe()!.meal_type === 'SPUNTINO_MATTINA' || selectedRecipe()!.meal_type === 'SPUNTINO_POMERIGGIO'"
-                                [class.bg-blue-100]="selectedRecipe()!.meal_type === 'PRANZO'"
-                                [class.text-blue-800]="selectedRecipe()!.meal_type === 'PRANZO'"
-                                [class.bg-purple-100]="selectedRecipe()!.meal_type === 'CENA'"
-                                [class.text-purple-800]="selectedRecipe()!.meal_type === 'CENA'">
-                                {{ getMealTypeLabel(selectedRecipe()!.meal_type) }}
-                            </span>
-                            <div class="flex items-center gap-2 text-sm text-gray-600">
-                                <svg lucideFlame aria-hidden="true" class="w-4 h-4 text-gray-400"></svg>
-                                <span class="font-medium">{{ selectedRecipe()!.calories }} kcal</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-gray-600">
-                                <svg lucideCalendar aria-hidden="true" class="w-4 h-4 text-gray-500"></svg>
-                                <span class="text-xs">{{ formatDate(selectedRecipe()!.created_at) }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Close Button -->
-                    <button (click)="closeModal()" type="button"
-                        class="flex-shrink-0 w-10 h-10 min-w-11 min-h-11 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors touch-manipulation"
-                        aria-label="Chiudi finestra ricetta">
-                        <svg lucideX aria-hidden="true" class="w-6 h-6 text-gray-400"></svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="px-6 sm:px-8 py-6 max-h-[60vh] overflow-y-auto scrollbar-hidden">
-                <div class="prose prose-sm sm:prose max-w-none recipe-content">
-                    @for (section of parseRecipeInstructions(selectedRecipe()!.recipe_instructions); track $index) {
-                        @switch (section.type) {
-                            @case ('heading') {
-                                <h3 class="text-lg font-semibold text-gray-900 mt-4 mb-2 first:mt-0">{{ section.content }}</h3>
-                            }
-                            @case ('paragraph') {
-                                <p class="text-gray-700 mb-3 leading-relaxed">{{ section.content }}</p>
-                            }
-                            @case ('bullet') {
-                                <ul class="list-disc list-inside text-gray-700 mb-3 space-y-1">
-                                    @for (item of section.items; track $index) {
-                                        <li>{{ item }}</li>
-                                    }
-                                </ul>
-                            }
-                            @case ('numbered') {
-                                <ol class="list-decimal list-inside text-gray-700 mb-3 space-y-2">
-                                    @for (item of section.items; track $index) {
-                                        <li class="leading-relaxed">{{ item }}</li>
-                                    }
-                                </ol>
-                            }
-                        }
-                    }
-                </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="bg-gray-50 px-6 sm:px-8 py-4 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
-                <button (click)="copyRecipe()" type="button"
-                    class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 text-sm font-medium transition-colors touch-manipulation"
-                    aria-label="Copia ricetta negli appunti">
-                    <svg lucideCopy aria-hidden="true" class="w-4 h-4 flex-shrink-0"></svg>
-                    <span>Copia Ricetta</span>
-                </button>
-                <button (click)="closeModal()" type="button"
-                    class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
-                    aria-label="Chiudi finestra ricetta">
-                    <span>Chiudi</span>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-}
+<app-recipe-detail-sheet [isOpen]="showModal()" [recipe]="selectedRecipe()" (closed)="closeModal()" />
