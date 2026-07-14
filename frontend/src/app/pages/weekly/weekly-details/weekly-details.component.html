@@ -60,18 +60,6 @@
       <!-- Meals Grid - Selected Day -->
       @if (selectedDayGroup(); as dayGroup) {
       <section class="space-y-4">
-        <!-- Day Header -->
-        <div
-          class="bg-primary rounded-xl px-4 sm:px-6 py-3 sm:py-4 shadow-md">
-          <h3 class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center gap-3">
-            <svg lucideCalendar aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"></svg>
-            <span>{{ dayGroup.dayName }}</span>
-            <span class="ml-auto text-sm sm:text-base font-medium bg-white/20 px-3 py-1 rounded-full">
-              {{ dayGroup.meals.length }} pasti
-            </span>
-          </h3>
-        </div>
-
         <!-- Meals for this day -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           @for (pasto of dayGroup.meals; track pasto.id) {
