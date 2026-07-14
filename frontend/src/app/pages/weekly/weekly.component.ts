@@ -45,7 +45,7 @@ export class WeeklyComponent implements OnInit {
   loading = signal<boolean>(true);
   showGroceryList = signal<boolean>(false);
   currentGroceryList = signal<ListaSpesa | null>(null);
-  groceryListLoading = signal<boolean>(false);
+  groceryListLoadingId = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loading.set(true);
@@ -69,19 +69,19 @@ export class WeeklyComponent implements OnInit {
   }
 
   viewGroceryList(dietId: string): void {
-    this.groceryListLoading.set(true);
+    this.groceryListLoadingId.set(dietId);
     // Note: Authorization header is automatically added by authInterceptor
     this.dietService.getGroceryListById(dietId)
       .subscribe({
         next: (data) => {
           this.currentGroceryList.set(data);
           this.showGroceryList.set(true);
-          this.groceryListLoading.set(false);
+          this.groceryListLoadingId.set(null);
         },
         error: (err) => {
           console.error('Failed to load grocery list', err);
           this.error.set('Could not load the grocery list. Please try again later.');
-          this.groceryListLoading.set(false);
+          this.groceryListLoadingId.set(null);
         }
       });
   }
