@@ -24,7 +24,9 @@ logger = logging.getLogger(__name__)
 
 _TIMEOUT = httpx.Timeout(10.0)
 _GOOGLE_KEY_RE = re.compile(r"[A-Za-z0-9\-_]+")  # legacy "AIza..." standard keys
-_GOOGLE_AUTH_KEY_RE = re.compile(r"AQ\.[A-Za-z0-9\-_]+")  # new "AQ." auth keys (2026 rollout)
+_GOOGLE_AUTH_KEY_RE = re.compile(
+    r"AQ\.[A-Za-z0-9\-_]+"
+)  # new "AQ." auth keys (2026 rollout)
 _AZURE_API_VERSION_RE = re.compile(r"^\d{4}-\d{2}-\d{2}(-preview)?$")
 
 
