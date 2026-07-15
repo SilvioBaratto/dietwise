@@ -6,9 +6,10 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   ApiKeyResponse,
-  AvailableModels,
   Preferences,
   Provider,
+  ProvidersResponse,
+  SaveKeyOptions,
   ValidateKeyResponse,
 } from '../models/api-key.types';
 
@@ -20,10 +21,18 @@ export class ApiKeyService {
     return this.http.get<ApiKeyResponse[]>(`${environment.apiUrl}/api-keys`);
   }
 
-  saveKey(provider: Provider, apiKey: string): Observable<ApiKeyResponse> {
+  saveKey(
+    provider: Provider,
+    apiKey: string,
+    options?: SaveKeyOptions,
+  ): Observable<ApiKeyResponse> {
     return this.http.post<ApiKeyResponse>(`${environment.apiUrl}/api-keys`, {
       provider,
-      api_key: apiKey,
+      // An empty string fails the backend's min_length=10 check (it only
+      // waives that check for null/omitted, i.e. Ollama's optional key).
+      api_key: apiKey || null,
+      ...(options?.baseUrl ? { base_url: options.baseUrl } : {}),
+      ...(options?.apiVersion ? { api_version: options.apiVersion } : {}),
     });
   }
 
@@ -31,15 +40,21 @@ export class ApiKeyService {
     return this.http.delete<void>(`${environment.apiUrl}/api-keys/${provider}`);
   }
 
-  validateKey(provider: Provider, apiKey: string): Observable<ValidateKeyResponse> {
+  validateKey(
+    provider: Provider,
+    apiKey: string,
+    options?: SaveKeyOptions,
+  ): Observable<ValidateKeyResponse> {
     return this.http.post<ValidateKeyResponse>(`${environment.apiUrl}/api-keys/validate`, {
       provider,
-      api_key: apiKey,
+      api_key: apiKey || null,
+      ...(options?.baseUrl ? { base_url: options.baseUrl } : {}),
+      ...(options?.apiVersion ? { api_version: options.apiVersion } : {}),
     });
   }
 
-  getAvailableModels(): Observable<AvailableModels> {
-    return this.http.get<AvailableModels>(`${environment.apiUrl}/api-keys/available-models`);
+  getProviders(): Observable<ProvidersResponse> {
+    return this.http.get<ProvidersResponse>(`${environment.apiUrl}/api-keys/providers`);
   }
 
   getPreferences(): Observable<Preferences> {

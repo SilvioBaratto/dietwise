@@ -42,6 +42,8 @@ class ApiKeyRepository:
         encrypted_key: str,
         encryption_nonce: str,
         key_hint: str,
+        base_url: str | None = None,
+        api_version: str | None = None,
     ) -> UserApiKey:
         """Create or update API key for user and provider (upsert)"""
         existing = self.get_by_user_and_provider(user_id, provider)
@@ -50,6 +52,8 @@ class ApiKeyRepository:
             existing.encryption_nonce = encryption_nonce
             existing.key_hint = key_hint
             existing.is_valid = True
+            existing.base_url = base_url
+            existing.api_version = api_version
             self.db.flush()
             self.db.refresh(existing)
             return existing
@@ -61,6 +65,8 @@ class ApiKeyRepository:
             encrypted_key=encrypted_key,
             encryption_nonce=encryption_nonce,
             key_hint=key_hint,
+            base_url=base_url,
+            api_version=api_version,
         )
         self.db.add(api_key)
         self.db.flush()
@@ -74,6 +80,8 @@ class ApiKeyRepository:
         encrypted_key: str,
         encryption_nonce: str,
         key_hint: str,
+        base_url: str | None = None,
+        api_version: str | None = None,
     ) -> UserApiKey | None:
         """Update an existing API key by ID, scoped to user"""
         stmt = select(UserApiKey).where(
@@ -88,6 +96,8 @@ class ApiKeyRepository:
         api_key.encrypted_key = encrypted_key
         api_key.encryption_nonce = encryption_nonce
         api_key.key_hint = key_hint
+        api_key.base_url = base_url
+        api_key.api_version = api_version
         self.db.flush()
         self.db.refresh(api_key)
         return api_key

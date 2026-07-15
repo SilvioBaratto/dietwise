@@ -1,29 +1,25 @@
 """Shared BAML client builder and error classifier for BYOK services."""
 
 import logging
-from typing import NoReturn
+from typing import Any, NoReturn
 
 import baml_py
 from sqlalchemy.orm import Session
 
 from app.exceptions import ApiKeyNotConfiguredError, LLMProviderError, RateLimitError
 from app.repositories import ApiKeyRepository, UserSettingsRepository
-from app.services.api_key_service import AVAILABLE_MODELS
 from app.services.encryption_service import InvalidTag, encryption_service
+from app.utils.llm_providers import PROVIDERS, get_provider_spec
 from baml_client.async_client import BamlAsyncClient, b
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_MODEL: dict[str, str] = {
-    "openai": "gpt-5.4-mini",
-    "anthropic": "claude-sonnet-5",
-    "google": "gemini-3.5-flash",
+    slug: spec.default_model for slug, spec in PROVIDERS.items() if spec.default_model
 }
 
 PROVIDER_BAML_NAME: dict[str, str] = {
-    "openai": "openai",
-    "google": "google-ai",
-    "anthropic": "anthropic",
+    slug: spec.baml_provider for slug, spec in PROVIDERS.items()
 }
 
 
@@ -51,8 +47,17 @@ class BamlClientFactory:
             raise ApiKeyNotConfiguredError("(not configured)")
 
         provider = settings.preferred_provider
-        model = settings.preferred_model or DEFAULT_MODEL.get(provider, "")
-        if model not in AVAILABLE_MODELS.get(provider, []):
+        spec = get_provider_spec(provider)
+        model = settings.preferred_model or spec.default_model
+
+        if spec.free_form_models:
+            if not model:
+                raise LLMProviderError(
+                    "No model configured for this provider. Set one in Settings.",
+                    provider=provider,
+                    llm_error_type="LLM_MODEL_UNAVAILABLE",
+                )
+        elif model not in spec.curated_models:
             logger.warning(
                 "baml_client_factory",
                 extra={
@@ -60,10 +65,10 @@ class BamlClientFactory:
                     "user_id": self.user_id,
                     "provider": provider,
                     "stored_model": model,
-                    "fallback_model": DEFAULT_MODEL.get(provider, ""),
+                    "fallback_model": spec.default_model,
                 },
             )
-            model = DEFAULT_MODEL.get(provider, "")
+            model = spec.default_model
         self.provider = provider
 
         record = self.api_key_repo.get_by_user_and_provider(self.user_id, provider)
@@ -103,11 +108,32 @@ class BamlClientFactory:
             },
         )
 
+        options: dict[str, Any] = {"model": model}
+        if decrypted_key:
+            options["api_key"] = decrypted_key
+        elif spec.requires_api_key:
+            raise ApiKeyNotConfiguredError(provider)
+
+        if spec.requires_base_url:
+            if not record.base_url:
+                raise LLMProviderError(
+                    f"Missing base_url for provider '{provider}'. Reconfigure in Settings.",
+                    provider=provider,
+                    llm_error_type="LLM_CONFIG_INVALID",
+                )
+            options["base_url"] = record.base_url
+
+        if spec.requires_api_version:
+            if not record.api_version:
+                raise LLMProviderError(
+                    f"Missing api_version for provider '{provider}'. Reconfigure in Settings.",
+                    provider=provider,
+                    llm_error_type="LLM_CONFIG_INVALID",
+                )
+            options["api_version"] = record.api_version
+
         cr = baml_py.ClientRegistry()
-        baml_provider = PROVIDER_BAML_NAME.get(provider, provider)
-        cr.add_llm_client(
-            "UserClient", baml_provider, {"model": model, "api_key": decrypted_key}
-        )
+        cr.add_llm_client("UserClient", spec.baml_provider, options)
         cr.set_primary("UserClient")
         return b.with_options(client_registry=cr)
 

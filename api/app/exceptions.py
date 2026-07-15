@@ -273,6 +273,7 @@ class LLMProviderError(BaseAPIException):
         "LLM_KEY_INVALID": status.HTTP_502_BAD_GATEWAY,
         "LLM_QUOTA_EXCEEDED": status.HTTP_502_BAD_GATEWAY,
         "LLM_MODEL_UNAVAILABLE": status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "LLM_CONFIG_INVALID": status.HTTP_422_UNPROCESSABLE_ENTITY,
     }
 
     def __init__(

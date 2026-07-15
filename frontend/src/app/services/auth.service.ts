@@ -6,11 +6,15 @@ import { map } from 'rxjs/operators';
 import type { Session, User } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
+import { DietService } from './diet.service';
+import { RecipeService } from './recipe.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private readonly supabase = inject(SupabaseService);
     private readonly router = inject(Router);
+    private readonly dietService = inject(DietService);
+    private readonly recipeService = inject(RecipeService);
 
     public readonly sessionSubject = new BehaviorSubject<Session | null>(null);
     readonly session$: Observable<Session | null> = this.sessionSubject.asObservable();
@@ -207,5 +211,7 @@ export class AuthService {
     async signOut(): Promise<void> {
         await this.supabase.signOut();
         this.sessionSubject.next(null);
+        this.dietService.clearCache();
+        this.recipeService.clearCache();
     }
 }

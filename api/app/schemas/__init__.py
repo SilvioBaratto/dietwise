@@ -4,9 +4,10 @@
 from app.schemas.api_key import (
     ApiKeyResponseSchema,
     ApiKeySaveRequest,
-    AvailableModelsResponse,
+    ProviderInfo,
     ProviderPreferencesRequest,
     ProviderPreferencesResponse,
+    ProvidersResponse,
     ValidateKeyRequest,
     ValidateKeyResponse,
 )
@@ -28,7 +29,8 @@ from baml_client.types import Ingrediente
 __all__ = [
     "ApiKeyResponseSchema",
     "ApiKeySaveRequest",
-    "AvailableModelsResponse",
+    "ProviderInfo",
+    "ProvidersResponse",
     "ProviderPreferencesRequest",
     "UserSettingsIn",
     "UserSettingsOut",

@@ -15,34 +15,15 @@ from app.repositories.api_key_repository import ApiKeyRepository
 from app.repositories.user_repository import UserSettingsRepository
 from app.schemas.api_key import (
     ApiKeyResponseSchema,
-    AvailableModelsResponse,
+    ProviderInfo,
     ProviderPreferencesResponse,
+    ProvidersResponse,
 )
 from app.services.api_key_validation_service import ApiKeyValidationService
 from app.services.encryption_service import encryption_service
+from app.utils.llm_providers import PROVIDERS, get_provider_spec
 
 logger = logging.getLogger(__name__)
-
-AVAILABLE_MODELS: dict[str, list[str]] = {
-    "openai": [
-        "gpt-5.6-sol",
-        "gpt-5.6-terra",
-        "gpt-5.6-luna",
-        "gpt-5.5",
-        "gpt-5.4",
-        "gpt-5.4-mini",
-    ],
-    "anthropic": [
-        "claude-opus-4-8",
-        "claude-sonnet-5",
-    ],
-    "google": [
-        "gemini-3.5-flash",
-        "gemini-3.1-flash-lite",
-        "gemini-3.1-pro-preview",
-        "gemini-3-flash-preview",
-    ],
-}
 
 
 class ApiKeyService:
@@ -72,15 +53,30 @@ class ApiKeyService:
         )
 
     async def save_key(
-        self, user_id: str, provider: str, api_key: str, ip: str = "unknown"
+        self,
+        user_id: str,
+        provider: str,
+        api_key: str | None,
+        base_url: str | None = None,
+        api_version: str | None = None,
+        ip: str = "unknown",
     ) -> ApiKeyResponseSchema:
         """Validate, encrypt, and persist a user API key. Returns hint only."""
-        is_valid, error_msg = await self.validator.validate(provider, api_key)
+        spec = get_provider_spec(provider)
+        if spec.requires_api_key and not api_key:
+            raise ValidationError(f"{spec.label} requires an API key")
+
+        is_valid, error_msg = await self.validator.validate(
+            provider, api_key, base_url=base_url, api_version=api_version
+        )
         if not is_valid:
             raise ValidationError(f"API key validation failed: {error_msg}")
 
-        ciphertext, nonce = self.encryption.encrypt(api_key)
-        key_hint = "..." + api_key[-4:]
+        # Ollama-style optional key: encrypt a sentinel empty string so the
+        # NOT NULL encrypted_key/encryption_nonce columns stay unchanged.
+        plaintext_key = api_key or ""
+        ciphertext, nonce = self.encryption.encrypt(plaintext_key)
+        key_hint = "..." + plaintext_key[-4:] if plaintext_key else "(none)"
         api_key = ""  # best-effort plaintext clear
 
         record = self.repo.create(
@@ -89,6 +85,8 @@ class ApiKeyService:
             encrypted_key=ciphertext,
             encryption_nonce=nonce,
             key_hint=key_hint,
+            base_url=base_url,
+            api_version=api_version,
         )
         self.db.commit()
         self._audit("api_key_saved", user_id, provider, record.key_hint, ip)
@@ -124,7 +122,8 @@ class ApiKeyService:
 
     def update_preferences(self, user_id: str, provider: str, model: str) -> None:
         """Persist the user's preferred LLM provider and model."""
-        if model not in AVAILABLE_MODELS.get(provider, []):
+        spec = get_provider_spec(provider)
+        if not spec.free_form_models and model not in spec.curated_models:
             raise ValidationError(
                 f"Model '{model}' is not available for provider '{provider}'"
             )
@@ -146,6 +145,22 @@ class ApiKeyService:
         )
 
     @staticmethod
-    def get_available_models() -> AvailableModelsResponse:
-        """Return the static list of supported models per provider."""
-        return AvailableModelsResponse(**AVAILABLE_MODELS)
+    def get_providers_info() -> ProvidersResponse:
+        """Return metadata for every supported LLM provider."""
+        return ProvidersResponse(
+            providers=[
+                ProviderInfo(
+                    slug=spec.slug,
+                    label=spec.label,
+                    requires_api_key=spec.requires_api_key,
+                    requires_base_url=spec.requires_base_url,
+                    requires_api_version=spec.requires_api_version,
+                    default_base_url=spec.default_base_url,
+                    free_form_models=spec.free_form_models,
+                    models=list(spec.curated_models),
+                    default_model=spec.default_model,
+                    key_format_hint=spec.key_format_hint,
+                )
+                for spec in PROVIDERS.values()
+            ]
+        )

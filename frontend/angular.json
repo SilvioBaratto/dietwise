@@ -60,6 +60,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "allowedHosts": ["silvios-mac-mini.tailb696dd.ts.net"]
+          },
           "configurations": {
             "production": {
               "buildTarget": "frontend_diet:build:production"

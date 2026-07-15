@@ -31,6 +31,11 @@ class UserApiKey(Base):
     encrypted_key: Mapped[str] = mapped_column(Text, nullable=False)
     encryption_nonce: Mapped[str] = mapped_column(Text, nullable=False)
     key_hint: Mapped[str] = mapped_column(String(8), nullable=False)
+    # Provider connection config for self-hosted/custom-endpoint providers
+    # (azure_openai, openai_generic, microsoft_foundry, ollama). Not secret —
+    # only encrypted_key/encryption_nonce hold credential material.
+    base_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    api_version: Mapped[str | None] = mapped_column(String(20), nullable=True)
     is_valid: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default="true", nullable=False
     )
@@ -48,7 +53,8 @@ class UserApiKey(Base):
     __table_args__ = (
         UniqueConstraint("user_id", "provider", name="uq_user_provider"),
         CheckConstraint(
-            "provider IN ('openai', 'google', 'anthropic')",
+            "provider IN ('openai', 'openai_responses', 'anthropic', 'google', "
+            "'azure_openai', 'openai_generic', 'microsoft_foundry', 'ollama')",
             name="ck_valid_provider",
         ),
         Index("idx_user_api_keys_user_id", "user_id"),

@@ -2,9 +2,9 @@
 
 from datetime import UTC, datetime
 import logging
-from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Request, Response, status
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
@@ -13,14 +13,15 @@ from app.dependencies import RateLimiter
 from app.schemas.api_key import (
     ApiKeyResponseSchema,
     ApiKeySaveRequest,
-    AvailableModelsResponse,
     ProviderPreferencesRequest,
     ProviderPreferencesResponse,
+    ProvidersResponse,
     ValidateKeyRequest,
     ValidateKeyResponse,
 )
 from app.services.api_key_service import ApiKeyService
 from app.services.api_key_validation_service import ApiKeyValidationService
+from app.utils.llm_providers import PROVIDERS
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +69,8 @@ async def save_api_key(
         current_user["id"],
         request.provider,
         request.api_key,
+        base_url=request.base_url,
+        api_version=request.api_version,
         ip=_get_ip(http_request),
     )
 
@@ -99,15 +102,18 @@ def list_api_keys(
 def delete_api_key(
     http_request: Request,
     response: Response,
-    provider: Literal["openai", "anthropic", "google"] = Path(
-        ..., description="Provider name: openai | anthropic | google"
-    ),
+    provider: str = Path(..., description="Provider slug, see GET /api-keys/providers"),
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """Remove the stored API key for the given provider."""
     _set_no_cache(response)
     rate_limit_keys(http_request, current_user)
+    if provider not in PROVIDERS:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Unknown provider '{provider}'",
+        )
     service = ApiKeyService(db)
     deleted = service.delete_key(current_user["id"], provider, ip=_get_ip(http_request))
     if not deleted:
@@ -134,14 +140,20 @@ async def validate_api_key(
     _set_no_cache(response)
     rate_limit_validate(http_request, current_user)
     validator = ApiKeyValidationService()
-    is_valid, error_msg = await validator.validate(request.provider, request.api_key)
+    is_valid, error_msg = await validator.validate(
+        request.provider,
+        request.api_key,
+        base_url=request.base_url,
+        api_version=request.api_version,
+    )
+    key_hint = "..." + request.api_key[-4:] if request.api_key else "(none)"
     logger.info(
         "api_key_event",
         extra={
             "event": "api_key_validated",
             "user_id": current_user["id"],
             "provider": request.provider,
-            "key_hint": "..." + request.api_key[-4:],
+            "key_hint": key_hint,
             "ip": _get_ip(http_request),
             "is_valid": is_valid,
             "timestamp": datetime.now(UTC).isoformat(),
@@ -194,15 +206,47 @@ def get_preferences(
 
 
 @router.get(
-    "/available-models",
-    response_model=AvailableModelsResponse,
+    "/providers",
+    response_model=ProvidersResponse,
     status_code=status.HTTP_200_OK,
-    summary="List supported models per provider",
+    summary="List supported LLM providers and their config requirements",
+)
+def get_providers(
+    http_request: Request,
+    response: Response,
+    current_user: dict = Depends(get_current_user),
+):
+    """Return metadata for every supported LLM provider (all 8)."""
+    _set_no_cache(response)
+    rate_limit_keys(http_request, current_user)
+    return ApiKeyService.get_providers_info()
+
+
+class _LegacyAvailableModelsResponse(BaseModel):
+    """Deprecated: superseded by GET /providers. Kept for one release so an
+    already-deployed frontend build doesn't break while the frontend deploy
+    catches up (backend/frontend are separate repos with independent CI)."""
+
+    openai: list[str]
+    anthropic: list[str]
+    google: list[str]
+
+
+@router.get(
+    "/available-models",
+    response_model=_LegacyAvailableModelsResponse,
+    status_code=status.HTTP_200_OK,
+    summary="[Deprecated] Use GET /providers instead",
+    deprecated=True,
 )
 def get_available_models(
     response: Response,
     current_user: dict = Depends(get_current_user),
 ):
-    """Return the static list of supported LLM models grouped by provider."""
+    """Deprecated legacy shape — use GET /providers instead."""
     _set_no_cache(response)
-    return ApiKeyService.get_available_models()
+    return _LegacyAvailableModelsResponse(
+        openai=list(PROVIDERS["openai"].curated_models),
+        anthropic=list(PROVIDERS["anthropic"].curated_models),
+        google=list(PROVIDERS["google"].curated_models),
+    )

@@ -41,49 +41,32 @@
     </div>
     }
 
-    <!-- Loading - skeleton matching the settings form sections below -->
-    @if (loading()) {
-    <div class="space-y-8 sm:space-y-10" role="status" aria-busy="true" aria-label="Caricamento impostazioni">
-      <!-- Personal Information -->
-      <div class="space-y-4">
-        <div class="h-6 w-56 rounded shimmer-bg"></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          @for (i of [1, 2, 3, 4]; track i) {
-          <div class="space-y-2">
-            <div class="h-4 w-20 rounded shimmer-bg"></div>
-            <div class="h-12 rounded-xl shimmer-bg"></div>
-          </div>
-          }
-        </div>
-      </div>
-      <!-- Additional Information -->
-      <div class="space-y-4 pt-8 border-t border-gray-200">
-        <div class="h-6 w-56 rounded shimmer-bg"></div>
-        <div class="h-20 rounded-xl shimmer-bg"></div>
-        <div class="h-24 rounded-xl shimmer-bg"></div>
-      </div>
-      <!-- AI Provider Configuration -->
-      <div class="space-y-6 pt-8 border-t border-gray-200">
-        <div class="h-6 w-64 rounded shimmer-bg"></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          <div class="h-12 rounded-xl shimmer-bg"></div>
-          <div class="h-12 rounded-xl shimmer-bg"></div>
-        </div>
-        @for (i of [1, 2, 3]; track i) {
-        <div class="h-14 rounded-xl shimmer-bg"></div>
-        }
-      </div>
-      <!-- Action buttons -->
-      <div class="pt-8 border-t border-gray-200 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end">
-        <div class="h-12 w-full sm:w-32 rounded-xl shimmer-bg"></div>
-        <div class="h-12 w-full sm:w-48 rounded-xl shimmer-bg"></div>
-      </div>
-    </div>
-    }
-
-    <!-- Settings Form - Improved responsive spacing -->
-    @if (!loading()) {
+    <!-- Settings Form -->
     <form (ngSubmit)="saveSettings()" #settingsForm="ngForm" class="space-y-8 sm:space-y-10">
+
+      @if (loading()) {
+      <!-- Loading - skeleton matching Personal/Additional Info sections below -->
+      <div class="space-y-8 sm:space-y-10" role="status" aria-busy="true" aria-label="Caricamento impostazioni">
+        <!-- Personal Information -->
+        <div class="space-y-4">
+          <div class="h-6 w-56 rounded shimmer-bg"></div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            @for (i of [1, 2, 3, 4]; track i) {
+            <div class="space-y-2">
+              <div class="h-4 w-20 rounded shimmer-bg"></div>
+              <div class="h-12 rounded-xl shimmer-bg"></div>
+            </div>
+            }
+          </div>
+        </div>
+        <!-- Additional Information -->
+        <div class="space-y-4 pt-8 border-t border-gray-200">
+          <div class="h-6 w-56 rounded shimmer-bg"></div>
+          <div class="h-20 rounded-xl shimmer-bg"></div>
+          <div class="h-24 rounded-xl shimmer-bg"></div>
+        </div>
+      </div>
+      } @else {
 
       <!-- Personal Information Section -->
       <section>
@@ -190,214 +173,16 @@
           </div>
         </div>
       </section>
+      }
 
-      <!-- AI Provider Configuration Section -->
-      <section class="pt-8 sm:pt-10 border-t border-gray-200">
-        <h2 class="font-display text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-4">Configurazione Provider AI</h2>
+      <!-- AI Provider Configuration - renders unconditionally with its own
+           internal skeleton, resolves independently of Personal/Additional Info -->
+      <app-byok-settings
+        [(selectedProvider)]="selectedProvider"
+        [(selectedModel)]="selectedModel"
+        (loaded)="byokReady.set(true)" />
 
-        <div class="space-y-6">
-
-          <!-- BYOK Alerts (inline) -->
-          @if (keySuccess()) {
-          <div role="alert" aria-live="polite"
-            class="p-3 sm:p-4 bg-green-50 border-l-4 border-green-400 text-green-800 rounded-r-xl">
-            <div class="flex items-start gap-3">
-              <svg lucideCheck aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0"></svg>
-              <span class="font-medium text-sm sm:text-base">{{ keySuccess() }}</span>
-            </div>
-          </div>
-          }
-          @if (keyError()) {
-          <div role="alert" aria-live="assertive"
-            class="p-3 sm:p-4 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-xl">
-            <div class="flex items-start gap-3">
-              <svg lucideAlertTriangle aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0"></svg>
-              <span class="font-medium text-sm sm:text-base">{{ keyError() }}</span>
-            </div>
-          </div>
-          }
-          @if (prefsError()) {
-          <div role="alert" aria-live="assertive"
-            class="p-3 sm:p-4 bg-red-50 border-l-4 border-red-400 text-red-800 rounded-r-xl">
-            <div class="flex items-start gap-3">
-              <svg lucideAlertTriangle aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0"></svg>
-              <span class="font-medium text-sm sm:text-base">{{ prefsError() }}</span>
-            </div>
-          </div>
-          }
-
-          <!-- Provider Preferences -->
-          <div class="space-y-4">
-            <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Preferenze Provider</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-              <div class="space-y-2 sm:space-y-3">
-                <label for="activeProvider" class="text-sm font-semibold text-gray-700">Provider Attivo</label>
-                <select id="activeProvider"
-                  (change)="onProviderChange($any($event.target).value)"
-                  class="w-full px-4 py-4 min-h-[48px] text-base border border-gray-300 rounded-xl
-                         focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-                         hover:border-gray-400 transition-colors duration-200
-                         appearance-none bg-white cursor-pointer">
-                  @for (p of providers; track p) {
-                  <option [value]="p" [selected]="p === selectedProvider()">{{ providerLabels[p] }}</option>
-                  }
-                </select>
-              </div>
-
-              <div class="space-y-2 sm:space-y-3">
-                <label for="activeModel" class="text-sm font-semibold text-gray-700">Modello</label>
-                <select id="activeModel"
-                  (change)="selectedModel.set($any($event.target).value)"
-                  class="w-full px-4 py-4 min-h-[48px] text-base border border-gray-300 rounded-xl
-                         focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-                         hover:border-gray-400 transition-colors duration-200
-                         appearance-none bg-white cursor-pointer">
-                  @for (m of modelsForProvider(); track m) {
-                  <option [value]="m" [selected]="m === selectedModel()">{{ m }}</option>
-                  }
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Divider -->
-          <div class="border-t border-gray-200"></div>
-
-          <!-- API Keys Status -->
-          <div>
-            <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Chiavi API</h3>
-
-            <div class="divide-y divide-gray-100 border-t border-b border-gray-100">
-              @for (provider of providers; track provider) {
-              <div class="flex items-center justify-between gap-3 py-2.5">
-                <div class="flex items-center gap-2 min-w-0">
-                  <span class="w-2 h-2 rounded-full flex-shrink-0"
-                    [class.bg-green-500]="getKeyForProvider(provider)?.is_valid"
-                    [class.bg-red-400]="getKeyForProvider(provider) && !getKeyForProvider(provider)!.is_valid"
-                    [class.bg-gray-300]="!getKeyForProvider(provider)"
-                    [attr.aria-label]="getKeyForProvider(provider) ? (getKeyForProvider(provider)!.is_valid ? 'Chiave valida' : 'Chiave non valida') : 'Non configurata'"></span>
-                  <span class="text-sm font-semibold text-gray-900 flex-shrink-0">{{ providerLabels[provider] }}</span>
-                  @if (getKeyForProvider(provider); as key) {
-                  <code class="text-xs text-gray-400 font-mono truncate">{{ key.key_hint }}</code>
-                  } @else {
-                  <span class="text-xs text-gray-400 italic">Non configurata</span>
-                  }
-                </div>
-
-                <div class="flex items-center gap-1 flex-shrink-0">
-                  @if (getKeyForProvider(provider)) {
-                  <button type="button" (click)="onChangeKeyFor(provider)"
-                    aria-label="Cambia chiave {{ providerLabels[provider] }}"
-                    class="flex items-center justify-center min-h-11 min-w-11 text-violet-600 hover:bg-violet-50
-                           rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-1">
-                    <svg lucidePencil aria-hidden="true" class="w-4 h-4"></svg>
-                  </button>
-                  <button type="button" (click)="deleteKey(provider)"
-                    [disabled]="isDeletingProvider() === provider"
-                    aria-label="Rimuovi chiave {{ providerLabels[provider] }}"
-                    class="flex items-center justify-center min-h-11 min-w-11 text-red-600 hover:bg-red-50
-                           rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1
-                           disabled:opacity-50 disabled:cursor-not-allowed">
-                    @if (isDeletingProvider() === provider) {
-                    <svg lucideLoader aria-hidden="true" class="w-4 h-4 animate-spin"></svg>
-                    } @else {
-                    <svg lucideTrash2 aria-hidden="true" class="w-4 h-4"></svg>
-                    }
-                  </button>
-                  } @else {
-                  <button type="button" (click)="onChangeKeyFor(provider)"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 min-h-11 text-xs font-medium
-                           text-violet-700 bg-violet-50 hover:bg-violet-100 active:bg-violet-200
-                           rounded-xl border border-violet-200 transition-colors duration-200
-                           focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-1">
-                    <svg lucidePlus aria-hidden="true" class="w-3.5 h-3.5"></svg>
-                    Aggiungi
-                  </button>
-                  }
-                </div>
-              </div>
-              }
-            </div>
-          </div>
-
-          <!-- Add / Change Key Form -->
-          @if (showKeyInput()) {
-          <div class="border-t border-gray-200 pt-6">
-            <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Aggiungi / Cambia Chiave</h3>
-
-            <div [formGroup]="byokForm" class="space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <div class="space-y-2 sm:space-y-3">
-                  <label for="formProvider" class="text-sm font-semibold text-gray-700">Provider</label>
-                  <select id="formProvider" formControlName="formProvider"
-                    class="w-full px-4 py-4 min-h-[48px] text-base border border-gray-300 rounded-xl
-                           focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-                           hover:border-gray-400 transition-colors duration-200
-                           appearance-none bg-white cursor-pointer">
-                    @for (p of providers; track p) {
-                    <option [value]="p">{{ providerLabels[p] }}</option>
-                    }
-                  </select>
-                </div>
-
-                <div class="space-y-2 sm:space-y-3">
-                  <label for="apiKey" class="text-sm font-semibold text-gray-700">Chiave API</label>
-                  <input type="password" id="apiKey" formControlName="apiKey"
-                    autocomplete="off" placeholder="Inserisci la tua chiave API..."
-                    class="w-full px-4 py-4 min-h-[48px] text-base border border-gray-300 rounded-xl
-                           focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-                           hover:border-gray-400 transition-colors duration-200
-                           disabled:opacity-50 disabled:cursor-not-allowed" />
-                  @if (byokForm.controls.apiKey.invalid && byokForm.controls.apiKey.touched) {
-                  <p class="text-sm text-red-600 mt-1">La chiave deve contenere almeno 10 caratteri</p>
-                  }
-                </div>
-              </div>
-
-              <div class="flex items-center gap-3">
-                <button type="button" (click)="validateAndSave()"
-                  [disabled]="byokForm.invalid || isValidating() || isSaving()"
-                  class="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl text-sm font-medium
-                         bg-violet-600 hover:bg-violet-700 active:bg-violet-800
-                         text-white
-                         transition-colors
-                         focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2
-                         disabled:opacity-50 disabled:cursor-not-allowed">
-                  @if (isValidating()) {
-                  <svg lucideLoader aria-hidden="true" class="w-4 h-4 animate-spin"></svg>
-                  Validazione...
-                  } @else if (isSaving()) {
-                  <svg lucideLoader aria-hidden="true" class="w-4 h-4 animate-spin"></svg>
-                  Salvataggio...
-                  } @else {
-                  Valida e Salva
-                  }
-                </button>
-
-                <button type="button" (click)="showKeyInput.set(false)"
-                  class="inline-flex items-center justify-center px-4 py-2.5 min-h-11 rounded-xl text-sm font-medium
-                         text-gray-700 bg-gray-100 hover:bg-gray-200 active:bg-gray-300
-                         border border-gray-300 transition-colors
-                         focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                  Annulla
-                </button>
-              </div>
-            </div>
-          </div>
-          }
-
-          <!-- Privacy Notice -->
-          <div class="flex items-start gap-3 p-3 sm:p-4 bg-blue-50 rounded-xl border border-blue-100">
-            <svg lucideInfo aria-hidden="true" class="w-5 h-5 mt-0.5 flex-shrink-0 text-blue-500"></svg>
-            <p class="text-sm text-blue-800 leading-relaxed">
-              La tua chiave viene crittografata e archiviata in modo sicuro.
-              Non vediamo né registriamo le tue chiavi API.
-              Paghi direttamente il tuo provider.
-            </p>
-          </div>
-        </div>
-      </section>
-
+      @if (!loading()) {
       <!-- Action Buttons Section -->
       <section class="pt-8 sm:pt-10 border-t border-gray-200 space-y-4 sm:space-y-6">
         <!-- Description -->
@@ -422,7 +207,7 @@
           }
 
           <!-- Save button - Primary action with proper touch targets -->
-          <button type="submit" [disabled]="settingsForm.invalid || isSavingSettings()" aria-label="Salva le impostazioni" class="order-1 sm:order-2 w-full sm:w-auto inline-flex items-center justify-center gap-2
+          <button type="submit" [disabled]="settingsForm.invalid || isSavingSettings() || !byokReady()" aria-label="Salva le impostazioni" class="order-1 sm:order-2 w-full sm:w-auto inline-flex items-center justify-center gap-2
                    px-4 py-2.5 min-h-11 rounded-xl text-sm font-medium
                    bg-primary hover:bg-primary-hover active:bg-primary-hover
                    text-white
@@ -438,8 +223,8 @@
           </button>
         </div>
       </section>
+      }
     </form>
-    }
 
     <!-- Account (mobile only) - logout lives in the sidebar footer on desktop -->
     <section class="md:hidden pt-8 sm:pt-10 mt-8 sm:mt-10 border-t border-gray-200">

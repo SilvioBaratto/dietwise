@@ -332,7 +332,8 @@ class UserSettings(Base):
             "height IS NULL OR height > 0", name="chk_user_settings_positive_height"
         ),
         CheckConstraint(
-            "preferred_provider IS NULL OR preferred_provider IN ('openai', 'google', 'anthropic')",
+            "preferred_provider IS NULL OR preferred_provider IN ('openai', 'openai_responses', "
+            "'anthropic', 'google', 'azure_openai', 'openai_generic', 'microsoft_foundry', 'ollama')",
             name="chk_user_settings_valid_preferred_provider",
         ),
         Index("idx_user_settings_user_id", "user_id"),
