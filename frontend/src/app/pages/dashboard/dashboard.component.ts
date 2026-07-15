@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { SettingsService } from '../../services/settings.service';
 import { DietService } from '../../services/diet.service';
 import { DietaConLista, ListaSpesa, DailyGroup, Pasto } from '../../models/diet.types';
-import { PageHeaderComponent } from '../../shared/page-header/page-header.component';
 import { GroceryListSheetComponent } from '../../shared/grocery-list-sheet/grocery-list-sheet';
 import { ModifyDietSheetComponent } from '../../shared/modify-diet-sheet/modify-diet-sheet';
 import {
@@ -31,7 +30,6 @@ const MEAL_TYPE_ORDER = [
   selector: 'app-dashboard',
   imports: [
     CommonModule,
-    PageHeaderComponent,
     GroceryListSheetComponent,
     ModifyDietSheetComponent,
     LucidePlus,

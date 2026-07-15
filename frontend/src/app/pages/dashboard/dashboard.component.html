@@ -91,12 +91,12 @@
     <!-- Main Dashboard Content -->
     @if (dietaConLista) {
     <div class="space-y-4 sm:space-y-6">
-      <app-page-header [title]="dietaConLista.dieta.nome">
-        <p page-header-subtitle class="text-sm sm:text-base lg:text-lg text-gray-600 flex items-center gap-2 mt-2">
+      <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <p class="text-sm sm:text-base lg:text-lg text-gray-600 flex items-center gap-2">
           <svg lucideCalendar aria-hidden="true" class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-gray-500"></svg>
           <span class="font-medium">{{ dietaConLista.dieta.dataInizio }} — {{ dietaConLista.dieta.dataFine }}</span>
         </p>
-        <div page-header-actions class="flex flex-row gap-2 sm:gap-3">
+        <div class="flex flex-row gap-2 sm:gap-3">
           <!-- Regenerate Button -->
           <button (click)="generateNewDiet()" [disabled]="loading"
             class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
@@ -126,7 +126,7 @@
             <span class="hidden sm:inline">Lista Spesa</span>
           </button>
         </div>
-      </app-page-header>
+      </div>
 
       <!-- Day Selector -->
       <div class="sticky top-0 z-10 -mx-4 px-4 sm:-mx-6 sm:px-6 py-3 bg-surface/95 backdrop-blur-sm md:static md:mx-0 md:px-0 md:bg-transparent md:backdrop-blur-none">
