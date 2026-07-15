@@ -15,7 +15,7 @@ client<llm> OpenAI {
 client<llm> Gemini {
   provider google-ai
   options {
-    model "gemini-2.5-flash"
+    model "gemini-3.5-flash"
     api_key env.GOOGLE_API_KEY
     generationConfig {
       maxOutputTokens 16000
@@ -26,7 +26,7 @@ client<llm> Gemini {
 client<llm> Anthropic {
   provider anthropic
   options {
-    model "claude-sonnet-4-6"
+    model "claude-sonnet-5"
     api_key env.ANTHROPIC_API_KEY
     max_tokens 16000
   }

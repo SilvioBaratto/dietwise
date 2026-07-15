@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_MODEL: dict[str, str] = {
     "openai": "gpt-5.4-mini",
-    "anthropic": "claude-haiku-4-5",
-    "google": "gemini-2.5-flash",
+    "anthropic": "claude-sonnet-5",
+    "google": "gemini-3.5-flash",
 }
 
 PROVIDER_BAML_NAME: dict[str, str] = {

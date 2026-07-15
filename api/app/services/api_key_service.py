@@ -33,15 +33,14 @@ AVAILABLE_MODELS: dict[str, list[str]] = {
         "gpt-5.4-mini",
     ],
     "anthropic": [
-        "claude-opus-4-6",
-        "claude-sonnet-4-6",
-        "claude-haiku-4-5",
-        "claude-sonnet-4-5",
+        "claude-opus-4-8",
+        "claude-sonnet-5",
     ],
     "google": [
-        "gemini-2.5-pro",
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite",
+        "gemini-3.5-flash",
+        "gemini-3.1-flash-lite",
+        "gemini-3.1-pro-preview",
+        "gemini-3-flash-preview",
     ],
 }
 
