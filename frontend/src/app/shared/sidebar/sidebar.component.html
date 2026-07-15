@@ -30,11 +30,9 @@
     }
     @for (item of navItems; track item.route; let i = $index) {
     <a #navRow [routerLink]="item.route"
-      routerLinkActive="text-white"
-      [class.text-white]="isLinkActive(item.route)"
-      [routerLinkActiveOptions]="{ exact: item.exact }"
+      [class.text-white]="activeIndex() === i"
+      [class.hover:text-primary]="activeIndex() !== i"
       class="group relative z-10 flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary
-             hover:text-primary
              transition-colors duration-200
              focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2
              min-h-11"
