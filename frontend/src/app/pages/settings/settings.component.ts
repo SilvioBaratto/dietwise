@@ -5,7 +5,7 @@ import { AsyncPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { forkJoin } from 'rxjs';
+import { forkJoin, catchError, of, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiKeyService } from '../../services/api-key.service';
 import { AuthService } from '../../services/auth.service';
@@ -71,6 +71,7 @@ export class SettingsComponent implements OnInit {
   // Signals for reactive state
   successMessage = signal('');
   errorMessage = signal('');
+  isSavingSettings = signal(false);
 
   // Convert queryParams observable to signal
   private queryParams = toSignal(this.route.queryParams, { initialValue: {} as Record<string, string> });
@@ -163,25 +164,48 @@ export class SettingsComponent implements OnInit {
   }
 
   saveSettings() {
+    if (this.isSavingSettings()) return;
+
     this.successMessage.set('');
     this.errorMessage.set('');
+    this.prefsError.set('');
+    this.isSavingSettings.set(true);
 
     // Note: Authorization header is automatically added by authInterceptor
-    this.http
+    const settingsSave$ = this.http
       .post<UserSettingsOut>(
         `${environment.apiUrl}/settings/update_user_settings`,
         this.settings
       )
-      .subscribe({
-        next: () => {
-          // Redirect to the dashboard on successful save
-          this.router.navigate(['/dashboard']);
-        },
-        error: (err) => {
+      .pipe(
+        map(() => true),
+        catchError((err) => {
           console.error('Save error', err);
-          this.errorMessage.set('Errore nel salvataggio. Riprova.');
-        },
-      });
+          this.errorMessage.set('Errore nel salvataggio delle informazioni personali. Riprova.');
+          return of(false);
+        })
+      );
+
+    const prefsSave$ = this.apiKeyService
+      .updatePreferences(this.selectedProvider(), this.selectedModel())
+      .pipe(
+        map(() => true),
+        catchError((err) => {
+          this.prefsError.set(err.error?.detail ?? 'Errore nel salvataggio delle preferenze AI.');
+          return of(false);
+        })
+      );
+
+    forkJoin([settingsSave$, prefsSave$]).subscribe(([settingsOk, prefsOk]) => {
+      this.isSavingSettings.set(false);
+      if (!settingsOk || !prefsOk) return;
+
+      if (this.isFirstTime()) {
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.successMessage.set('Impostazioni salvate.');
+      }
+    });
   }
 
   cancelSettings() {
@@ -291,17 +315,6 @@ export class SettingsComponent implements OnInit {
         this.keyError.set(
           err.error?.error?.message ?? err.error?.detail ?? 'Impossibile eliminare la chiave'
         );
-      },
-    });
-  }
-
-  updatePreferences(): void {
-    this.prefsError.set('');
-
-    this.apiKeyService.updatePreferences(this.selectedProvider(), this.selectedModel()).subscribe({
-      next: () => this.keySuccess.set('Preferenze AI salvate'),
-      error: (err) => {
-        this.prefsError.set(err.error?.detail ?? 'Errore nel salvataggio delle preferenze');
       },
     });
   }
