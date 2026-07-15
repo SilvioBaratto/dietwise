@@ -245,7 +245,15 @@ export class SettingsComponent implements OnInit {
         this.availableModels.set(models);
         const provider = (prefs.provider as Provider) ?? 'openai';
         this.selectedProvider.set(provider);
-        this.selectedModel.set(prefs.model ?? models[provider]?.[0] ?? '');
+        // The saved model may no longer be offered for this provider (e.g. a
+        // deprecated model) - the <select> silently falls back to showing its
+        // first <option> in that case without updating the bound signal, so
+        // validate membership here rather than trusting the stored value.
+        const providerModels = models[provider] ?? [];
+        const savedModel = prefs.model;
+        this.selectedModel.set(
+          savedModel && providerModels.includes(savedModel) ? savedModel : providerModels[0] ?? ''
+        );
         this.markLoaded('models');
       },
       error: () => {
