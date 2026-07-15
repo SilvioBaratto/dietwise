@@ -23,7 +23,8 @@ from app.utils.url_safety import is_safe_base_url
 logger = logging.getLogger(__name__)
 
 _TIMEOUT = httpx.Timeout(10.0)
-_GOOGLE_KEY_RE = re.compile(r"[A-Za-z0-9\-_]+")
+_GOOGLE_KEY_RE = re.compile(r"[A-Za-z0-9\-_]+")  # legacy "AIza..." standard keys
+_GOOGLE_AUTH_KEY_RE = re.compile(r"AQ\.[A-Za-z0-9\-_]+")  # new "AQ." auth keys (2026 rollout)
 _AZURE_API_VERSION_RE = re.compile(r"^\d{4}-\d{2}-\d{2}(-preview)?$")
 
 
@@ -49,8 +50,12 @@ class ApiKeyValidationService:
         elif api_key and provider == "anthropic":
             if not api_key.startswith("sk-ant-") or len(api_key) <= 20:
                 return (False, "Invalid key format for Anthropic")
-        elif provider == "google" and (
-            not api_key or len(api_key) < 30 or not _GOOGLE_KEY_RE.fullmatch(api_key)
+        elif provider == "google" and not (
+            api_key
+            and (
+                (len(api_key) >= 30 and _GOOGLE_KEY_RE.fullmatch(api_key))
+                or _GOOGLE_AUTH_KEY_RE.fullmatch(api_key)
+            )
         ):
             return (False, "Invalid key format for Google")
 
