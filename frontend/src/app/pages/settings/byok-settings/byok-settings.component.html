@@ -62,15 +62,30 @@
           </select>
         </div>
 
+        @if (activeProviderInfo()?.free_form_models) {
         <app-editable-select id="activeModel" label="Modello" [required]="true"
           [suggestions]="activeProviderInfo()?.models ?? []"
-          [placeholder]="activeProviderInfo()?.free_form_models
-            ? 'Scrivi il nome del modello o del deployment...'
-            : 'Scegli un modello suggerito o scrivi il nome di un altro...'"
-          [helpText]="activeProviderInfo()?.free_form_models
-            ? 'Nessun modello precaricato per questo provider: inserisci manualmente il nome del modello o del deployment.'
-            : 'Puoi scegliere un modello suggerito oppure scrivere manualmente il nome di un modello diverso.'"
+          placeholder="Scrivi il nome del modello o del deployment..."
+          helpText="Nessun modello precaricato per questo provider: inserisci manualmente il nome del modello o del deployment."
           [(value)]="selectedModel" />
+        } @else {
+        <div class="space-y-2 sm:space-y-3">
+          <label for="activeModel" class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+            Modello
+            <span class="text-red-500" aria-label="obbligatorio">*</span>
+          </label>
+          <select id="activeModel"
+            (change)="onModelChange($any($event.target).value)"
+            class="w-full px-4 py-4 min-h-[48px] text-base border border-gray-300 rounded-xl
+                   focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500
+                   hover:border-gray-400 transition-colors duration-200
+                   appearance-none bg-white cursor-pointer">
+            @for (m of activeProviderInfo()?.models ?? []; track m) {
+            <option [value]="m" [selected]="m === selectedModel()">{{ m }}</option>
+            }
+          </select>
+        </div>
+        }
       </div>
     </div>
 

@@ -191,6 +191,10 @@ export class ByokSettingsComponent implements OnInit {
     this.selectedModel.set(info?.default_model ?? info?.models[0] ?? '');
   }
 
+  onModelChange(model: string): void {
+    this.selectedModel.set(model);
+  }
+
   validateAndSave(): void {
     if (this.byokForm.invalid || this.isSaving() || this.isValidating()) return;
 
