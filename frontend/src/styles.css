@@ -30,6 +30,15 @@
   --text-4xl: 2.75rem;     /* 44px  (was 36, kept above 3xl) */
 }
 
+/* Kill the focus ring app-wide. Dozens of focus:ring-* utilities fire on
+   :focus (not :focus-visible), so the colored ring flashed on every mouse
+   click, not just keyboard nav. Unlayered rule beats the utilities layer
+   without touching persistent shadows (--tw-shadow is untouched). */
+:focus {
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+}
+
 @layer base {
   /* Prevent iOS auto-zoom on form inputs (triggers below 16px). Several
      inputs in this app use text-sm/text-xs for visual density; without
