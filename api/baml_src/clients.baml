@@ -7,7 +7,7 @@
 client<llm> OpenAI {
   provider openai
   options {
-    model "gpt-5-mini"
+    model "gpt-5.4-mini"
     api_key env.OPENAI_API_KEY
   }
 }

@@ -15,7 +15,7 @@ from baml_client.async_client import BamlAsyncClient, b
 logger = logging.getLogger(__name__)
 
 DEFAULT_MODEL: dict[str, str] = {
-    "openai": "gpt-5-mini",
+    "openai": "gpt-5.4-mini",
     "anthropic": "claude-haiku-4-5",
     "google": "gemini-2.5-flash",
 }
