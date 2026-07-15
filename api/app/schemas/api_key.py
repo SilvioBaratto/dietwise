@@ -17,6 +17,8 @@ class _ProviderConnectionRequest(BaseModel):
     rather than duplicating per-provider rules in every request schema.
     """
 
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     provider: ProviderSlug
     api_key: str | None = Field(default=None, min_length=10, max_length=512)
     base_url: str | None = Field(default=None, min_length=1, max_length=2048)
