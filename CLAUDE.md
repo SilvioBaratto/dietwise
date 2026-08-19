@@ -33,7 +33,7 @@ Browser → Vercel (Angular SPA)
           BAML → OpenAI (diet/recipe generation)
 ```
 
-- Frontend proxies `/api/*` requests to `https://api-diet.fly.dev/api/*` via Vercel rewrites
+- Frontend proxies `/api/*` requests to the backend via Vercel rewrites (destination configured in `frontend/vercel.json`; update when redeploying)
 - Auth: Supabase OAuth (Google) with PKCE flow; JWT validated server-side (`api/app/auth/supabase_auth.py`)
 - Production API URL is relative (`/api/v1`), dev points to `localhost:8000`
 - CSP headers configured in `frontend/vercel.json` — must whitelist Supabase domains for `connect-src`

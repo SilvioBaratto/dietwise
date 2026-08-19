@@ -4,9 +4,6 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![Angular 21](https://img.shields.io/badge/Angular-21-red.svg)](https://angular.dev/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.135-009688.svg)](https://fastapi.tiangolo.com/)
-[![Deployed on Vercel](https://img.shields.io/badge/Vercel-deployed-black.svg)](https://diet.silviobaratto.com)
-[![Deployed on Fly.io](https://img.shields.io/badge/Fly.io-deployed-7b36ed.svg)](https://api-diet.fly.dev)
-
 AI-powered personalized weekly meal plan generator for the Italian market. Users set their goals (weight, height, dietary preferences) and the AI generates a complete weekly diet with recipes and grocery lists.
 
 > **Regulatory note** — This application is positioned as a general wellness and informational tool, not a medical device. It complies with the Italian and EU regulatory framework for nutrition apps. See [`law_diet.md`](law_diet.md) for the full legal analysis covering MDR classification, GDPR health-data obligations, consumer protection, and AI Act transparency requirements.
@@ -223,7 +220,7 @@ vercel --prod
 
 The `vercel.json` configuration handles:
 
-- **API proxy** — `/api/*` rewrites to `https://api-diet.fly.dev/api/*`
+- **API proxy** — `/api/*` rewrites to the backend deployment URL (configured via the frontend environment; the default production backend URL is set in `vercel.json`)
 - **SPA fallback** — All non-API routes serve `index.html`
 - **Security headers** — CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy
 
